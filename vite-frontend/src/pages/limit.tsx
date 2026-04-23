@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -213,7 +213,7 @@ export default function LimitPage() {
         <div className="flex items-center justify-center h-64">
           <div className="flex items-center gap-3">
             <Spinner size="sm" />
-            <span className="text-default-600">正在加载...</span>
+            <span className="text-[#6b6560] dark:text-[#8a8480]">正在加载...</span>
           </div>
         </div>
       
@@ -243,11 +243,11 @@ export default function LimitPage() {
         {rules.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
             {rules.map((rule) => (
-              <Card key={rule.id} className="shadow-sm border border-gray-200 dark:border-gray-700">
+              <Card key={rule.id} className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
                 <CardHeader className="pb-3">
                   <div className="flex justify-between items-start w-full">
                     <div>
-                      <h3 className="font-semibold text-foreground">{rule.name}</h3>
+                      <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{rule.name}</h3>
                     </div>
                     <Chip 
                       color={rule.status === 1 ? "success" : "danger"} 
@@ -261,19 +261,19 @@ export default function LimitPage() {
                 <CardBody className="pt-0">
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-small text-default-600">速度限制</span>
+                      <span className="text-small text-[#6b6560] dark:text-[#8a8480]">速度限制</span>
                       <Chip color="secondary" variant="flat" size="sm">
                         {rule.speed} Mbps
                       </Chip>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-small text-default-600">绑定隧道</span>
+                      <span className="text-small text-[#6b6560] dark:text-[#8a8480]">绑定隧道</span>
                       {rule.tunnelName ? (
                         <Chip color="primary" variant="flat" size="sm">
                           {rule.tunnelName}
                         </Chip>
                       ) : (
-                        <span className="text-default-400 text-small">未绑定</span>
+                        <span className="text-[#9b9590] dark:text-[#5d5854] text-small">未绑定</span>
                       )}
                     </div>
                   </div>
@@ -315,17 +315,17 @@ export default function LimitPage() {
           </div>
         ) : (
           /* 空状态 */
-          <Card className="shadow-sm border border-gray-200 dark:border-gray-700">
+          <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
             <CardBody className="text-center py-16">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center">
-                  <svg className="w-8 h-8 text-default-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-[#9b9590] dark:text-[#5d5854]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6l4 2m6-6a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground">暂无限速规则</h3>
-                  <p className="text-default-500 text-sm mt-1">还没有创建任何限速规则，点击上方按钮开始创建</p>
+                  <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">暂无限速规则</h3>
+                  <p className="text-[#9b9590] dark:text-[#5d5854] text-sm mt-1">还没有创建任何限速规则，点击上方按钮开始创建</p>
                 </div>
               </div>
             </CardBody>
@@ -348,7 +348,7 @@ export default function LimitPage() {
                   <h2 className="text-xl font-bold">
                     {isEdit ? '编辑限速规则' : '新增限速规则'}
                   </h2>
-                  <p className="text-small text-default-500">
+                  <p className="text-small text-[#9b9590] dark:text-[#5d5854]">
                     {isEdit ? '修改现有限速规则的配置信息' : '创建新的限速规则并绑定到隧道'}
                   </p>
                 </ModalHeader>
@@ -375,7 +375,7 @@ export default function LimitPage() {
                       variant="bordered"
                       endContent={
                         <div className="pointer-events-none flex items-center">
-                          <span className="text-default-400 text-small">Mbps</span>
+                          <span className="text-[#9b9590] dark:text-[#5d5854] text-small">Mbps</span>
                         </div>
                       }
                     />
@@ -446,10 +446,10 @@ export default function LimitPage() {
                   <h2 className="text-lg font-bold text-danger">确认删除</h2>
                 </ModalHeader>
                 <ModalBody>
-                  <p className="text-default-600">
-                    确定要删除限速规则 <span className="font-semibold text-foreground">"{ruleToDelete?.name}"</span> 吗？
+                  <p className="text-[#6b6560] dark:text-[#8a8480]">
+                    确定要删除限速规则 <span className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">"{ruleToDelete?.name}"</span> 吗？
                   </p>
-                  <p className="text-small text-default-500 mt-2">
+                  <p className="text-small text-[#9b9590] dark:text-[#5d5854] mt-2">
                     此操作无法撤销，删除后该规则将永久消失。
                   </p>
                 </ModalBody>

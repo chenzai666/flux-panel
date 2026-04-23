@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -1178,17 +1178,17 @@ export default function ForwardPage() {
     const strategyDisplay = getStrategyDisplay(forward.strategy);
     
     return (
-      <Card key={forward.id} className="group shadow-sm border border-divider hover:shadow-md transition-shadow duration-200">
+      <Card key={forward.id} className="group shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200">
         <CardHeader className="pb-2">
           <div className="flex justify-between items-start w-full">
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-foreground truncate text-sm">{forward.name}</h3>
-              <p className="text-xs text-default-500 truncate">{forward.tunnelName}</p>
+              <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da] truncate text-sm">{forward.name}</h3>
+              <p className="text-xs text-[#9b9590] dark:text-[#5d5854] truncate">{forward.tunnelName}</p>
             </div>
             <div className="flex items-center gap-1.5 ml-2">
               {viewMode === 'direct' && (
                 <div 
-                  className={`cursor-grab active:cursor-grabbing p-2 text-default-400 hover:text-default-600 transition-colors touch-manipulation ${
+                  className={`cursor-grab active:cursor-grabbing p-2 text-[#9b9590] dark:text-[#5d5854] hover:text-[#6b6560] dark:text-[#8a8480] transition-colors touch-manipulation ${
                     isMobile 
                       ? 'opacity-100' // 移动端始终显示
                       : 'opacity-0 group-hover:opacity-100 sm:opacity-0 sm:group-hover:opacity-100'
@@ -1225,21 +1225,21 @@ export default function ForwardPage() {
             {/* 地址信息 */}
             <div className="space-y-1">
               <div 
-                className={`cursor-pointer px-2 py-1 bg-default-50 dark:bg-default-100/50 rounded border border-default-200 dark:border-default-300 transition-colors duration-200 ${
-                  hasMultipleAddresses(forward.inIp) ? 'hover:bg-default-100 dark:hover:bg-default-200/50' : ''
+                className={`cursor-pointer px-2 py-1 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#3d3834] transition-colors duration-200 ${
+                  hasMultipleAddresses(forward.inIp) ? 'hover:bg-[#f0ece6] dark:bg-[#2d2824] dark:hover:bg-[#3d3834]/50' : ''
                 }`}
                 onClick={() => showAddressModal(forward.inIp, forward.inPort, '入口端口')}
                 title={formatInAddress(forward.inIp, forward.inPort)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                    <span className="text-xs font-medium text-default-600 flex-shrink-0">入口:</span>
-                    <code className="text-xs font-mono text-foreground truncate min-w-0">
+                    <span className="text-xs font-medium text-[#6b6560] dark:text-[#8a8480] flex-shrink-0">入口:</span>
+                    <code className="text-xs font-mono text-[#1a1a1a] dark:text-[#e8e2da] truncate min-w-0">
                       {formatInAddress(forward.inIp, forward.inPort)}
                     </code>
                   </div>
                   {hasMultipleAddresses(forward.inIp) && (
-                    <svg className="w-3 h-3 text-default-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 text-[#9b9590] dark:text-[#5d5854] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
                   )}
@@ -1247,21 +1247,21 @@ export default function ForwardPage() {
               </div>
               
               <div 
-                className={`cursor-pointer px-2 py-1 bg-default-50 dark:bg-default-100/50 rounded border border-default-200 dark:border-default-300 transition-colors duration-200 ${
-                  hasMultipleAddresses(forward.remoteAddr) ? 'hover:bg-default-100 dark:hover:bg-default-200/50' : ''
+                className={`cursor-pointer px-2 py-1 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#3d3834] transition-colors duration-200 ${
+                  hasMultipleAddresses(forward.remoteAddr) ? 'hover:bg-[#f0ece6] dark:bg-[#2d2824] dark:hover:bg-[#3d3834]/50' : ''
                 }`}
                 onClick={() => showAddressModal(forward.remoteAddr, null, '目标地址')}
                 title={formatRemoteAddress(forward.remoteAddr)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                    <span className="text-xs font-medium text-default-600 flex-shrink-0">目标:</span>
-                    <code className="text-xs font-mono text-foreground truncate min-w-0">
+                    <span className="text-xs font-medium text-[#6b6560] dark:text-[#8a8480] flex-shrink-0">目标:</span>
+                    <code className="text-xs font-mono text-[#1a1a1a] dark:text-[#e8e2da] truncate min-w-0">
                       {formatRemoteAddress(forward.remoteAddr)}
                     </code>
                   </div>
                   {hasMultipleAddresses(forward.remoteAddr) && (
-                    <svg className="w-3 h-3 text-default-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 text-[#9b9590] dark:text-[#5d5854] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
                   )}
@@ -1270,7 +1270,7 @@ export default function ForwardPage() {
             </div>
 
             {/* 统计信息 */}
-            <div className="flex items-center justify-between pt-2 border-t border-divider">
+            <div className="flex items-center justify-between pt-2 border-t border-[#e5e0d8] dark:border-[#2d2824]">
               <Chip color={strategyDisplay.color as any} variant="flat" size="sm" className="text-xs">
                 {strategyDisplay.text}
               </Chip>
@@ -1342,7 +1342,7 @@ export default function ForwardPage() {
         <div className="flex items-center justify-center h-64">
           <div className="flex items-center gap-3">
             <Spinner size="sm" />
-            <span className="text-default-600">正在加载...</span>
+            <span className="text-[#6b6560] dark:text-[#8a8480]">正在加载...</span>
           </div>
         </div>
       
@@ -1423,18 +1423,18 @@ export default function ForwardPage() {
           userGroups.length > 0 ? (
             <div className="space-y-6">
               {userGroups.map((userGroup) => (
-                <Card key={userGroup.userId || 'unknown'} className="shadow-sm border border-divider w-full overflow-hidden">
+                <Card key={userGroup.userId || 'unknown'} className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] w-full overflow-hidden">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between w-full min-w-0">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                          <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-5 h-5 text-[#c96442] dark:text-[#d4856a]" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                           </svg>
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h2 className="text-base font-medium text-foreground truncate max-w-[150px] sm:max-w-[250px] md:max-w-[350px] lg:max-w-[450px]">{userGroup.userName}</h2>
-                          <p className="text-xs text-default-500 truncate max-w-[150px] sm:max-w-[250px] md:max-w-[350px] lg:max-w-[450px]">
+                          <h2 className="text-base font-medium text-[#1a1a1a] dark:text-[#e8e2da] truncate max-w-[150px] sm:max-w-[250px] md:max-w-[350px] lg:max-w-[450px]">{userGroup.userName}</h2>
+                          <p className="text-xs text-[#9b9590] dark:text-[#5d5854] truncate max-w-[150px] sm:max-w-[250px] md:max-w-[350px] lg:max-w-[450px]">
                             {userGroup.tunnelGroups.length} 个隧道，
                             {userGroup.tunnelGroups.reduce((total, tg) => total + tg.forwards.length, 0)} 个转发
                           </p>
@@ -1461,7 +1461,7 @@ export default function ForwardPage() {
                                   </svg>
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                  <h3 className="text-sm font-medium text-foreground truncate max-w-[120px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-[400px]">{tunnelGroup.tunnelName}</h3>
+                                  <h3 className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da] truncate max-w-[120px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-[400px]">{tunnelGroup.tunnelName}</h3>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2 flex-shrink-0 ml-2">
@@ -1471,7 +1471,7 @@ export default function ForwardPage() {
                               </div>
                             </div>
                           }
-                          className="shadow-none border border-divider"
+                          className="shadow-none border border-[#e5e0d8] dark:border-[#2d2824]"
                         >
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 p-4">
                             {tunnelGroup.forwards.map((forward) => renderForwardCard(forward, undefined))}
@@ -1485,17 +1485,17 @@ export default function ForwardPage() {
             </div>
           ) : (
             /* 空状态 */
-            <Card className="shadow-sm border border-gray-200 dark:border-gray-700">
+            <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
               <CardBody className="text-center py-16">
                 <div className="flex flex-col items-center gap-4">
-                  <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center">
-                    <svg className="w-8 h-8 text-default-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
+                    <svg className="w-8 h-8 text-[#9b9590] dark:text-[#5d5854]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground">暂无转发配置</h3>
-                    <p className="text-default-500 text-sm mt-1">还没有创建任何转发配置，点击上方按钮开始创建</p>
+                    <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">暂无转发配置</h3>
+                    <p className="text-[#9b9590] dark:text-[#5d5854] text-sm mt-1">还没有创建任何转发配置，点击上方按钮开始创建</p>
                   </div>
                 </div>
               </CardBody>
@@ -1525,17 +1525,17 @@ export default function ForwardPage() {
             </DndContext>
           ) : (
             /* 空状态 */
-            <Card className="shadow-sm border border-gray-200 dark:border-gray-700">
+            <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
               <CardBody className="text-center py-16">
                 <div className="flex flex-col items-center gap-4">
-                  <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center">
-                    <svg className="w-8 h-8 text-default-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
+                    <svg className="w-8 h-8 text-[#9b9590] dark:text-[#5d5854]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground">暂无转发配置</h3>
-                    <p className="text-default-500 text-sm mt-1">还没有创建任何转发配置，点击上方按钮开始创建</p>
+                    <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">暂无转发配置</h3>
+                    <p className="text-[#9b9590] dark:text-[#5d5854] text-sm mt-1">还没有创建任何转发配置，点击上方按钮开始创建</p>
                   </div>
                 </div>
               </CardBody>
@@ -1559,7 +1559,7 @@ export default function ForwardPage() {
                   <h2 className="text-xl font-bold">
                     {isEdit ? '编辑转发' : '新增转发'}
                   </h2>
-                  <p className="text-small text-default-500">
+                  <p className="text-small text-[#9b9590] dark:text-[#5d5854]">
                     {isEdit ? '修改现有转发配置的信息' : '创建新的转发配置'}
                   </p>
                 </ModalHeader>
@@ -1692,10 +1692,10 @@ export default function ForwardPage() {
                   <h2 className="text-lg font-bold text-danger">确认删除</h2>
                 </ModalHeader>
                 <ModalBody>
-                  <p className="text-default-600">
-                    确定要删除转发 <span className="font-semibold text-foreground">"{forwardToDelete?.name}"</span> 吗？
+                  <p className="text-[#6b6560] dark:text-[#8a8480]">
+                    确定要删除转发 <span className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">"{forwardToDelete?.name}"</span> 吗？
                   </p>
-                  <p className="text-small text-default-500 mt-2">
+                  <p className="text-small text-[#9b9590] dark:text-[#5d5854] mt-2">
                     此操作无法撤销，删除后该转发将永久消失。
                   </p>
                 </ModalBody>
@@ -1729,8 +1729,8 @@ export default function ForwardPage() {
               
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {addressList.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center p-3 border border-default-200 dark:border-default-100 rounded-lg">
-                    <code className="text-sm flex-1 mr-3 text-foreground">{item.address}</code>
+                  <div key={item.id} className="flex justify-between items-center p-3 border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#e5e0d8] dark:border-[#2d2824] rounded-lg">
+                    <code className="text-sm flex-1 mr-3 text-[#1a1a1a] dark:text-[#e8e2da]">{item.address}</code>
                     <Button
                       size="sm"
                       variant="light"
@@ -1763,7 +1763,7 @@ export default function ForwardPage() {
           <ModalContent>
             <ModalHeader className="flex flex-col gap-1">
               <h2 className="text-xl font-bold">导出转发数据</h2>
-              <p className="text-small text-default-500">
+              <p className="text-small text-[#9b9590] dark:text-[#5d5854]">
                 格式：目标地址|转发名称|入口端口
               </p>
             </ModalHeader>
@@ -1886,10 +1886,10 @@ export default function ForwardPage() {
           <ModalContent>
             <ModalHeader className="flex flex-col gap-1">
               <h2 className="text-xl font-bold">导入转发数据</h2>
-              <p className="text-small text-default-500">
+              <p className="text-small text-[#9b9590] dark:text-[#5d5854]">
                 格式：目标地址|转发名称|入口端口，每行一个，入口端口留空将自动分配可用端口
               </p>
-              <p className="text-small text-default-400">
+              <p className="text-small text-[#9b9590] dark:text-[#5d5854]">
                 目标地址支持单个地址(如：example.com:8080)或多个地址用逗号分隔(如：3.3.3.3:3,4.4.4.4:4)
               </p>
             </ModalHeader>
@@ -1940,7 +1940,7 @@ export default function ForwardPage() {
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-base font-semibold">导入结果</h3>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-default-500">
+                        <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">
                           成功：{importResults.filter(r => r.success).length} / 
                           总计：{importResults.length}
                         </span>
@@ -1977,8 +1977,8 @@ export default function ForwardPage() {
                                 }`}>
                                   {result.success ? '成功' : '失败'}
                                 </span>
-                                <span className="text-xs text-default-500">|</span>
-                                <code className="text-xs font-mono text-default-600 truncate">{result.line}</code>
+                                <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">|</span>
+                                <code className="text-xs font-mono text-[#6b6560] dark:text-[#8a8480] truncate">{result.line}</code>
                               </div>
                               <div className={`text-xs ${
                                 result.success ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'
@@ -2030,7 +2030,7 @@ export default function ForwardPage() {
                   <h2 className="text-xl font-bold">转发诊断结果</h2>
                   {currentDiagnosisForward && (
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-small text-default-500 truncate flex-1 min-w-0">{currentDiagnosisForward.name}</span>
+                      <span className="text-small text-[#9b9590] dark:text-[#5d5854] truncate flex-1 min-w-0">{currentDiagnosisForward.name}</span>
                       <Chip 
                         color="primary"
                         variant="flat" 
@@ -2047,7 +2047,7 @@ export default function ForwardPage() {
                     <div className="flex items-center justify-center py-16">
                       <div className="flex items-center gap-3">
                         <Spinner size="sm" />
-                        <span className="text-default-600">正在诊断转发连接...</span>
+                        <span className="text-[#6b6560] dark:text-[#8a8480]">正在诊断转发连接...</span>
                       </div>
                     </div>
                   ) : diagnosisResult ? (
@@ -2060,9 +2060,9 @@ export default function ForwardPage() {
                             <CardHeader className="pb-2">
                               <div className="flex items-center justify-between w-full">
                                 <div>
-                                  <h3 className="text-lg font-semibold text-foreground">{result.description}</h3>
+                                  <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{result.description}</h3>
                                   <div className="flex items-center gap-2 mt-1">
-                                    <span className="text-small text-default-500">节点: {result.nodeName}</span>
+                                    <span className="text-small text-[#9b9590] dark:text-[#5d5854]">节点: {result.nodeName}</span>
                                     <Chip 
                                       color={result.success ? 'success' : 'danger'} 
                                       variant="flat" 
@@ -2080,12 +2080,12 @@ export default function ForwardPage() {
                                 <div className="space-y-3">
                                   <div className="grid grid-cols-3 gap-4">
                                     <div className="text-center">
-                                      <div className="text-2xl font-bold text-primary">{result.averageTime?.toFixed(0)}</div>
-                                      <div className="text-small text-default-500">平均延迟(ms)</div>
+                                      <div className="text-2xl font-bold text-[#c96442] dark:text-[#d4856a]">{result.averageTime?.toFixed(0)}</div>
+                                      <div className="text-small text-[#9b9590] dark:text-[#5d5854]">平均延迟(ms)</div>
                                     </div>
                                     <div className="text-center">
                                       <div className="text-2xl font-bold text-warning">{result.packetLoss?.toFixed(1)}</div>
-                                      <div className="text-small text-default-500">丢包率(%)</div>
+                                      <div className="text-small text-[#9b9590] dark:text-[#5d5854]">丢包率(%)</div>
                                     </div>
                                     <div className="text-center">
                                       {quality && (
@@ -2093,12 +2093,12 @@ export default function ForwardPage() {
                                           <Chip color={quality.color as any} variant="flat" size="lg">
                                             {quality.text}
                                           </Chip>
-                                          <div className="text-small text-default-500 mt-1">连接质量</div>
+                                          <div className="text-small text-[#9b9590] dark:text-[#5d5854] mt-1">连接质量</div>
                                         </>
                                       )}
                                     </div>
                                   </div>
-                                  <div className="text-small text-default-500 flex items-center gap-1">
+                                  <div className="text-small text-[#9b9590] dark:text-[#5d5854] flex items-center gap-1">
                                     <span className="flex-shrink-0">目标地址:</span>
                                     <code className="font-mono truncate min-w-0" title={`${result.targetIp}${result.targetPort ? ':' + result.targetPort : ''}`}>
                                       {result.targetIp}{result.targetPort ? ':' + result.targetPort : ''}
@@ -2107,7 +2107,7 @@ export default function ForwardPage() {
                                 </div>
                               ) : (
                                 <div className="space-y-2">
-                                  <div className="text-small text-default-500 flex items-center gap-1">
+                                  <div className="text-small text-[#9b9590] dark:text-[#5d5854] flex items-center gap-1">
                                     <span className="flex-shrink-0">目标地址:</span>
                                     <code className="font-mono truncate min-w-0" title={`${result.targetIp}${result.targetPort ? ':' + result.targetPort : ''}`}>
                                       {result.targetIp}{result.targetPort ? ':' + result.targetPort : ''}
@@ -2128,12 +2128,12 @@ export default function ForwardPage() {
                     </div>
                   ) : (
                     <div className="text-center py-16">
-                      <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-default-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-[#9b9590] dark:text-[#5d5854]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
-                      <h3 className="text-lg font-semibold text-foreground">暂无诊断数据</h3>
+                      <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">暂无诊断数据</h3>
                     </div>
                   )}
                 </ModalBody>

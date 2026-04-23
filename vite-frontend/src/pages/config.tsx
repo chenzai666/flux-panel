@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
@@ -282,7 +282,7 @@ export default function ConfigPage() {
               wrapper: isChanged ? "border-warning-300" : ""
             }}
           >
-            <span className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="text-sm text-[#1a1a1a] dark:text-[#9b9590]">
               {configs[item.key] === 'true' ? '已启用' : '已禁用'}
             </span>
           </Switch>
@@ -338,21 +338,21 @@ export default function ConfigPage() {
       <div className="p-6 max-w-4xl mx-auto">
         {/* 页面标题 */}
         <div className="flex items-center gap-3 mb-6">
-          <SettingsIcon className="w-8 h-8 text-primary" />
+          <SettingsIcon className="w-8 h-8 text-[#c96442] dark:text-[#d4856a]" />
           <div>
             <h1 className="text-2xl font-bold">网站配置</h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-[#6b6560] dark:text-[#9b9590]">
               管理网站的基本信息和显示设置
             </p>
           </div>
         </div>
 
-        <Card className="shadow-md">
+        <Card className="shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
           <CardHeader className="pb-4">
             <div className="flex justify-between items-center w-full">
               <div>
                 <h2 className="text-xl font-semibold">基本设置</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[#6b6560] dark:text-[#9b9590]">
                   配置网站的基本信息，这些设置会影响网站的显示效果
                 </p>
               </div>
@@ -387,11 +387,11 @@ export default function ConfigPage() {
               return (
                 <div key={item.key} className="space-y-3">
                   <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="text-sm font-medium text-[#1a1a1a] dark:text-[#9b9590]">
                       {item.label}
                     </label>
                     {item.description && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-[#9b9590] dark:text-[#5d5854]">
                         {item.description}
                       </p>
                     )}

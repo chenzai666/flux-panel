@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -416,7 +416,7 @@ export default function TunnelPage() {
         <div className="flex items-center justify-center h-64">
           <div className="flex items-center gap-3">
             <Spinner size="sm" />
-            <span className="text-default-600">正在加载...</span>
+            <span className="text-[#6b6560] dark:text-[#8a8480]">正在加载...</span>
           </div>
         </div>
       
@@ -451,11 +451,11 @@ export default function TunnelPage() {
               const typeDisplay = getTypeDisplay(tunnel.type);
               
               return (
-                <Card key={tunnel.id} className="shadow-sm border border-divider hover:shadow-md transition-shadow duration-200">
+                <Card key={tunnel.id} className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200">
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start w-full">
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-foreground truncate text-sm">{tunnel.name}</h3>
+                        <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da] truncate text-sm">{tunnel.name}</h3>
                         <div className="flex items-center gap-1.5 mt-1">
                           <Chip 
                             color={typeDisplay.color as any} 
@@ -482,48 +482,48 @@ export default function TunnelPage() {
                     <div className="space-y-2">
                       {/* 流程展示 */}
                       <div className="space-y-1.5">
-                        <div className="p-2 bg-default-50 dark:bg-default-100/50 rounded border border-default-200 dark:border-default-300">
+                        <div className="p-2 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#3d3834]">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-medium text-default-600">入口节点</span>
+                            <span className="text-xs font-medium text-[#6b6560] dark:text-[#8a8480]">入口节点</span>
                           </div>
-                          <code className="text-xs font-mono text-foreground block truncate">
+                          <code className="text-xs font-mono text-[#1a1a1a] dark:text-[#e8e2da] block truncate">
                             {getNodeName(tunnel.inNodeId)}
                           </code>
-                          <code className="text-xs font-mono text-default-500 block truncate">
+                          <code className="text-xs font-mono text-[#9b9590] dark:text-[#5d5854] block truncate">
                             {getDisplayIp(tunnel.inIp)}
                           </code>
                         </div>
                         
                         <div className="text-center py-0.5">
-                          <svg className="w-3 h-3 text-default-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-3 h-3 text-[#9b9590] dark:text-[#5d5854] mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                           </svg>
                         </div>
                         
-                        <div className="p-2 bg-default-50 dark:bg-default-100/50 rounded border border-default-200 dark:border-default-300">
+                        <div className="p-2 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#3d3834]">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-medium text-default-600">
+                            <span className="text-xs font-medium text-[#6b6560] dark:text-[#8a8480]">
                               {tunnel.type === 1 ? '出口节点（同入口）' : '出口节点'}
                             </span>
                           </div>
-                          <code className="text-xs font-mono text-foreground block truncate">
+                          <code className="text-xs font-mono text-[#1a1a1a] dark:text-[#e8e2da] block truncate">
                             {tunnel.type === 1 ? getNodeName(tunnel.inNodeId) : getNodeName(tunnel.outNodeId)}
                           </code>
-                          <code className="text-xs font-mono text-default-500 block truncate">
+                          <code className="text-xs font-mono text-[#9b9590] dark:text-[#5d5854] block truncate">
                             {tunnel.type === 1 ? getDisplayIp(tunnel.inIp) : getDisplayIp(tunnel.outIp)}
                           </code>
                         </div>
                       </div>
 
                       {/* 配置信息 */}
-                      <div className="flex justify-between items-center pt-2 border-t border-divider">
+                      <div className="flex justify-between items-center pt-2 border-t border-[#e5e0d8] dark:border-[#2d2824]">
                         <div className="text-left">
-                          <div className="text-xs font-medium text-foreground">
+                          <div className="text-xs font-medium text-[#1a1a1a] dark:text-[#e8e2da]">
                             {getFlowDisplay(tunnel.flow)}
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-xs font-medium text-foreground">
+                          <div className="text-xs font-medium text-[#1a1a1a] dark:text-[#e8e2da]">
                             {tunnel.trafficRatio}x
                           </div>
                         </div>
@@ -583,17 +583,17 @@ export default function TunnelPage() {
           </div>
         ) : (
           /* 空状态 */
-          <Card className="shadow-sm border border-gray-200 dark:border-gray-700">
+          <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
             <CardBody className="text-center py-16">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center">
-                  <svg className="w-8 h-8 text-default-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-[#9b9590] dark:text-[#5d5854]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground">暂无隧道配置</h3>
-                  <p className="text-default-500 text-sm mt-1">还没有创建任何隧道配置，点击上方按钮开始创建</p>
+                  <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">暂无隧道配置</h3>
+                  <p className="text-[#9b9590] dark:text-[#5d5854] text-sm mt-1">还没有创建任何隧道配置，点击上方按钮开始创建</p>
                 </div>
               </div>
             </CardBody>
@@ -616,7 +616,7 @@ export default function TunnelPage() {
                   <h2 className="text-xl font-bold">
                     {isEdit ? '编辑隧道' : '新增隧道'}
                   </h2>
-                  <p className="text-small text-default-500">
+                  <p className="text-small text-[#9b9590] dark:text-[#5d5854]">
                     {isEdit ? '修改现有隧道配置的信息' : '创建新的隧道配置'}
                   </p>
                 </ModalHeader>
@@ -684,7 +684,7 @@ export default function TunnelPage() {
                         variant="bordered"
                         endContent={
                           <div className="pointer-events-none flex items-center">
-                            <span className="text-default-400 text-small">x</span>
+                            <span className="text-[#9b9590] dark:text-[#5d5854] text-small">x</span>
                           </div>
                         }
                       />
@@ -738,7 +738,7 @@ export default function TunnelPage() {
                         variant="bordered"
                         startContent={
                           <div className="pointer-events-none flex items-center">
-                            <span className="text-default-400 text-small">TCP</span>
+                            <span className="text-[#9b9590] dark:text-[#5d5854] text-small">TCP</span>
                           </div>
                         }
                       />
@@ -753,7 +753,7 @@ export default function TunnelPage() {
                         variant="bordered"
                         startContent={
                           <div className="pointer-events-none flex items-center">
-                            <span className="text-default-400 text-small">UDP</span>
+                            <span className="text-[#9b9590] dark:text-[#5d5854] text-small">UDP</span>
                           </div>
                         }
                       />
@@ -893,7 +893,7 @@ export default function TunnelPage() {
                 </ModalHeader>
                 <ModalBody>
                   <p>确定要删除隧道 <strong>"{tunnelToDelete?.name}"</strong> 吗？</p>
-                  <p className="text-small text-default-500">此操作不可恢复，请谨慎操作。</p>
+                  <p className="text-small text-[#9b9590] dark:text-[#5d5854]">此操作不可恢复，请谨慎操作。</p>
                 </ModalBody>
                 <ModalFooter>
                   <Button variant="light" onPress={onClose}>
@@ -928,7 +928,7 @@ export default function TunnelPage() {
                   <h2 className="text-xl font-bold">隧道诊断结果</h2>
                   {currentDiagnosisTunnel && (
                     <div className="flex items-center gap-2">
-                      <span className="text-small text-default-500">{currentDiagnosisTunnel.name}</span>
+                      <span className="text-small text-[#9b9590] dark:text-[#5d5854]">{currentDiagnosisTunnel.name}</span>
                       <Chip 
                         color={currentDiagnosisTunnel.type === 1 ? 'primary' : 'secondary'} 
                         variant="flat" 
@@ -944,7 +944,7 @@ export default function TunnelPage() {
                     <div className="flex items-center justify-center py-16">
                       <div className="flex items-center gap-3">
                         <Spinner size="sm" />
-                        <span className="text-default-600">正在诊断...</span>
+                        <span className="text-[#6b6560] dark:text-[#8a8480]">正在诊断...</span>
                       </div>
                     </div>
                   ) : diagnosisResult ? (
@@ -964,7 +964,7 @@ export default function TunnelPage() {
                                   </div>
                                   <div>
                                     <h4 className="font-semibold">{result.description}</h4>
-                                    <p className="text-small text-default-500">{result.nodeName}</p>
+                                    <p className="text-small text-[#9b9590] dark:text-[#5d5854]">{result.nodeName}</p>
                                   </div>
                                 </div>
                                 <Chip 
@@ -980,12 +980,12 @@ export default function TunnelPage() {
                                 <div className="space-y-3">
                                   <div className="grid grid-cols-3 gap-4">
                                     <div className="text-center">
-                                      <div className="text-2xl font-bold text-primary">{result.averageTime?.toFixed(0)}</div>
-                                      <div className="text-small text-default-500">平均延迟(ms)</div>
+                                      <div className="text-2xl font-bold text-[#c96442] dark:text-[#d4856a]">{result.averageTime?.toFixed(0)}</div>
+                                      <div className="text-small text-[#9b9590] dark:text-[#5d5854]">平均延迟(ms)</div>
                                     </div>
                                     <div className="text-center">
                                       <div className="text-2xl font-bold text-warning">{result.packetLoss?.toFixed(1)}</div>
-                                      <div className="text-small text-default-500">丢包率(%)</div>
+                                      <div className="text-small text-[#9b9590] dark:text-[#5d5854]">丢包率(%)</div>
                                     </div>
                                     <div className="text-center">
                                       {quality && (
@@ -993,18 +993,18 @@ export default function TunnelPage() {
                                           <Chip color={quality.color as any} variant="flat" size="lg">
                                             {quality.text}
                                           </Chip>
-                                          <div className="text-small text-default-500 mt-1">连接质量</div>
+                                          <div className="text-small text-[#9b9590] dark:text-[#5d5854] mt-1">连接质量</div>
                                         </>
                                       )}
                                     </div>
                                   </div>
-                                  <div className="text-small text-default-500">
+                                  <div className="text-small text-[#9b9590] dark:text-[#5d5854]">
                                     目标地址: <code className="font-mono">{result.targetIp}{result.targetPort ? ':' + result.targetPort : ''}</code>
                                   </div>
                                 </div>
                               ) : (
                                 <div className="space-y-2">
-                                  <div className="text-small text-default-500">
+                                  <div className="text-small text-[#9b9590] dark:text-[#5d5854]">
                                     目标地址: <code className="font-mono">{result.targetIp}{result.targetPort ? ':' + result.targetPort : ''}</code>
                                   </div>
                                   <Alert
@@ -1022,12 +1022,12 @@ export default function TunnelPage() {
                     </div>
                   ) : (
                     <div className="text-center py-16">
-                      <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-default-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-[#9b9590] dark:text-[#5d5854]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
-                      <h3 className="text-lg font-semibold text-foreground">暂无诊断数据</h3>
+                      <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">暂无诊断数据</h3>
                     </div>
                   )}
                 </ModalBody>

@@ -7,6 +7,14 @@ html, body {
   overflow-x: hidden;
 }
 
+/* Claude 风格全局字体 */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 /* 现代浏览器使用 100dvh，避免地址栏收起/展开导致的布局跳动 */
 @supports (height: 100dvh) {
   .h-screen {
@@ -41,7 +49,7 @@ html, body {
 
 
 /* 安全区域变量与工具类（适配刘海/底部手势条） */
-:root {
+::root {
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -54,6 +62,51 @@ html, body {
   padding-bottom: var(--safe-area-bottom);
 }
 
+/* Claude 风格滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c9c3bb;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a29e;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4d4844;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #5d5854;
+}
+
+/* Claude 风格 - 淡入动画 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Claude 风格 - 柔和悬停效果 */
+.claude-hover {
+  transition: all 0.2s ease;
+}
+.claude-hover:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transform: translateY(-1px);
+}
 
 /* 验证码弹层动画 */
 .captcha-modal-enter {
@@ -83,6 +136,66 @@ html, body {
   to {
     opacity: 1;
   }
+}
+
+/* Claude 风格 - HeroUI 组件覆盖 */
+/* 模态框圆角 */
+[data-slot="base"].rounded-xl {
+  border-radius: 12px !important;
+}
+
+/* 卡片圆角 */
+.claude-card {
+  border-radius: 12px;
+  border: 1px solid #e5e0d8;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  transition: all 0.2s ease;
+}
+
+.dark .claude-card {
+  border-color: #3d3834;
+  background: #231e1b;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.claude-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+}
+
+/* Claude 风格 - 按钮覆盖 */
+.claude-btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.claude-btn-primary {
+  background: #c96442;
+  color: white;
+  border: none;
+}
+.claude-btn-primary:hover {
+  background: #b5583a;
+}
+
+/* Claude 风格 - Input 覆盖 */
+.claude-input {
+  border-radius: 8px;
+  border: 1.5px solid #e5e0d8;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.claude-input:focus {
+  border-color: #c96442;
+  box-shadow: 0 0 0 3px rgba(201, 100, 66, 0.1);
+}
+
+.dark .claude-input {
+  border-color: #3d3834;
+}
+.dark .claude-input:focus {
+  border-color: #d4856a;
+  box-shadow: 0 0 0 3px rgba(212, 133, 106, 0.15);
 }
 
 @config "../../tailwind.config.js"

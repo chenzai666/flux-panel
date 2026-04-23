@@ -1,11 +1,11 @@
-import { Button } from "@heroui/button";
+﻿import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 
-import { title } from "@/components/primitives";
+
 import { updatePassword } from "@/api";
 import DefaultLayout from "@/layouts/default";
 import { safeLogout } from "@/utils/logout";
@@ -119,8 +119,8 @@ export default function ChangePasswordPage() {
                 </svg>
               </div>
               
-              <h1 className={title({ size: "sm" })}>安全提醒</h1>
-              <p className="text-small text-default-500 mt-2 text-center">检测到您使用的是默认账号密码，为了您的账户安全，请立即修改</p>
+              <h1 className="text-xl font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">安全提醒</h1>
+              <p className="text-small text-[#9b9590] dark:text-[#5d5854] mt-2 text-center">检测到您使用的是默认账号密码，为了您的账户安全，请立即修改</p>
             </CardHeader>
             
             <CardBody className="px-6 py-6">

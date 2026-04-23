@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@heroui/modal";
@@ -164,25 +164,25 @@ export default function ProfilePage() {
 
       <div className="space-y-6 flex-1">
         {/* 用户信息卡片 */}
-        <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
+        <Card className="border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] transition-shadow">
           <CardBody className="p-4">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-6 h-6 text-[#c96442] dark:text-[#d4856a]" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="text-base font-medium text-foreground">{username}</h3>
+                <h3 className="text-base font-medium text-[#1a1a1a] dark:text-[#e8e2da]">{username}</h3>
                 <div className="flex items-center space-x-2 mt-1">
                   <span className={`px-2 py-1 rounded-md text-xs font-medium ${
                     isAdmin 
-                      ? 'bg-primary-100 dark:bg-primary-500/20 text-primary-700 dark:text-primary-300' 
+                      ? 'bg-primary-100 dark:bg-primary-500/20 text-[#c96442] dark:text-[#d4856a]-700 dark:text-[#c96442] dark:text-[#d4856a]-300' 
                       : 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300'
                   }`}>
                     {isAdmin ? '管理员' : '普通用户'}
                   </span>
-                  <span className="text-xs text-default-500">
+                  <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">
                     {new Date().toLocaleDateString('zh-CN')}
                   </span>
                 </div>
@@ -192,7 +192,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* 功能网格 */}
-        <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
+        <Card className="border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] transition-shadow">
           <CardBody className="p-4">
             <div className="grid grid-cols-3 gap-3">
               {/* 管理员功能 */}
@@ -200,57 +200,57 @@ export default function ProfilePage() {
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className="flex flex-col items-center p-3 rounded-2xl bg-gray-50 dark:bg-default-100 hover:bg-gray-100 dark:hover:bg-default-200 transition-colors duration-200"
+                  className="flex flex-col items-center p-3 rounded-2xl bg-[#faf8f5] dark:bg-[#2d2824] dark:bg-[#2d2824] hover:bg-[#f5f1eb] dark:hover:bg-[#2d2824] dark:hover:bg-[#3d3834] transition-colors duration-200"
                 >
                   <div className={`w-10 h-10 ${item.color} rounded-full flex items-center justify-center mb-2`}>
                     {item.icon}
                   </div>
-                  <span className="text-xs text-foreground text-center">{item.label}</span>
+                  <span className="text-xs text-[#1a1a1a] dark:text-[#e8e2da] text-center">{item.label}</span>
                 </button>
               ))}
               
               {/* 修改密码 */}
               <button
                 onClick={onOpen}
-                className="flex flex-col items-center p-3 rounded-2xl bg-gray-50 dark:bg-default-100 hover:bg-gray-100 dark:hover:bg-default-200 transition-colors duration-200"
+                className="flex flex-col items-center p-3 rounded-2xl bg-[#faf8f5] dark:bg-[#2d2824] dark:bg-[#2d2824] hover:bg-[#f5f1eb] dark:hover:bg-[#2d2824] dark:hover:bg-[#3d3834] transition-colors duration-200"
               >
                 <div className="w-10 h-10 bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mb-2">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-xs text-foreground text-center">修改密码</span>
+                <span className="text-xs text-[#1a1a1a] dark:text-[#e8e2da] text-center">修改密码</span>
               </button>
               
               {/* 退出登录 */}
               <button
                 onClick={handleLogout}
-                className="flex flex-col items-center p-3 rounded-2xl bg-gray-50 dark:bg-default-100 hover:bg-gray-100 dark:hover:bg-default-200 transition-colors duration-200"
+                className="flex flex-col items-center p-3 rounded-2xl bg-[#faf8f5] dark:bg-[#2d2824] dark:bg-[#2d2824] hover:bg-[#f5f1eb] dark:hover:bg-[#2d2824] dark:hover:bg-[#3d3834] transition-colors duration-200"
               >
                 <div className="w-10 h-10 bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mb-2">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-xs text-foreground text-center">退出登录</span>
+                <span className="text-xs text-[#1a1a1a] dark:text-[#e8e2da] text-center">退出登录</span>
               </button>
             </div>
           </CardBody>
         </Card>
 
         <div className="fixed inset-x-0 bottom-20 text-center py-4">
-               <p className="text-xs text-gray-400 dark:text-gray-500">
+               <p className="text-xs text-[#9b9590] dark:text-[#5d5854]">
                  Powered by{' '}
                  <a 
                    href="https://github.com/bqlpfy/flux-panel" 
                    target="_blank" 
                    rel="noopener noreferrer"
-                   className="text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                   className="text-[#9b9590] dark:text-[#5d5854] hover:text-[#6b6560] dark:hover:text-[#9b9590] transition-colors"
                  >
                    flux-panel
                  </a>
                </p>
-               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+               <p className="text-xs text-[#9b9590] dark:text-[#5d5854] mt-1">
                  v{ isWebViewFunc() ? siteConfig.app_version : siteConfig.version}
                </p>
              </div>

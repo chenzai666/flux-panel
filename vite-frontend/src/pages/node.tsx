@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -613,21 +613,21 @@ export default function NodePage() {
           <div className="flex items-center justify-center h-64">
             <div className="flex items-center gap-3">
               <Spinner size="sm" />
-              <span className="text-default-600">正在加载...</span>
+              <span className="text-[#6b6560] dark:text-[#8a8480]">正在加载...</span>
             </div>
           </div>
         ) : nodeList.length === 0 ? (
-          <Card className="shadow-sm border border-gray-200 dark:border-gray-700">
+          <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
             <CardBody className="text-center py-16">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center">
-                  <svg className="w-8 h-8 text-default-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-[#9b9590] dark:text-[#5d5854]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 12h14M5 12l4-4m-4 4l4 4" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground">暂无节点配置</h3>
-                  <p className="text-default-500 text-sm mt-1">还没有创建任何节点配置，点击上方按钮开始创建</p>
+                  <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">暂无节点配置</h3>
+                  <p className="text-[#9b9590] dark:text-[#5d5854] text-sm mt-1">还没有创建任何节点配置，点击上方按钮开始创建</p>
                 </div>
               </div>
             </CardBody>
@@ -637,13 +637,13 @@ export default function NodePage() {
             {nodeList.map((node) => (
               <Card 
                 key={node.id} 
-                className="shadow-sm border border-divider hover:shadow-md transition-shadow duration-200"
+                className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200"
               >
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start w-full">
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-foreground truncate text-sm">{node.name}</h3>
-                      <p className="text-xs text-default-500 truncate">{node.serverIp}</p>
+                      <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da] truncate text-sm">{node.name}</h3>
+                      <p className="text-xs text-[#9b9590] dark:text-[#5d5854] truncate">{node.serverIp}</p>
                     </div>
                     <div className="flex items-center gap-1.5 ml-2">
                       <Chip 
@@ -662,7 +662,7 @@ export default function NodePage() {
                   {/* 基础信息 */}
                   <div className="space-y-2 mb-4">
                     <div className="flex justify-between items-center text-sm min-w-0">
-                      <span className="text-default-600 flex-shrink-0">入口IP</span>
+                      <span className="text-[#6b6560] dark:text-[#8a8480] flex-shrink-0">入口IP</span>
                       <div className="text-right text-xs min-w-0 flex-1 ml-2">
                         {node.ip ? (
                           node.ip.split(',').length > 1 ? (
@@ -678,15 +678,15 @@ export default function NodePage() {
                       </div>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-default-600">端口</span>
+                      <span className="text-[#6b6560] dark:text-[#8a8480]">端口</span>
                       <span className="text-xs">{node.portSta}-{node.portEnd}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-default-600">版本</span>
+                      <span className="text-[#6b6560] dark:text-[#8a8480]">版本</span>
                       <span className="text-xs">{node.version || '未知'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-default-600">开机时间</span>
+                      <span className="text-[#6b6560] dark:text-[#8a8480]">开机时间</span>
                       <span className="text-xs">
                         {node.connectionStatus === 'online' && node.systemInfo 
                           ? formatUptime(node.systemInfo.uptime)
@@ -742,8 +742,8 @@ export default function NodePage() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="text-center p-2 bg-default-50 dark:bg-default-100 rounded">
-                        <div className="text-default-600 mb-0.5">上传</div>
+                      <div className="text-center p-2 bg-[#faf8f5] dark:bg-[#2d2824] rounded">
+                        <div className="text-[#6b6560] dark:text-[#8a8480] mb-0.5">上传</div>
                         <div className="font-mono">
                           {node.connectionStatus === 'online' && node.systemInfo 
                             ? formatSpeed(node.systemInfo.uploadSpeed) 
@@ -751,8 +751,8 @@ export default function NodePage() {
                           }
                         </div>
                       </div>
-                      <div className="text-center p-2 bg-default-50 dark:bg-default-100 rounded">
-                        <div className="text-default-600 mb-0.5">下载</div>
+                      <div className="text-center p-2 bg-[#faf8f5] dark:bg-[#2d2824] rounded">
+                        <div className="text-[#6b6560] dark:text-[#8a8480] mb-0.5">下载</div>
                         <div className="font-mono">
                           {node.connectionStatus === 'online' && node.systemInfo 
                             ? formatSpeed(node.systemInfo.downloadSpeed) 
@@ -765,8 +765,8 @@ export default function NodePage() {
                     {/* 流量统计 */}
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="text-center p-2 bg-primary-50 dark:bg-primary-100/20 rounded border border-primary-200 dark:border-primary-300/20">
-                        <div className="text-primary-600 dark:text-primary-400 mb-0.5">↑ 上行流量</div>
-                        <div className="font-mono text-primary-700 dark:text-primary-300">
+                        <div className="text-[#c96442] dark:text-[#d4856a] mb-0.5">↑ 上行流量</div>
+                        <div className="font-mono text-[#c96442] dark:text-[#d4856a]-700 dark:text-[#c96442] dark:text-[#d4856a]-300">
                           {node.connectionStatus === 'online' && node.systemInfo 
                             ? formatTraffic(node.systemInfo.uploadTraffic) 
                             : '-'
@@ -900,8 +900,8 @@ export default function NodePage() {
 
                 {/* 屏蔽协议 */}
                 <div className="mt-1">
-                  <div className="text-sm font-medium text-default-700">屏蔽协议</div>
-                  <div className="text-xs text-default-500 mb-2">开启开关以屏蔽对应协议</div>
+                  <div className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da]">屏蔽协议</div>
+                  <div className="text-xs text-[#9b9590] dark:text-[#5d5854] mb-2">开启开关以屏蔽对应协议</div>
                   {protocolDisabled && (
                     <Alert
                       color="warning"
@@ -910,15 +910,15 @@ export default function NodePage() {
                       className="mb-2"
                     />
                   )}
-                  <div className={`grid grid-cols-1 sm:grid-cols-3 gap-3 bg-default-50 dark:bg-default-100 p-3 rounded-md border border-default-200 dark:border-default-100/30 ${protocolDisabled ? 'opacity-70' : ''}`}>
+                  <div className={`grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[#faf8f5] dark:bg-[#2d2824] p-3 rounded-md border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#e5e0d8] dark:border-[#2d2824]/30 ${protocolDisabled ? 'opacity-70' : ''}`}>
                     {/* HTTP tile */}
-                    <div className="px-3 py-3 rounded-lg bg-white dark:bg-default-50 border border-default-200 dark:border-default-100/30 hover:border-primary-200 transition-colors">
+                    <div className="px-3 py-3 rounded-lg bg-white dark:bg-[#faf8f5] dark:bg-[#2d2824] border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#e5e0d8] dark:border-[#2d2824]/30 hover:border-primary-200 transition-colors">
                       <div className="flex items-center gap-2 mb-2">
-                        <svg className="w-4 h-4 text-default-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
-                        <div className="text-sm font-medium text-default-700">HTTP</div>
+                        <svg className="w-4 h-4 text-[#9b9590] dark:text-[#5d5854]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
+                        <div className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da]">HTTP</div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="text-xs text-default-500">禁用/启用</div>
+                        <div className="text-xs text-[#9b9590] dark:text-[#5d5854]">禁用/启用</div>
                         <Switch
                           size="sm"
                           isSelected={form.http === 1}
@@ -926,17 +926,17 @@ export default function NodePage() {
                           onValueChange={(v) => setForm(prev => ({ ...prev, http: v ? 1 : 0 }))}
                         />
                       </div>
-                      <div className="mt-1 text-xs text-default-400">{form.http === 1 ? '已开启' : '已关闭'}</div>
+                      <div className="mt-1 text-xs text-[#9b9590] dark:text-[#5d5854]">{form.http === 1 ? '已开启' : '已关闭'}</div>
                     </div>
 
                     {/* TLS tile */}
-                    <div className="px-3 py-3 rounded-lg bg-white dark:bg-default-50 border border-default-200 dark:border-default-100/30 hover:border-primary-200 transition-colors">
+                    <div className="px-3 py-3 rounded-lg bg-white dark:bg-[#faf8f5] dark:bg-[#2d2824] border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#e5e0d8] dark:border-[#2d2824]/30 hover:border-primary-200 transition-colors">
                       <div className="flex items-center gap-2 mb-2">
-                        <svg className="w-4 h-4 text-default-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 10V7a6 6 0 1 1 12 0v3"/><rect x="4" y="10" width="16" height="10" rx="2"/></svg>
-                        <div className="text-sm font-medium text-default-700">TLS</div>
+                        <svg className="w-4 h-4 text-[#9b9590] dark:text-[#5d5854]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 10V7a6 6 0 1 1 12 0v3"/><rect x="4" y="10" width="16" height="10" rx="2"/></svg>
+                        <div className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da]">TLS</div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="text-xs text-default-500">禁用/启用</div>
+                        <div className="text-xs text-[#9b9590] dark:text-[#5d5854]">禁用/启用</div>
                         <Switch
                           size="sm"
                           isSelected={form.tls === 1}
@@ -944,17 +944,17 @@ export default function NodePage() {
                           onValueChange={(v) => setForm(prev => ({ ...prev, tls: v ? 1 : 0 }))}
                         />
                       </div>
-                      <div className="mt-1 text-xs text-default-400">{form.tls === 1 ? '已开启' : '已关闭'}</div>
+                      <div className="mt-1 text-xs text-[#9b9590] dark:text-[#5d5854]">{form.tls === 1 ? '已开启' : '已关闭'}</div>
                     </div>
 
                     {/* SOCKS tile */}
-                    <div className="px-3 py-3 rounded-lg bg-white dark:bg-default-50 border border-default-200 dark:border-default-100/30 hover:border-primary-200 transition-colors">
+                    <div className="px-3 py-3 rounded-lg bg-white dark:bg-[#faf8f5] dark:bg-[#2d2824] border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#e5e0d8] dark:border-[#2d2824]/30 hover:border-primary-200 transition-colors">
                       <div className="flex items-center gap-2 mb-2">
-                        <svg className="w-4 h-4 text-default-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        <div className="text-sm font-medium text-default-700">SOCKS</div>
+                        <svg className="w-4 h-4 text-[#9b9590] dark:text-[#5d5854]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <div className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da]">SOCKS</div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="text-xs text-default-500">禁用/启用</div>
+                        <div className="text-xs text-[#9b9590] dark:text-[#5d5854]">禁用/启用</div>
                         <Switch
                           size="sm"
                           isSelected={form.socks === 1}
@@ -962,7 +962,7 @@ export default function NodePage() {
                           onValueChange={(v) => setForm(prev => ({ ...prev, socks: v ? 1 : 0 }))}
                         />
                       </div>
-                      <div className="mt-1 text-xs text-default-400">{form.socks === 1 ? '已开启' : '已关闭'}</div>
+                      <div className="mt-1 text-xs text-[#9b9590] dark:text-[#5d5854]">{form.socks === 1 ? '已开启' : '已关闭'}</div>
                     </div>
                   </div>
                 </div>
@@ -1019,7 +1019,7 @@ export default function NodePage() {
                 </ModalHeader>
                 <ModalBody>
                   <p>确定要删除节点 <strong>"{nodeToDelete?.name}"</strong> 吗？</p>
-                  <p className="text-small text-default-500">此操作不可恢复，请谨慎操作。</p>
+                  <p className="text-small text-[#9b9590] dark:text-[#5d5854]">此操作不可恢复，请谨慎操作。</p>
                 </ModalBody>
                 <ModalFooter>
                   <Button variant="light" onPress={onClose}>
@@ -1051,7 +1051,7 @@ export default function NodePage() {
             <ModalHeader>安装命令 - {currentNodeName}</ModalHeader>
             <ModalBody>
               <div className="space-y-4">
-                <p className="text-sm text-default-600">
+                <p className="text-sm text-[#6b6560] dark:text-[#8a8480]">
                   请复制以下安装命令到服务器上执行：
                 </p>
                 <div className="relative">
@@ -1076,7 +1076,7 @@ export default function NodePage() {
                     复制
                   </Button>
                 </div>
-                <div className="text-xs text-default-500">
+                <div className="text-xs text-[#9b9590] dark:text-[#5d5854]">
                   💡 提示：如果复制按钮失效，请手动选择上方文本进行复制
                 </div>
               </div>
