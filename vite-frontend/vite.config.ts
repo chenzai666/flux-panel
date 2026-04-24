@@ -14,14 +14,21 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    host: '0.0.0.0'
+    host: '0.0.0.0',
+    allowedHosts: ['.monkeycode-ai.online'],
+    proxy: {
+      '/api': {
+        target: 'http://localhost:6365',
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     outDir: 'dist',
     sourcemap: false,
-    minify: 'esbuild',
+    minify: false,  
     rollupOptions: {
-      treeshake: true,
+      treeshake: false,
     }
   }
 });
