@@ -1,176 +1,259 @@
-# AI Tools
-.claude
-.gemini
-.opencode
-
-# IDE and Editors
-**/.idea/
-**/.vscode/
-*.swp
-*.swo
-*~
-**/.project
-**/.classpath
-**/.settings/
-*.sublime-project
-*.sublime-workspace
-**/.spyproject/
-**/.ropeproject/
-*.code-workspace
+# ==========================================
+# 操作系统生成的文件
+# ==========================================
+flutter_app/
 
 # macOS
-**/.DS_Store
-**/.AppleDouble
-**/.LSOverride
-**/._*
-**/.Spotlight-V100
-**/.Trashes
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
 
 # Windows
-**/Thumbs.db
-**/ehthumbs.db
-**/Desktop.ini
-**/$RECYCLE.BIN/
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
 *.lnk
 
 # Linux
-**/.fuse_hidden*
-**/.nfs*
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
 
-# Node.js
-**/node_modules/
-**/npm-debug.log*
-**/yarn-debug.log*
-**/yarn-error.log*
-**/.npm
-**/.yarn/cache
-**/.pnpm-store/
-**/*.tsbuild*
+# ==========================================
+# IDE 和编辑器配置文件
+# ==========================================
 
-# Python
-**/__pycache__/
-*.py[cod]
-*$py.class
-**/.Python
-**/build/
-**/develop-eggs/
-**/dist/
-**/downloads/
-**/eggs/
-**/.eggs/
-**/parts/
-**/sdist/
-**/var/
-**/wheels/
-*.egg-info/
-**/.installed.cfg
-*.egg
-**/.venv/
-**/venv/
-**/ENV/
-**/.pytest_cache/
-**/.mypy_cache/
-**/.ruff_cache/
+# IntelliJ IDEA
+.idea/
+.vitepress/dist/
+.vitepress/cache/
+*.iws
+*.iml
+*.ipr
+out/
+go-gost/ss/
+# VS Code
+.vscode/
+*.code-workspace
 
-# Java
-*.class
+# Eclipse
+.metadata
+.classpath
+.project
+.settings/
+bin/
+tmp/
+*.swp
+*.bak
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ==========================================
+# Java / Maven / Spring Boot
+# ==========================================
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Spring Boot
 *.jar
 *.war
+*.nar
 *.ear
-**/.gradle/
+*.zip
+*.tar.gz
+*.rar
+application-local.properties
+application-dev.properties
 
-# C/C++/Go/Rust
-*.o
-*.obj
-*.exe
-*.out
-*.app
-*.dll
-*.dylib
-*.so
-*.test
-**/target/
-**/go.work
-**/Cargo.lock
+# Java编译输出
+*.class
 
-# Ruby
-*.gem
-*.rbc
-**/.bundle/
-**/vendor/bundle
-**/.byebug_history
-
-# Logs
+# 日志文件
+logs/
+applog/
 *.log
-**/logs/
+log/
 
-# Environment and secrets
-**/.env
-**/.env.local
-**/.env.*.local
-*.pem
+# ==========================================
+# Node.js / Vue.js / 前端
+# ==========================================
+
+# 依赖目录
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# 运行时数据
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 构建输出
+dist/
+build/
+
+# ==========================================
+# Go
+# ==========================================
+
+# Go 二进制文件
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+your_app.exe
+
+# Go 测试二进制文件
+*.test
+
+# Go 输出覆盖率
+*.out
+
+# Go 模块代理缓存
+go.work
+go.work.sum
+
+# 编译器输出
+vendor/
+
+# ==========================================
+# Docker
+# ==========================================
+
+# Docker 本地配置
+.dockerignore.local
+
+# ==========================================
+# 数据库和配置文件
+# ==========================================
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 配置文件中的敏感信息
+config-local.json
+secrets.json
 *.key
+*.pem
+*.p12
+*.pfx
 
-# Temporary files
-*.tmp
-*.temp
+# Go-gost 特定配置文件
+go-gost/config.json
+go-gost/gost.json
+
+# ==========================================
+# 备份和临时文件
+# ==========================================
+
+# 备份文件
 *.bak
 *.backup
-*.cache
-**/.cache/
-**/tmp/
-**/temp/
+*.orig
+*.save
 
-# Dart
-**/.dart_tool/
-**/*.dart_tool
-**/analysis_options.yaml
-**/.packages
-**/.pub-cache/
-**/.pub/
+# 临时文件
+*.tmp
+*.temp
+.cache/
 
-# Flutter
-**/flutter_export_environment.sh
-**/flutter_export_environment.bat
-**/.flutter-plugins
-**/.flutter-plugins-dependencies
-**/.flutter-plugins-dependencies.lock
-**/.metadata
-**/.flutter_build
-**/build/
-**/.dart_tool/
-**/ios/Pods/
-**/ios/.symlinks/
-**/ios/Flutter/ephemeral/
-**/ios/Podfile.lock
-**/ios/.generated/
-**/android/**/generated/
-**/android/.gradle/
-**/android/gradlew
-**/android/gradlew.bat
-**/android/local.properties
-**/android/**/GeneratedPluginRegistrant.java
-**/android/**/flutter_*.json
-**/web/.dart_tool/
-**/web/build/
-**/.flutter-plugins
-**/.flutter-plugins-dependencies
 
-# Compressed files
-*.zip
-*.rar
+gitee/
+
+
+
+# ==========================================
+# 其他
+# ==========================================
+
+# 压缩文件
 *.7z
-*.tar
-*.tar.gz
-*.tgz
-*.tar.bz2
-*.tbz2
-*.tar.xz
-*.txz
+*.dmg
 *.gz
-*.bz2
-*.xz
-*.Z
-*.lz
-*.lzma
 *.iso
+*.rar
+*.tar
+*.zip
+
+# 证书文件
+*.crt
+*.cert
+doraemon.jks
+device.id
+commit.sh

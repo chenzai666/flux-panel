@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+:root {
+  --surface-bg: #f7f4ef;
+  --surface-paper: #fffdfa;
+  --surface-muted: #eee7dc;
+  --surface-border: #d9d0c4;
+  --text-primary: #1f1b16;
+  --text-secondary: #6a6156;
+  --brand-accent: #c26b2b;
+  --brand-accent-soft: #f0dfcc;
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans", "Noto Sans SC", "Segoe UI", sans-serif;
+  color: var(--text-primary);
+  background:
+    radial-gradient(circle at 12% 0%, #efe4d5 0%, rgba(239, 228, 213, 0) 35%),
+    radial-gradient(circle at 100% 12%, #efe7de 0%, rgba(239, 231, 222, 0) 40%),
+    var(--surface-bg);
+}
+
+.app-shell {
+  background: transparent;
+}
+
+.app-sidebar {
+  border-right: 1px solid var(--surface-border);
+  background: linear-gradient(180deg, #fffdfa 0%, #f8f2e9 100%);
+  box-shadow: 0 10px 30px rgba(59, 43, 26, 0.07);
+}
+
+.app-header {
+  border-bottom: 1px solid var(--surface-border);
+  background: rgba(255, 253, 250, 0.88);
+  backdrop-filter: blur(10px);
+}
+
+.app-content {
+  background: transparent;
+}
+
+.claude-panel {
+  border: 1px solid var(--surface-border);
+  background: var(--surface-paper);
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(52, 41, 31, 0.08);
+}
+
+.brand-muted {
+  color: var(--text-secondary);
+}
+
+.brand-accent {
+  color: var(--brand-accent);
+}
+
+.login-shell {
+  position: relative;
+}
+
+.login-shell::before {
+  content: "";
+  position: absolute;
+  inset: -4rem auto auto -4rem;
+  width: 22rem;
+  height: 22rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(194, 107, 43, 0.2) 0%, rgba(194, 107, 43, 0) 72%);
+  pointer-events: none;
+}
+
+.login-shell::after {
+  content: "";
+  position: absolute;
+  inset: auto -3rem -4rem auto;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(156, 131, 97, 0.2) 0%, rgba(156, 131, 97, 0) 70%);
+  pointer-events: none;
+}
+
+.claude-fade-in {
+  animation: claudeFadeIn 0.5s ease-out;
+}
+
+@keyframes claudeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* 移动端视口高度优化 */
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* 现代浏览器使用 100dvh，避免地址栏收起/展开导致的布局跳动 */
+@supports (height: 100dvh) {
+  .h-screen {
+    height: 100dvh;
+  }
+  .min-h-screen {
+    min-height: 100dvh;
+  }
+}
+
+/* 解决移动端100vh问题 */
+@supports (-webkit-touch-callout: none) {
+  .h-screen {
+    height: -webkit-fill-available;
+  }
+  
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* 移动端滚动优化 */
+@media (max-width: 768px) {
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  body {
+    overscroll-behavior-y: none;
+  }
+}
+
+
+.safe-top {
+  padding-top: var(--safe-area-top);
+}
+
+.safe-bottom {
+  padding-bottom: var(--safe-area-bottom);
+}
+
+
+/* 验证码弹层动画 */
+.captcha-modal-enter {
+  animation: captchaModalIn 0.3s ease-out forwards;
+}
+
+@keyframes captchaModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 验证码弹层背景渐入 */
+.captcha-backdrop-enter {
+  animation: backdropFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@config "../../tailwind.config.js"
