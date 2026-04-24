@@ -7,7 +7,7 @@ WORKDIR /app
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci --prefer-offline --no-audit --progress=false
 
 COPY . .
 RUN npx vite build
