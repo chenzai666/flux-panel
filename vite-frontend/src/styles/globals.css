@@ -1,18 +1,115 @@
 @import "tailwindcss";
 
+:root {
+  --surface-bg: #f7f4ef;
+  --surface-paper: #fffdfa;
+  --surface-muted: #eee7dc;
+  --surface-border: #d9d0c4;
+  --text-primary: #1f1b16;
+  --text-secondary: #6a6156;
+  --brand-accent: #c26b2b;
+  --brand-accent-soft: #f0dfcc;
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans", "Noto Sans SC", "Segoe UI", sans-serif;
+  color: var(--text-primary);
+  background:
+    radial-gradient(circle at 12% 0%, #efe4d5 0%, rgba(239, 228, 213, 0) 35%),
+    radial-gradient(circle at 100% 12%, #efe7de 0%, rgba(239, 231, 222, 0) 40%),
+    var(--surface-bg);
+}
+
+.app-shell {
+  background: transparent;
+}
+
+.app-sidebar {
+  border-right: 1px solid var(--surface-border);
+  background: linear-gradient(180deg, #fffdfa 0%, #f8f2e9 100%);
+  box-shadow: 0 10px 30px rgba(59, 43, 26, 0.07);
+}
+
+.app-header {
+  border-bottom: 1px solid var(--surface-border);
+  background: rgba(255, 253, 250, 0.88);
+  backdrop-filter: blur(10px);
+}
+
+.app-content {
+  background: transparent;
+}
+
+.claude-panel {
+  border: 1px solid var(--surface-border);
+  background: var(--surface-paper);
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(52, 41, 31, 0.08);
+}
+
+.brand-muted {
+  color: var(--text-secondary);
+}
+
+.brand-accent {
+  color: var(--brand-accent);
+}
+
+.login-shell {
+  position: relative;
+}
+
+.login-shell::before {
+  content: "";
+  position: absolute;
+  inset: -4rem auto auto -4rem;
+  width: 22rem;
+  height: 22rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(194, 107, 43, 0.2) 0%, rgba(194, 107, 43, 0) 72%);
+  pointer-events: none;
+}
+
+.login-shell::after {
+  content: "";
+  position: absolute;
+  inset: auto -3rem -4rem auto;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(156, 131, 97, 0.2) 0%, rgba(156, 131, 97, 0) 70%);
+  pointer-events: none;
+}
+
+.claude-fade-in {
+  animation: claudeFadeIn 0.5s ease-out;
+}
+
+@keyframes claudeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 /* 移动端视口高度优化 */
 html, body {
   height: 100%;
   overflow-x: hidden;
-}
-
-/* Claude 风格全局字体 */
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
 /* 现代浏览器使用 100dvh，避免地址栏收起/展开导致的布局跳动 */
@@ -48,12 +145,6 @@ body {
 }
 
 
-/* 安全区域变量与工具类（适配刘海/底部手势条） */
-::root {
-  --safe-area-top: env(safe-area-inset-top, 0px);
-  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-}
-
 .safe-top {
   padding-top: var(--safe-area-top);
 }
@@ -62,51 +153,6 @@ body {
   padding-bottom: var(--safe-area-bottom);
 }
 
-/* Claude 风格滚动条 */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c9c3bb;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a8a29e;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #4d4844;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #5d5854;
-}
-
-/* Claude 风格 - 淡入动画 */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-/* Claude 风格 - 柔和悬停效果 */
-.claude-hover {
-  transition: all 0.2s ease;
-}
-.claude-hover:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  transform: translateY(-1px);
-}
 
 /* 验证码弹层动画 */
 .captcha-modal-enter {
@@ -136,228 +182,6 @@ body {
   to {
     opacity: 1;
   }
-}
-
-/* Claude 风格 - HeroUI 组件覆盖 */
-/* 模态框圆角 */
-[data-slot="base"].rounded-xl {
-  border-radius: 12px !important;
-}
-
-/* 卡片圆角 */
-.claude-card {
-  border-radius: 12px;
-  border: 1px solid #e5e0d8;
-  background: #ffffff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
-  transition: all 0.2s ease;
-}
-
-.dark .claude-card {
-  border-color: #3d3834;
-  background: #231e1b;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-
-.claude-card:hover {
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-}
-
-/* Claude 风格 - 按钮覆盖 */
-.claude-btn {
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.15s ease;
-}
-
-.claude-btn-primary {
-  background: #c96442;
-  color: white;
-  border: none;
-}
-.claude-btn-primary:hover {
-  background: #b5583a;
-}
-
-/* Claude 风格 - Input 覆盖 */
-.claude-input {
-  border-radius: 8px;
-  border: 1.5px solid #e5e0d8;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-.claude-input:focus {
-  border-color: #c96442;
-  box-shadow: 0 0 0 3px rgba(201, 100, 66, 0.1);
-}
-
-.dark .claude-input {
-  border-color: #3d3834;
-}
-.dark .claude-input:focus {
-  border-color: #d4856a;
-  box-shadow: 0 0 0 3px rgba(212, 133, 106, 0.15);
-}
-
-/* ===== H5 移动端专用样式 ===== */
-
-/* H5 页面切换动画 */
-.h5-page-transition {
-  animation: h5PageIn 0.25s ease-out;
-}
-
-@keyframes h5PageIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* H5 触摸反馈 - 按压缩小效果 */
-@media (max-width: 768px) {
-  .h5-press {
-    transition: transform 0.1s ease, opacity 0.1s ease;
-  }
-  .h5-press:active {
-    transform: scale(0.97);
-    opacity: 0.85;
-  }
-
-  /* H5 卡片触摸反馈 */
-  .h5-card-press {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .h5-card-press:active {
-    transform: scale(0.98);
-    box-shadow: none;
-  }
-
-  /* H5 列表项触摸高亮 */
-  .h5-list-item {
-    transition: background-color 0.1s ease;
-  }
-  .h5-list-item:active {
-    background-color: rgba(0, 0, 0, 0.04);
-  }
-  .dark .h5-list-item:active {
-    background-color: rgba(255, 255, 255, 0.04);
-  }
-
-  /* H5 底部安全区域色块 - 用于给固定元素底部着色 */
-  .h5-safe-area-bg {
-    background-color: #ffffff;
-  }
-  .dark .h5-safe-area-bg {
-    background-color: #231e1b;
-  }
-
-  /* H5 下拉刷新指示器 */
-  .h5-pull-indicator {
-    transition: transform 0.2s ease, opacity 0.2s ease;
-  }
-
-  /* H5 滚动回弹优化 */
-  .h5-scroll-container {
-    overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* H5 输入框聚焦时避免缩放 */
-  input[type="text"],
-  input[type="password"],
-  input[type="email"],
-  input[type="number"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="url"],
-  select,
-  textarea {
-    font-size: 16px !important;
-  }
-
-  /* H5 去除点击高亮 */
-  * {
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  /* H5 优化滚动条 - 移动端隐藏 */
-  .h5-scroll-container::-webkit-scrollbar {
-    display: none;
-  }
-  .h5-scroll-container {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-}
-
-/* H5 毛玻璃效果兼容 */
-@supports not (backdrop-filter: blur(20px)) {
-  .h5-glass-fallback {
-    background-color: rgba(255, 255, 255, 0.96) !important;
-  }
-  .dark .h5-glass-fallback {
-    background-color: rgba(35, 30, 27, 0.96) !important;
-  }
-}
-
-/* H5 活跃态 Tab 动画 */
-.h5-tab-indicator {
-  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* H5 渐入渐出 */
-.h5-fade-enter {
-  animation: h5FadeIn 0.2s ease-out forwards;
-}
-
-.h5-fade-exit {
-  animation: h5FadeOut 0.15s ease-in forwards;
-}
-
-@keyframes h5FadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes h5FadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-
-/* H5 从右侧滑入（子页面） */
-.h5-slide-in {
-  animation: h5SlideIn 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes h5SlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* H5 骨架屏闪烁动画 */
-.h5-skeleton {
-  background: linear-gradient(90deg, #f0ece5 25%, #e8e2da 50%, #f0ece5 75%);
-  background-size: 200% 100%;
-  animation: h5Skeleton 1.5s ease-in-out infinite;
-}
-
-.dark .h5-skeleton {
-  background: linear-gradient(90deg, #2d2824 25%, #3d3834 50%, #2d2824 75%);
-  background-size: 200% 100%;
-}
-
-@keyframes h5Skeleton {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
 }
 
 @config "../../tailwind.config.js"
