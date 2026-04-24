@@ -198,4 +198,166 @@ body {
   box-shadow: 0 0 0 3px rgba(212, 133, 106, 0.15);
 }
 
+/* ===== H5 移动端专用样式 ===== */
+
+/* H5 页面切换动画 */
+.h5-page-transition {
+  animation: h5PageIn 0.25s ease-out;
+}
+
+@keyframes h5PageIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* H5 触摸反馈 - 按压缩小效果 */
+@media (max-width: 768px) {
+  .h5-press {
+    transition: transform 0.1s ease, opacity 0.1s ease;
+  }
+  .h5-press:active {
+    transform: scale(0.97);
+    opacity: 0.85;
+  }
+
+  /* H5 卡片触摸反馈 */
+  .h5-card-press {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .h5-card-press:active {
+    transform: scale(0.98);
+    box-shadow: none;
+  }
+
+  /* H5 列表项触摸高亮 */
+  .h5-list-item {
+    transition: background-color 0.1s ease;
+  }
+  .h5-list-item:active {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+  .dark .h5-list-item:active {
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+
+  /* H5 底部安全区域色块 - 用于给固定元素底部着色 */
+  .h5-safe-area-bg {
+    background-color: #ffffff;
+  }
+  .dark .h5-safe-area-bg {
+    background-color: #231e1b;
+  }
+
+  /* H5 下拉刷新指示器 */
+  .h5-pull-indicator {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  /* H5 滚动回弹优化 */
+  .h5-scroll-container {
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* H5 输入框聚焦时避免缩放 */
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* H5 去除点击高亮 */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* H5 优化滚动条 - 移动端隐藏 */
+  .h5-scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+  .h5-scroll-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* H5 毛玻璃效果兼容 */
+@supports not (backdrop-filter: blur(20px)) {
+  .h5-glass-fallback {
+    background-color: rgba(255, 255, 255, 0.96) !important;
+  }
+  .dark .h5-glass-fallback {
+    background-color: rgba(35, 30, 27, 0.96) !important;
+  }
+}
+
+/* H5 活跃态 Tab 动画 */
+.h5-tab-indicator {
+  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* H5 渐入渐出 */
+.h5-fade-enter {
+  animation: h5FadeIn 0.2s ease-out forwards;
+}
+
+.h5-fade-exit {
+  animation: h5FadeOut 0.15s ease-in forwards;
+}
+
+@keyframes h5FadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes h5FadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* H5 从右侧滑入（子页面） */
+.h5-slide-in {
+  animation: h5SlideIn 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes h5SlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* H5 骨架屏闪烁动画 */
+.h5-skeleton {
+  background: linear-gradient(90deg, #f0ece5 25%, #e8e2da 50%, #f0ece5 75%);
+  background-size: 200% 100%;
+  animation: h5Skeleton 1.5s ease-in-out infinite;
+}
+
+.dark .h5-skeleton {
+  background: linear-gradient(90deg, #2d2824 25%, #3d3834 50%, #2d2824 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes h5Skeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 @config "../../tailwind.config.js"

@@ -590,9 +590,9 @@ export default function NodePage() {
 
   return (
     
-      <div className="px-3 lg:px-6 py-8">
+      <div className="px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         {/* 页面头部 */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
         <div className="flex-1">
         </div>
 
@@ -617,7 +617,7 @@ export default function NodePage() {
             </div>
           </div>
         ) : nodeList.length === 0 ? (
-          <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
+          <Card className="rounded-2xl shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
             <CardBody className="text-center py-16">
               <div className="flex flex-col items-center gap-4">
                 <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
@@ -637,7 +637,7 @@ export default function NodePage() {
             {nodeList.map((node) => (
               <Card 
                 key={node.id} 
-                className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200"
+                className="rounded-2xl shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200"
               >
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start w-full">
@@ -658,7 +658,7 @@ export default function NodePage() {
                   </div>
                 </CardHeader>
 
-                <CardBody className="pt-0 pb-3">
+                <CardBody className="pt-0 pb-4">
                   {/* 基础信息 */}
                   <div className="space-y-2 mb-4">
                     <div className="flex justify-between items-center text-sm min-w-0">

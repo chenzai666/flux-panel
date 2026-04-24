@@ -574,33 +574,42 @@ export default function DashboardPage() {
 
       if (loading) {
       return (
-        
-          <div className="px-3 lg:px-6 flex-grow pt-2 lg:pt-4">
-            <div className="flex items-center justify-center h-64">
-              <div className="flex items-center gap-3">
-                <div className="animate-spin h-5 w-5 border-2 border-[#e5e0d8] dark:border-[#2d2824] border-t-gray-600 dark:border-t-gray-300 rounded-full"></div>
-                <span className="text-[#6b6560] dark:text-[#8a8480]">正在加载数据...</span>
-              </div>
+          <div className="px-4 lg:px-6 flex-grow pt-3 lg:pt-4">
+            {/* 骨架屏 - H5 加载占位 */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
+              {[1,2,3,4].map(i => (
+                <div key={i} className="rounded-2xl border border-[#e5e0d8] dark:border-[#2d2824] p-3 lg:p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="h-3 w-14 h5-skeleton rounded" />
+                    <div className="h-8 w-8 h5-skeleton rounded-lg" />
+                  </div>
+                  <div className="h-6 w-20 h5-skeleton rounded" />
+                  <div className="h-1.5 w-full h5-skeleton rounded-full" />
+                </div>
+              ))}
+            </div>
+            <div className="rounded-2xl border border-[#e5e0d8] dark:border-[#2d2824] p-4 space-y-4">
+              <div className="h-5 w-32 h5-skeleton rounded" />
+              <div className="h-48 lg:h-64 w-full h5-skeleton rounded-lg" />
             </div>
           </div>
-        
       );
     }
 
       return (
       
-        <div className="px-3 lg:px-6 py-2 lg:py-4">
+        <div className="px-4 lg:px-6 py-3 lg:py-4">
 
                           {/* 响应式统计卡片 */}
-         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
+         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-5 lg:mb-8">
            <Card className="border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] transition-shadow">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
                    <p className="text-xs lg:text-sm text-[#6b6560] dark:text-[#8a8480] truncate">总流量</p>
                    <div className="p-1.5 lg:p-2 bg-blue-100 dark:bg-blue-500/20 rounded-lg flex-shrink-0">
-                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                       <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
                      </svg>
                    </div>
                  </div>
@@ -615,8 +624,8 @@ export default function DashboardPage() {
                  <div className="flex items-center justify-between">
                    <p className="text-xs lg:text-sm text-[#6b6560] dark:text-[#8a8480] truncate">已用流量</p>
                    <div className="p-1.5 lg:p-2 bg-green-100 dark:bg-green-500/20 rounded-lg flex-shrink-0">
-                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                       <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
+                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
                      </svg>
                    </div>
                  </div>
@@ -681,17 +690,16 @@ export default function DashboardPage() {
          </div>
 
          {/* 24小时流量统计图表 */}
-         <Card className="mb-6 lg:mb-8 border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-           <CardHeader className="pb-3">
+         <Card className="mb-5 lg:mb-8 border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+           <CardHeader className="pb-3 px-4 lg:px-6 pt-4 lg:pt-6">
              <div className="flex items-center gap-2">
-               <svg className="w-5 h-5 text-[#c96442] dark:text-[#d4856a]" fill="currentColor" viewBox="0 0 20 20">
-                 <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
-                 <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
+               <svg className="w-5 h-5 text-[#c96442] dark:text-[#d4856a]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
                </svg>
-               <h2 className="text-lg lg:text-xl font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">24小时流量统计</h2>
+               <h2 className="text-base lg:text-xl font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">24小时流量统计</h2>
              </div>
            </CardHeader>
-           <CardBody className="pt-0">
+           <CardBody className="pt-0 px-4 lg:px-6 pb-4 lg:pb-6">
              {statisticsFlows.length === 0 ? (
                <div className="text-center py-12">
                  <svg className="w-12 h-12 text-[#9b9590] dark:text-[#5d5854] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -703,7 +711,7 @@ export default function DashboardPage() {
                <div className="space-y-4">
 
                                     {/* 流量趋势图 */}
-                   <div className="h-64 lg:h-80 w-full">
+                   <div className="h-48 lg:h-80 w-full">
                      <ResponsiveContainer width="100%" height="100%">
                        <LineChart data={processFlowChartData()}>
                          <CartesianGrid strokeDasharray="3 3" className="opacity-30" />

@@ -528,9 +528,9 @@ export default function UserPage() {
 
   return (
     
-      <div className="px-3 lg:px-6 py-8">
+      <div className="px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
       {/* 页面头部 */}
-      <div className="flex flex-col gap-4 mb-6">
+      <div className="flex flex-col gap-4 mb-4 sm:mb-6">
         <div className="flex items-center gap-3">
         </div>
         
@@ -580,7 +580,7 @@ export default function UserPage() {
           </div>
         </div>
       ) : users.length === 0 ? (
-        <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
+        <Card className="rounded-2xl shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
           <CardBody className="text-center py-16">
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
@@ -604,7 +604,7 @@ export default function UserPage() {
             return (
               <Card 
                 key={user.id} 
-                className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200"
+                className="rounded-2xl shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200"
               >
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start w-full">
@@ -627,7 +627,7 @@ export default function UserPage() {
                   </div>
                 </CardHeader>
 
-                <CardBody className="pt-0 pb-3">
+                <CardBody className="pt-0 pb-4">
                   <div className="space-y-2">
                     {/* 流量信息 */}
                     <div className="space-y-1.5">
@@ -700,8 +700,8 @@ export default function UserPage() {
                         onPress={() => handleResetFlow(user)}
                         className="flex-1 min-h-8"
                         startContent={
-                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
                           </svg>
                         }
                       >

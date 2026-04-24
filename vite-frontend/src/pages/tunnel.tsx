@@ -425,9 +425,9 @@ export default function TunnelPage() {
 
   return (
     
-      <div className="px-3 lg:px-6 py-8">
+      <div className="px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         {/* 页面头部 */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
         <div className="flex-1">
         </div>
 
@@ -451,7 +451,7 @@ export default function TunnelPage() {
               const typeDisplay = getTypeDisplay(tunnel.type);
               
               return (
-                <Card key={tunnel.id} className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200">
+                <Card key={tunnel.id} className="rounded-2xl shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200">
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start w-full">
                       <div className="flex-1 min-w-0">
@@ -478,7 +478,7 @@ export default function TunnelPage() {
                     </div>
                   </CardHeader>
                   
-                  <CardBody className="pt-0 pb-3">
+                  <CardBody className="pt-0 pb-4">
                     <div className="space-y-2">
                       {/* 流程展示 */}
                       <div className="space-y-1.5">
@@ -539,8 +539,8 @@ export default function TunnelPage() {
                         onPress={() => handleEdit(tunnel)}
                         className="flex-1 min-h-8"
                         startContent={
-                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                           </svg>
                         }
                       >
@@ -553,8 +553,8 @@ export default function TunnelPage() {
                         onPress={() => handleDiagnose(tunnel)}
                         className="flex-1 min-h-8"
                         startContent={
-                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
                           </svg>
                         }
                       >
@@ -567,9 +567,8 @@ export default function TunnelPage() {
                         onPress={() => handleDelete(tunnel)}
                         className="flex-1 min-h-8"
                         startContent={
-                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clipRule="evenodd" />
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 012 0v4a1 1 0 11-2 0V7zM12 7a1 1 0 012 0v4a1 1 0 11-2 0V7z" clipRule="evenodd" />
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                           </svg>
                         }
                       >
@@ -583,7 +582,7 @@ export default function TunnelPage() {
           </div>
         ) : (
           /* 空状态 */
-          <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
+          <Card className="rounded-2xl shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
             <CardBody className="text-center py-16">
               <div className="flex flex-col items-center gap-4">
                 <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
@@ -953,7 +952,7 @@ export default function TunnelPage() {
                         const quality = getQualityDisplay(result.averageTime, result.packetLoss);
                         
                         return (
-                          <Card key={index} className={`shadow-sm border ${result.success ? 'border-success' : 'border-danger'}`}>
+                          <Card key={index} className={`rounded-2xl shadow-sm border ${result.success ? 'border-success' : 'border-danger'}`}>
                             <CardHeader className="pb-2">
                               <div className="flex items-center justify-between w-full">
                                 <div className="flex items-center gap-3">

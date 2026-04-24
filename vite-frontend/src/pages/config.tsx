@@ -335,9 +335,9 @@ export default function ConfigPage() {
 
   return (
     
-      <div className="p-6 max-w-4xl mx-auto">
+      <div className="px-4 lg:px-6 py-4 sm:py-6 lg:py-8 max-w-4xl mx-auto">
         {/* 页面标题 */}
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex items-center gap-3 mb-4 sm:mb-6">
           <SettingsIcon className="w-8 h-8 text-[#c96442] dark:text-[#d4856a]" />
           <div>
             <h1 className="text-2xl font-bold">网站配置</h1>
@@ -347,7 +347,7 @@ export default function ConfigPage() {
           </div>
         </div>
 
-        <Card className="shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+        <Card className="rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
           <CardHeader className="pb-4">
             <div className="flex justify-between items-center w-full">
               <div>
@@ -412,7 +412,7 @@ export default function ConfigPage() {
 
         {/* 操作提示 */}
         {hasChanges && (
-          <Card className="mt-4 bg-warning-50 dark:bg-warning-900/20 border-warning-200 dark:border-warning-800">
+          <Card className="mt-4 rounded-2xl bg-warning-50 dark:bg-warning-900/20 border-warning-200 dark:border-warning-800">
             <CardBody className="py-3">
               <div className="flex items-center gap-2 text-warning-700 dark:text-warning-300">
                 <div className="w-2 h-2 bg-warning-500 rounded-full animate-pulse" />

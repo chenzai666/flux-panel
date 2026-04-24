@@ -1178,7 +1178,7 @@ export default function ForwardPage() {
     const strategyDisplay = getStrategyDisplay(forward.strategy);
     
     return (
-      <Card key={forward.id} className="group shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200">
+      <Card key={forward.id} className="group shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] rounded-2xl hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200">
         <CardHeader className="pb-2">
           <div className="flex justify-between items-start w-full">
             <div className="flex-1 min-w-0">
@@ -1197,8 +1197,8 @@ export default function ForwardPage() {
                   title={isMobile ? "长按拖拽排序" : "拖拽排序"}
                   style={{ touchAction: 'none' }}
                 >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M7 2a2 2 0 1 1 .001 4.001A2 2 0 0 1 7 2zm0 6a2 2 0 1 1 .001 4.001A2 2 0 0 1 7 8zm0 6a2 2 0 1 1 .001 4.001A2 2 0 0 1 7 14zm6-8a2 2 0 1 1-.001-4.001A2 2 0 0 1 13 6zm0 2a2 2 0 1 1 .001 4.001A2 2 0 0 1 13 8zm0 6a2 2 0 1 1 .001 4.001A2 2 0 0 1 13 14z" />
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 16v-2M6 12H4m16 0h-2" />
                   </svg>
                 </div>
               )}
@@ -1220,7 +1220,7 @@ export default function ForwardPage() {
           </div>
         </CardHeader>
         
-        <CardBody className="pt-0 pb-3">
+        <CardBody className="pt-0 pb-4">
           <div className="space-y-2">
             {/* 地址信息 */}
             <div className="space-y-1">
@@ -1294,8 +1294,8 @@ export default function ForwardPage() {
               onPress={() => handleEdit(forward)}
               className="flex-1 min-h-8"
               startContent={
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
               }
             >
@@ -1308,8 +1308,8 @@ export default function ForwardPage() {
               onPress={() => handleDiagnose(forward)}
               className="flex-1 min-h-8"
               startContent={
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
               }
             >
@@ -1322,9 +1322,8 @@ export default function ForwardPage() {
               onPress={() => handleDelete(forward)}
               className="flex-1 min-h-8"
               startContent={
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clipRule="evenodd" />
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 012 0v4a1 1 0 11-2 0V7zM12 7a1 1 0 012 0v4a1 1 0 11-2 0V7z" clipRule="evenodd" />
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
               }
             >
@@ -1353,9 +1352,9 @@ export default function ForwardPage() {
 
   return (
     
-      <div className="px-3 lg:px-6 py-8">
+      <div className="px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         {/* 页面头部 */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div className="flex-1">
           </div>
           <div className="flex items-center gap-3">
@@ -1370,12 +1369,12 @@ export default function ForwardPage() {
               title={viewMode === 'grouped' ? '切换到直接显示' : '切换到分类显示'}
             >
               {viewMode === 'grouped' ? (
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zM3 16a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" clipRule="evenodd" />
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                 </svg>
               ) : (
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 12a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1v-7z" />
                 </svg>
               )}
             </Button>
@@ -1423,13 +1422,13 @@ export default function ForwardPage() {
           userGroups.length > 0 ? (
             <div className="space-y-6">
               {userGroups.map((userGroup) => (
-                <Card key={userGroup.userId || 'unknown'} className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] w-full overflow-hidden">
+                <Card key={userGroup.userId || 'unknown'} className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] rounded-2xl w-full overflow-hidden">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between w-full min-w-0">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                          <svg className="w-5 h-5 text-[#c96442] dark:text-[#d4856a]" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                          <svg className="w-5 h-5 text-[#c96442] dark:text-[#d4856a]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                         </div>
                         <div className="min-w-0 flex-1">
@@ -1485,7 +1484,7 @@ export default function ForwardPage() {
             </div>
           ) : (
             /* 空状态 */
-            <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
+            <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] rounded-2xl">
               <CardBody className="text-center py-16">
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
@@ -1525,7 +1524,7 @@ export default function ForwardPage() {
             </DndContext>
           ) : (
             /* 空状态 */
-            <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
+            <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] rounded-2xl">
               <CardBody className="text-center py-16">
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
@@ -2056,7 +2055,7 @@ export default function ForwardPage() {
                         const quality = getQualityDisplay(result.averageTime, result.packetLoss);
                         
                         return (
-                          <Card key={index} className={`shadow-sm border ${result.success ? 'border-success' : 'border-danger'}`}>
+                          <Card key={index} className={`shadow-sm border rounded-2xl ${result.success ? 'border-success' : 'border-danger'}`}>
                             <CardHeader className="pb-2">
                               <div className="flex items-center justify-between w-full">
                                 <div>
