@@ -10,7 +10,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-RUN npm run build
+RUN npx vite build
 
 # 生产阶段
 FROM nginx:stable-alpine AS production-stage
