@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Input } from "@heroui/input";
+import { Textarea } from "@heroui/input";
 import { Spinner } from "@heroui/spinner";
 import { Divider } from "@heroui/divider";
 import { Switch } from "@heroui/switch";
@@ -36,7 +37,7 @@ interface ConfigItem {
   label: string;
   placeholder?: string;
   description?: string;
-  type: 'input' | 'switch' | 'select';
+  type: 'input' | 'switch' | 'select' | 'textarea';
   options?: { label: string; value: string; description?: string }[];
   dependsOn?: string; // 依赖的配置项key
   dependsValue?: string; // 依赖的配置项值
@@ -98,6 +99,13 @@ const CONFIG_ITEMS: ConfigItem[] = [
         description: '拖动滑块完成图片拼接' 
       }
     ]
+  },
+  {
+    key: 'announcement',
+    label: '网站公告',
+    placeholder: '请输入公告内容，留空则不显示公告',
+    description: '设置后将显示在用户首页顶部，支持换行。留空则不显示公告',
+    type: 'textarea'
   }
 ];
 
@@ -105,7 +113,7 @@ const CONFIG_ITEMS: ConfigItem[] = [
 const getInitialConfigs = (): Record<string, string> => {
   if (typeof window === 'undefined') return {};
   
-  const configKeys = ['app_name', 'captcha_enabled', 'captcha_type', 'ip'];
+  const configKeys = ['app_name', 'captcha_enabled', 'captcha_type', 'ip', 'announcement'];
   const initialConfigs: Record<string, string> = {};
   
   try {
@@ -316,6 +324,24 @@ export default function ConfigPage() {
               </SelectItem>
             )) || []}
           </Select>
+        );
+
+      case 'textarea':
+        return (
+          <Textarea
+            value={configs[item.key] || ''}
+            onChange={(e) => handleConfigChange(item.key, e.target.value)}
+            placeholder={item.placeholder}
+            variant="bordered"
+            minRows={3}
+            maxRows={8}
+            classNames={{
+              input: "text-sm",
+              inputWrapper: isChanged 
+                ? "border-warning-300 data-[hover=true]:border-warning-400" 
+                : ""
+            }}
+          />
         );
 
       default:
