@@ -191,7 +191,7 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
     public R exportBackup() {
         try {
             Map<String, Object> backup = new LinkedHashMap<>();
-            backup.put("version", "1.5.5");
+            backup.put("version", "1.5.6");
             backup.put("exportTime", System.currentTimeMillis());
             backup.put("exportTimeStr", new Date().toString());
 
