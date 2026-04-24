@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
@@ -8,8 +8,9 @@ import { Spinner } from "@heroui/spinner";
 import { Divider } from "@heroui/divider";
 import { Switch } from "@heroui/switch";
 import { Select, SelectItem } from "@heroui/select";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import toast from 'react-hot-toast';
-import { updateConfigs } from '@/api';
+import { updateConfigs, exportConfig, importConfig } from '@/api';
 import { SettingsIcon } from '@/components/icons';
 
 import { isAdmin } from '@/utils/auth';
@@ -137,6 +138,12 @@ export default function ConfigPage() {
   const [saving, setSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [originalConfigs, setOriginalConfigs] = useState<Record<string, string>>(initialConfigs);
+  const [exporting, setExporting] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const [importPreview, setImportPreview] = useState<any>(null);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 权限检查
   useEffect(() => {
@@ -247,7 +254,118 @@ export default function ConfigPage() {
     }
   };
 
+  // 导出备份
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const res = await exportConfig();
+      if (res.code === 0 && res.data) {
+        // 生成下载文件
+        const jsonStr = JSON.stringify(res.data, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const date = new Date().toISOString().slice(0, 10);
+        a.download = `flux-panel-backup-${date}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast.success('备份导出成功');
+      } else {
+        toast.error('导出失败: ' + (res.msg || '未知错误'));
+      }
+    } catch (error) {
+      toast.error('导出备份出错');
+    } finally {
+      setExporting(false);
+    }
+  };
 
+  // 选择导入文件
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith('.json')) {
+      toast.error('请选择 JSON 格式的备份文件');
+      return;
+    }
+
+    setImportFile(file);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string);
+        // 预览数据
+        const preview: any = {};
+        if (data.version) preview.version = data.version;
+        if (data.exportTimeStr) preview.exportTimeStr = data.exportTimeStr;
+
+        const tables = ['vite_config', 'node', 'tunnel', 'user', 'user_tunnel', 'speed_limit', 'forward'];
+        const tableNames: Record<string, string> = {
+          vite_config: '网站配置',
+          node: '节点',
+          tunnel: '隧道',
+          user: '用户',
+          user_tunnel: '用户隧道',
+          speed_limit: '限速规则',
+          forward: '转发'
+        };
+
+        preview.tables = tables
+          .filter(t => data[t] && Array.isArray(data[t]) && data[t].length > 0)
+          .map(t => ({
+            key: t,
+            name: tableNames[t] || t,
+            count: data[t].length
+          }));
+
+        setImportPreview(preview);
+        setImportModalOpen(true);
+      } catch (err) {
+        toast.error('备份文件格式错误，请检查文件内容');
+      }
+    };
+    reader.readAsText(file);
+    // 重置 input 以便重复选择同一文件
+    e.target.value = '';
+  };
+
+  // 确认导入
+  const confirmImport = async () => {
+    if (!importFile) return;
+
+    setImporting(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async (ev) => {
+        try {
+          const data = JSON.parse(ev.target?.result as string);
+          const res = await importConfig(data);
+          if (res.code === 0) {
+            toast.success(res.data?.message || '导入成功');
+            setImportModalOpen(false);
+            setImportFile(null);
+            setImportPreview(null);
+            // 重新加载配置
+            loadConfigs();
+          } else {
+            toast.error('导入失败: ' + (res.msg || '未知错误'));
+          }
+        } catch (err) {
+          toast.error('导入数据解析失败');
+        } finally {
+          setImporting(false);
+        }
+      };
+      reader.readAsText(importFile);
+    } catch (error) {
+      toast.error('导入备份出错');
+      setImporting(false);
+    }
+  };
 
   // 检查配置项是否应该显示（依赖检查）
   const shouldShowItem = (item: ConfigItem): boolean => {
@@ -383,6 +501,41 @@ export default function ConfigPage() {
                 </p>
               </div>
               <div className="flex gap-2">
+                {/* 隐藏的文件选择 input */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept=".json"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+                <Button
+                  variant="flat"
+                  color="primary"
+                  size="sm"
+                  startContent={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                  }
+                  onPress={handleExport}
+                  isLoading={exporting}
+                >
+                  导出备份
+                </Button>
+                <Button
+                  variant="flat"
+                  size="sm"
+                  startContent={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  }
+                  onPress={() => fileInputRef.current?.click()}
+                  isLoading={importing}
+                >
+                  导入备份
+                </Button>
 
                 <Button
                   color="primary"
@@ -449,6 +602,72 @@ export default function ConfigPage() {
             </CardBody>
           </Card>
         )}
+
+        {/* 备份导入确认弹窗 */}
+        <Modal 
+          isOpen={importModalOpen}
+          onOpenChange={setImportModalOpen}
+          size="2xl"
+          scrollBehavior="outside"
+          backdrop="blur"
+          placement="center"
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  <h2 className="text-lg font-bold">确认导入备份</h2>
+                </ModalHeader>
+                <ModalBody>
+                  {importPreview && (
+                    <>
+                      <p className="text-[#6b6560] dark:text-[#8a8480]">
+                        即将导入以下备份数据到当前面板：
+                      </p>
+                      {importPreview.version && (
+                        <p className="text-sm text-[#9b9590] dark:text-[#5d5854]">
+                          备份版本：{importPreview.version}
+                        </p>
+                      )}
+                      {importPreview.exportTimeStr && (
+                        <p className="text-sm text-[#9b9590] dark:text-[#5d5854]">
+                          导出时间：{importPreview.exportTimeStr}
+                        </p>
+                      )}
+                      <div className="mt-3 space-y-2">
+                        <p className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da]">包含数据：</p>
+                        {importPreview.tables?.map((t: any) => (
+                          <div key={t.key} className="flex items-center gap-2 text-sm text-[#6b6560] dark:text-[#8a8480]">
+                            <span className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
+                            <span>{t.name}</span>
+                            <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">({t.count} 条)</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-3 p-3 bg-warning-50 dark:bg-warning-900/20 rounded-xl">
+                        <p className="text-sm text-warning-700 dark:text-warning-300">
+                          ⚠️ 导入操作会将备份数据追加到现有数据中，不会删除已有数据。如果存在重复数据可能导致冲突，建议先导出当前备份再导入新数据。
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </ModalBody>
+                <ModalFooter>
+                  <Button variant="light" onPress={onClose}>
+                    取消
+                  </Button>
+                  <Button 
+                    color="primary" 
+                    onPress={confirmImport}
+                    isLoading={importing}
+                  >
+                    确认导入
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </div>
     
   );

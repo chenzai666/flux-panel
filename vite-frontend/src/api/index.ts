@@ -84,6 +84,8 @@ export const getConfigs = () => Network.post("/config/list");
 export const getConfigByName = (name: string) => Network.post("/config/get", { name });
 export const updateConfigs = (configMap: Record<string, string>) => Network.post("/config/update", configMap);
 export const updateConfig = (name: string, value: string) => Network.post("/config/update-single", { name, value });
+export const exportConfig = () => Network.post("/config/export");
+export const importConfig = (backupData: any) => Network.post("/config/import", backupData);
 
 
 // 验证码相关接口
