@@ -7,6 +7,7 @@ import com.admin.common.lang.R;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -24,21 +25,27 @@ import java.util.*;
 @Service
 public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteConfig> implements ViteConfigService {
 
+    @Lazy
     @Autowired
     private NodeService nodeService;
 
+    @Lazy
     @Autowired
     private TunnelService tunnelService;
 
+    @Lazy
     @Autowired
     private UserService userService;
 
+    @Lazy
     @Autowired
     private UserTunnelService userTunnelService;
 
+    @Lazy
     @Autowired
     private SpeedLimitService speedLimitService;
 
+    @Lazy
     @Autowired
     private ForwardService forwardService;
 
