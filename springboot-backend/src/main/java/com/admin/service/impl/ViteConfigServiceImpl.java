@@ -416,10 +416,11 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
             result.put("details", details);
 
             if (totalFailed == 0) {
-                return R.ok("导入完成，共导入" + totalImported + "条数据", result);
+                result.put("msg", "导入完成，共导入" + totalImported + "条数据");
             } else {
-                return R.ok("导入完成，成功" + totalImported + "条，失败" + totalFailed + "条", result);
+                result.put("msg", "导入完成，成功" + totalImported + "条，失败" + totalFailed + "条");
             }
+            return R.ok(result);
         } catch (Exception e) {
             return R.err("导入备份失败: " + e.getMessage());
         }
