@@ -307,7 +307,7 @@ export default function IndexPage() {
                <p className="text-xs text-[#9b9590] dark:text-[#5d5854]">
                  Powered by{' '}
                  <a 
-                   href="https://github.com/bqlpfy/flux-panel" 
+                   href="https://github.com/chenzai666/flux-panel" 
                    target="_blank" 
                    rel="noopener noreferrer"
                    className="text-[#6b6560] dark:text-[#8a8480] hover:text-[#c96442] dark:hover:text-[#d4856a] transition-colors"

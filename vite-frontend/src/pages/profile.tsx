@@ -273,7 +273,7 @@ export default function ProfilePage() {
           <p className="text-[11px] text-[#9b9590] dark:text-[#5d5854]">
             Powered by{' '}
             <a 
-              href="https://github.com/bqlpfy/flux-panel" 
+              href="https://github.com/chenzai666/flux-panel" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-[#9b9590] dark:text-[#5d5854] hover:text-[#6b6560] dark:hover:text-[#9b9590] transition-colors"
