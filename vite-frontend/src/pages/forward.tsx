@@ -6,6 +6,7 @@ import { Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import { Chip } from "@heroui/chip";
+import { Checkbox } from "@heroui/checkbox";
 import { Spinner } from "@heroui/spinner";
 import { Switch } from "@heroui/switch";
 import { Alert } from "@heroui/alert";
@@ -37,6 +38,7 @@ import {
   getForwardList, 
   updateForward, 
   deleteForward,
+  batchDeleteForward,
   forceDeleteForward,
   userTunnel, 
   pauseForwardService,
@@ -164,6 +166,11 @@ export default function ForwardPage() {
   const [currentDiagnosisForward, setCurrentDiagnosisForward] = useState<Forward | null>(null);
   const [diagnosisResult, setDiagnosisResult] = useState<DiagnosisResult | null>(null);
   const [addressModalTitle, setAddressModalTitle] = useState('');
+  
+  // 批量选择相关状态
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [batchDeleteModalOpen, setBatchDeleteModalOpen] = useState(false);
+  const [batchDeleteLoading, setBatchDeleteLoading] = useState(false);
   const [addressList, setAddressList] = useState<AddressItem[]>([]);
   
   // 导出相关状态
@@ -506,6 +513,60 @@ export default function ForwardPage() {
       toast.error('删除失败');
     } finally {
       setDeleteLoading(false);
+    }
+  };
+
+  // 批量选择切换
+  const toggleSelect = (id: number) => {
+    setSelectedIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  // 全选/取消全选
+  const toggleSelectAll = () => {
+    const allIds = getSortedForwards().map(f => f.id);
+    if (selectedIds.size === allIds.length && allIds.length > 0) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(allIds));
+    }
+  };
+
+  // 批量删除确认
+  const handleBatchDelete = () => {
+    if (selectedIds.size === 0) {
+      toast.error('请先选择要删除的转发');
+      return;
+    }
+    setBatchDeleteModalOpen(true);
+  };
+
+  // 确认批量删除
+  const confirmBatchDelete = async () => {
+    setBatchDeleteLoading(true);
+    try {
+      const ids = Array.from(selectedIds);
+      const res = await batchDeleteForward(ids);
+      if (res.code === 0) {
+        toast.success(res.data || '批量删除成功');
+        setSelectedIds(new Set());
+        setBatchDeleteModalOpen(false);
+        loadData();
+      } else {
+        toast.error(res.msg || '批量删除失败');
+      }
+    } catch (error) {
+      console.error('批量删除失败:', error);
+      toast.error('批量删除失败');
+    } finally {
+      setBatchDeleteLoading(false);
     }
   };
 
@@ -1181,9 +1242,17 @@ export default function ForwardPage() {
       <Card key={forward.id} className="group shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] rounded-2xl hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200">
         <CardHeader className="pb-2">
           <div className="flex justify-between items-start w-full">
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da] truncate text-sm">{forward.name}</h3>
-              <p className="text-xs text-[#9b9590] dark:text-[#5d5854] truncate">{forward.tunnelName}</p>
+            <div className="flex items-start gap-2 flex-1 min-w-0">
+              <Checkbox
+                isSelected={selectedIds.has(forward.id)}
+                onValueChange={() => toggleSelect(forward.id)}
+                size="sm"
+                className="mt-0.5 flex-shrink-0"
+              />
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da] truncate text-sm">{forward.name}</h3>
+                <p className="text-xs text-[#9b9590] dark:text-[#5d5854] truncate">{forward.tunnelName}</p>
+              </div>
             </div>
             <div className="flex items-center gap-1.5 ml-2">
               {viewMode === 'direct' && (
@@ -1358,6 +1427,29 @@ export default function ForwardPage() {
           <div className="flex-1">
           </div>
           <div className="flex items-center gap-3">
+            {/* 批量删除按钮 */}
+            {selectedIds.size > 0 && (
+              <Button
+                size="sm"
+                variant="flat"
+                color="danger"
+                onPress={handleBatchDelete}
+                startContent={
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                }
+              >
+                删除({selectedIds.size})
+              </Button>
+            )}
+            {/* 全选按钮 */}
+            <Checkbox
+              isSelected={selectedIds.size === getSortedForwards().length && getSortedForwards().length > 0}
+              isIndeterminate={selectedIds.size > 0 && selectedIds.size < getSortedForwards().length}
+              onValueChange={toggleSelectAll}
+              size="sm"
+            />
             {/* 显示模式切换按钮 */}
             <Button
               size="sm"
@@ -2149,6 +2241,56 @@ export default function ForwardPage() {
                       重新诊断
                     </Button>
                   )}
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+        {/* 批量删除确认模态框 */}
+        <Modal 
+          isOpen={batchDeleteModalOpen}
+          onOpenChange={setBatchDeleteModalOpen}
+          size="2xl"
+          scrollBehavior="outside"
+          backdrop="blur"
+          placement="center"
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  <h2 className="text-lg font-bold text-danger">确认批量删除</h2>
+                </ModalHeader>
+                <ModalBody>
+                  <p className="text-[#6b6560] dark:text-[#8a8480]">
+                    确定要删除选中的 <span className="font-semibold text-danger">{selectedIds.size}</span> 条转发吗？
+                  </p>
+                  <div className="max-h-40 overflow-y-auto mt-2 space-y-1">
+                    {getSortedForwards()
+                      .filter(f => selectedIds.has(f.id))
+                      .map(f => (
+                        <div key={f.id} className="text-sm text-[#6b6560] dark:text-[#8a8480] flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 bg-danger rounded-full flex-shrink-0" />
+                          <span className="truncate">{f.name}</span>
+                          <span className="text-[#9b9590] dark:text-[#5d5854] text-xs">({f.tunnelName})</span>
+                        </div>
+                      ))}
+                  </div>
+                  <p className="text-small text-[#9b9590] dark:text-[#5d5854] mt-2">
+                    此操作无法撤销，删除后这些转发将永久消失。
+                  </p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button variant="light" onPress={onClose}>
+                    取消
+                  </Button>
+                  <Button 
+                    color="danger" 
+                    onPress={confirmBatchDelete}
+                    isLoading={batchDeleteLoading}
+                  >
+                    确认删除({selectedIds.size})
+                  </Button>
                 </ModalFooter>
               </>
             )}

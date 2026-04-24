@@ -80,6 +80,12 @@ public interface ForwardService extends IService<Forward> {
      */
     R updateForwardOrder(Map<String, Object> params);
 
+    /**
+     * 批量删除端口转发
+     * @param ids 转发ID列表
+     * @return 结果
+     */
+    R batchDeleteForwards(java.util.List<Long> ids);
 
     void updateForwardA(Forward forward);
 }

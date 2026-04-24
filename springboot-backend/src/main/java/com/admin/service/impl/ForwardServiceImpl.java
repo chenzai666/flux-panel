@@ -1381,6 +1381,37 @@ public class ForwardServiceImpl extends ServiceImpl<ForwardMapper, Forward> impl
         return forwardId + "_" + userId + "_" + userTunnelId;
     }
 
+    @Override
+    public R batchDeleteForwards(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return R.err("请选择要删除的转发");
+        }
+
+        int successCount = 0;
+        int failCount = 0;
+        List<String> failNames = new ArrayList<>();
+
+        for (Long id : ids) {
+            R result = deleteForward(id);
+            if (result.getCode() == 0) {
+                successCount++;
+            } else {
+                failCount++;
+                // 尝试获取转发名称用于错误提示
+                Forward forward = this.getById(id);
+                failNames.add(forward != null ? forward.getName() : "ID:" + id);
+            }
+        }
+
+        if (failCount == 0) {
+            return R.ok("批量删除成功，共删除" + successCount + "条转发");
+        } else if (successCount == 0) {
+            return R.err("批量删除失败，所有转发删除均失败");
+        } else {
+            return R.ok("批量删除完成，成功" + successCount + "条，失败" + failCount + "条（" + String.join("、", failNames) + "）");
+        }
+    }
+
 
     public void updateForwardA(Forward forward) {
         Tunnel tunnel = validateTunnel(forward.getTunnelId());

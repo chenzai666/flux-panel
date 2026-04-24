@@ -54,6 +54,7 @@ export const createForward = (data: any) => Network.post("/forward/create", data
 export const getForwardList = () => Network.post("/forward/list");
 export const updateForward = (data: any) => Network.post("/forward/update", data);
 export const deleteForward = (id: number) => Network.post("/forward/delete", { id });
+export const batchDeleteForward = (ids: number[]) => Network.post("/forward/batch-delete", { ids });
 export const forceDeleteForward = (id: number) => Network.post("/forward/force-delete", { id });
 
 // 转发服务控制操作 - 通过Java后端接口
