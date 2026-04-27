@@ -6,6 +6,10 @@ WORKDIR /app
 # 增加 Node 内存限制，防止 CI 环境 OOM
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
+# 接收来自 docker build --build-arg 的版本号
+ARG VERSION=dev
+ENV VITE_APP_VERSION=${VERSION}
+
 COPY package*.json ./
 RUN npm install --legacy-peer-deps --prefer-offline --no-audit --progress=false
 

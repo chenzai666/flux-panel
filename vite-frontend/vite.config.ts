@@ -6,7 +6,11 @@ export default defineConfig({
   plugins: [
     react(),
   ],
-  base: '/',    
+  base: '/',
+  define: {
+    // CI 构建时由 VITE_APP_VERSION 环境变量注入，本地开发回退到 'dev'
+    __APP_VERSION__: JSON.stringify(process.env.VITE_APP_VERSION || 'dev'),
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

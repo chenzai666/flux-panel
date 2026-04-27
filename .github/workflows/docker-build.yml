@@ -149,6 +149,7 @@ jobs:
           VERSION="${{ needs.check-version.outputs.version }}"
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
+            --build-arg VERSION=${VERSION} \
             --push \
             -t bats666/vite-frontend:latest \
             -t bats666/vite-frontend:${VERSION} \
