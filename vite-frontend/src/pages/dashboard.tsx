@@ -98,13 +98,13 @@ export default function DashboardPage() {
             toast('账户将于明天过期，请及时续费', { 
               icon: '⚠️',
               duration: 6000,
-              style: { background: '#f59e0b', color: '#fff' }
+              style: { background: '#FAEEDA', color: '#633806' }
             });
           } else {
             toast(`账户将于${diffDays}天后过期，请及时续费`, { 
               icon: '⚠️',
               duration: 6000,
-              style: { background: '#f59e0b', color: '#fff' }
+              style: { background: '#FAEEDA', color: '#633806' }
             });
           }
         } else if (diffDays <= 0) {
@@ -112,7 +112,7 @@ export default function DashboardPage() {
           toast('账户已过期，请立即续费', { 
             icon: '⚠️',
             duration: 8000,
-            style: { background: '#ef4444', color: '#fff' }
+            style: { background: '#FCEBEB', color: '#791F1F' }
           });
         }
       }
@@ -134,13 +134,13 @@ export default function DashboardPage() {
               toast(`隧道"${tunnel.tunnelName}"将于明天过期`, { 
                 icon: '⚠️',
                 duration: 5000,
-                style: { background: '#f59e0b', color: '#fff' }
+                style: { background: '#FAEEDA', color: '#633806' }
               });
             } else {
               toast(`隧道"${tunnel.tunnelName}"将于${diffDays}天后过期`, { 
                 icon: '⚠️',
                 duration: 5000,
-                style: { background: '#f59e0b', color: '#fff' }
+                style: { background: '#FAEEDA', color: '#633806' }
               });
             }
           } else if (diffDays <= 0) {
@@ -148,7 +148,7 @@ export default function DashboardPage() {
             toast(`隧道"${tunnel.tunnelName}"已过期`, { 
               icon: '⚠️',
               duration: 6000,
-              style: { background: '#ef4444', color: '#fff' }
+              style: { background: '#FCEBEB', color: '#791F1F' }
             });
           }
         }
@@ -267,8 +267,7 @@ export default function DashboardPage() {
 
   const getExpStatus = (expTime?: string) => {
     if (!expTime) return { 
-      color: 'text-green-600 dark:text-green-400', 
-      bg: 'bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20',
+      style: { background: 'var(--color-success-bg)', color: 'var(--color-success-text)', borderColor: 'var(--color-success-border)' },
       text: '永久' 
     };
 
@@ -277,16 +276,14 @@ export default function DashboardPage() {
 
     if (isNaN(expDate.getTime())) {
       return { 
-        color: 'text-[#6b6560] dark:text-[#9b9590]', 
-        bg: 'bg-[#f5f1eb] dark:bg-[#1a1614]/10 border-[#e5e0d8] dark:border-gray-500/20',
+        style: { background: 'var(--color-background-tertiary)', color: 'var(--color-text-secondary)', borderColor: 'var(--color-border-secondary)' },
         text: '无效' 
       };
     }
 
     if (expDate < now) {
       return { 
-        color: 'text-red-600 dark:text-red-400', 
-        bg: 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20',
+        style: { background: 'var(--color-danger-bg)', color: 'var(--color-danger-text)', borderColor: 'var(--color-danger-border)' },
         text: '已过期' 
       };
     }
@@ -296,20 +293,17 @@ export default function DashboardPage() {
 
     if (diffDays <= 7) {
       return { 
-        color: 'text-red-600 dark:text-red-400', 
-        bg: 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20',
+        style: { background: 'var(--color-danger-bg)', color: 'var(--color-danger-text)', borderColor: 'var(--color-danger-border)' },
         text: `${diffDays}天后过期` 
       };
     } else if (diffDays <= 30) {
       return { 
-        color: 'text-orange-600 dark:text-orange-400', 
-        bg: 'bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/20',
+        style: { background: 'var(--color-warning-bg)', color: 'var(--color-warning-text)', borderColor: 'var(--color-warning-border)' },
         text: `${diffDays}天后过期` 
       };
     } else {
       return { 
-        color: 'text-green-600 dark:text-green-400', 
-        bg: 'bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20',
+        style: { background: 'var(--color-success-bg)', color: 'var(--color-success-text)', borderColor: 'var(--color-success-border)' },
         text: `${diffDays}天后过期` 
       };
     }
@@ -624,17 +618,17 @@ export default function DashboardPage() {
 
                           {/* 公告 */}
          {announcement && (
-           <Card className="mb-4 border border-amber-200 dark:border-amber-500/30 bg-amber-50/50 dark:bg-amber-500/10 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+           <Card className="mb-4 border shadow-[0_1px_3px_rgba(0,0,0,0.04)]" style={{borderColor:'var(--color-warning-border)',background:'var(--color-warning-bg)'}}>
              <CardBody className="p-3 lg:p-4">
                <div className="flex items-start gap-3">
-                 <div className="p-1.5 bg-amber-100 dark:bg-amber-500/20 rounded-lg flex-shrink-0 mt-0.5">
-                   <svg className="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                 <div className="p-1.5 rounded-lg flex-shrink-0 mt-0.5" style={{background:'var(--color-warning-bg)'}}>
+                   <svg className="w-4 h-4 icon-warning" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                      <path strokeLinecap="round" strokeLinejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.022-.858-.032-1.717-.126-2.574M3.03 12h2.47" />
                    </svg>
                  </div>
                  <div className="flex-1 min-w-0">
-                   <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-300 mb-1">公告</h3>
-                   <p className="text-sm text-amber-700 dark:text-amber-200/80 whitespace-pre-wrap break-words">{announcement}</p>
+                   <h3 className="text-sm font-semibold mb-1" style={{color:'var(--color-warning-text)'}}>公告</h3>
+                   <p className="text-sm whitespace-pre-wrap break-words" style={{color:'var(--color-warning-text)'}}>{announcement}</p>
                  </div>
                </div>
              </CardBody>
@@ -648,8 +642,8 @@ export default function DashboardPage() {
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
                    <p className="text-xs lg:text-sm text-[#6b6560] dark:text-[#8a8480] truncate">总流量</p>
-                   <div className="p-1.5 lg:p-2 bg-blue-100 dark:bg-blue-500/20 rounded-lg flex-shrink-0">
-                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                   <div className="p-1.5 lg:p-2 icon-bg-info rounded-lg flex-shrink-0">
+                     <svg className="w-4 h-4 lg:w-5 lg:h-5 icon-info" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                        <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
                      </svg>
                    </div>
@@ -664,8 +658,8 @@ export default function DashboardPage() {
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
                    <p className="text-xs lg:text-sm text-[#6b6560] dark:text-[#8a8480] truncate">已用流量</p>
-                   <div className="p-1.5 lg:p-2 bg-green-100 dark:bg-green-500/20 rounded-lg flex-shrink-0">
-                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                   <div className="p-1.5 lg:p-2 icon-bg-success rounded-lg flex-shrink-0">
+                     <svg className="w-4 h-4 lg:w-5 lg:h-5 icon-success" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
                      </svg>
                    </div>
@@ -696,8 +690,8 @@ export default function DashboardPage() {
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
                    <p className="text-xs lg:text-sm text-[#6b6560] dark:text-[#8a8480] truncate">转发配额</p>
-                   <div className="p-1.5 lg:p-2 bg-purple-100 dark:bg-purple-500/20 rounded-lg flex-shrink-0">
-                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-purple-600 dark:text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                   <div className="p-1.5 lg:p-2 icon-bg-warning rounded-lg flex-shrink-0">
+                     <svg className="w-4 h-4 lg:w-5 lg:h-5 icon-warning" fill="currentColor" viewBox="0 0 20 20">
                        <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                      </svg>
                    </div>
@@ -712,8 +706,8 @@ export default function DashboardPage() {
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
                    <p className="text-xs lg:text-sm text-[#6b6560] dark:text-[#8a8480] truncate">已用转发</p>
-                   <div className="p-1.5 lg:p-2 bg-orange-100 dark:bg-orange-500/20 rounded-lg flex-shrink-0">
-                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                   <div className="p-1.5 lg:p-2 icon-bg-danger rounded-lg flex-shrink-0">
+                     <svg className="w-4 h-4 lg:w-5 lg:h-5 icon-danger" fill="currentColor" viewBox="0 0 20 20">
                        <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
                      </svg>
                    </div>
@@ -837,10 +831,14 @@ export default function DashboardPage() {
                          <div>
                            <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{tunnel.tunnelName} ID: {tunnel.id}</h3>
                            <div className="flex flex-wrap items-center gap-2 mt-1">
-                             <span className={`px-2 py-1 rounded-md text-xs font-medium ${tunnel.tunnelFlow === 1 ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300' : 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300'}`}>
+                             <span className={`px-2 py-1 rounded-md text-xs font-medium border ${tunnel.tunnelFlow === 1 ? '' : ''}`}
+                               style={tunnel.tunnelFlow === 1
+                                 ? { background:'var(--color-info-bg)', color:'var(--color-info-text)', borderColor:'var(--color-info-border)' }
+                                 : { background:'var(--color-warning-bg)', color:'var(--color-warning-text)', borderColor:'var(--color-warning-border)' }
+                               }>
                                {tunnel.tunnelFlow === 1 ? '单向计费' : '双向计费'}
                              </span>
-                             <span className={`px-2 py-1 rounded-md text-xs font-medium border ${tunnelExpStatus.bg} ${tunnelExpStatus.color}`}>
+                             <span className="px-2 py-1 rounded-md text-xs font-medium border" style={tunnelExpStatus.style}>
                                {tunnelExpStatus.text}
                              </span>
                              {(tunnel.flowResetTime !== undefined && tunnel.flowResetTime !== null) && (
@@ -925,7 +923,8 @@ export default function DashboardPage() {
                               <h4 className="font-medium text-[#1a1a1a] dark:text-[#e8e2da] text-sm mb-2 truncate">{forward.name}</h4>
                               <div className="space-y-1">
                                 <code 
-                                  className={`block px-2 py-1 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 rounded font-mono text-xs truncate ${hasMultipleIps(forward.inIp) ? 'cursor-pointer hover:bg-green-200 dark:hover:bg-green-500/30' : ''}`}
+                                  className={`block px-2 py-1 rounded font-mono text-xs truncate ${hasMultipleIps(forward.inIp) ? 'cursor-pointer' : ''}`}
+                                  style={{ background:'var(--color-success-bg)', color:'var(--color-success-text)' }}
                                   onClick={() => hasMultipleIps(forward.inIp) && showAddressModal(forward.inIp, forward.inPort, '入口地址')}
                                   title={formatInAddress(forward.inIp, forward.inPort)}
                                 >
@@ -933,7 +932,8 @@ export default function DashboardPage() {
                                 </code>
                                 <div className="text-center text-[#9b9590] dark:text-[#5d5854] text-xs">↓</div>
                                 <code 
-                                  className={`block px-2 py-1 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 rounded font-mono text-xs truncate ${hasMultipleRemoteAddresses(forward.remoteAddr) ? 'cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-500/30' : ''}`}
+                                  className={`block px-2 py-1 rounded font-mono text-xs truncate ${hasMultipleRemoteAddresses(forward.remoteAddr) ? 'cursor-pointer' : ''}`}
+                                  style={{ background:'var(--color-info-bg)', color:'var(--color-info-text)' }}
                                   onClick={() => hasMultipleRemoteAddresses(forward.remoteAddr) && showRemoteAddressModal(forward.remoteAddr, '出口地址')}
                                   title={formatRemoteAddress(forward.remoteAddr)}
                                 >
@@ -946,11 +946,11 @@ export default function DashboardPage() {
                               <div className="grid grid-cols-3 gap-1 text-xs">
                                 <div className="text-center">
                                   <div className="text-[#9b9590] dark:text-[#5d5854] mb-1">上传</div>
-                                  <div className="font-medium text-green-600 dark:text-green-400 truncate">{formatFlow(forward.inFlow || 0)}</div>
+                                  <div className="font-medium truncate" style={{color:'var(--color-success)'}}>{formatFlow(forward.inFlow || 0)}</div>
                                 </div>
                                 <div className="text-center">
                                   <div className="text-[#9b9590] dark:text-[#5d5854] mb-1">下载</div>
-                                  <div className="font-medium text-orange-600 dark:text-orange-400 truncate">{formatFlow(forward.outFlow || 0)}</div>
+                                  <div className="font-medium truncate" style={{color:'var(--color-warning)'}}>{formatFlow(forward.outFlow || 0)}</div>
                                 </div>
                                 <div className="text-center">
                                   <div className="text-[#9b9590] dark:text-[#5d5854] mb-1">计费</div>

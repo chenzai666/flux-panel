@@ -243,7 +243,7 @@ export default function AdminLayout({
   );
 
   return (
-    <div className={`flex ${isMobile ? 'min-h-screen' : 'h-screen'} bg-[#f5f1eb] dark:bg-[#1a1614]`}>
+    <div className={`flex ${isMobile ? 'min-h-screen' : 'h-screen'} bg-tertiary`}>
       {/* 移动端遮罩层 */}
       {isMobile && mobileMenuVisible && (
         <div 
@@ -257,8 +257,8 @@ export default function AdminLayout({
         ${isMobile ? 'fixed' : 'relative'} 
         ${isMobile && !mobileMenuVisible ? '-translate-x-full' : 'translate-x-0'}
         ${isMobile ? 'w-[280px]' : 'w-[260px]'} 
-        bg-[#ede8e0] dark:bg-[#1f1b18]
-        border-r border-[#e0dbd3] dark:border-[#2d2824]
+        bg-secondary
+        border-r border-var-secondary
         z-50 
         transition-transform duration-300 ease-in-out
         flex flex-col
@@ -266,7 +266,7 @@ export default function AdminLayout({
         ${isMobile ? 'top-0 left-0' : ''}
       `}>
         {/* Logo 区域 - Claude 风格 */}
-        <div className="px-5 py-5 h-16 flex items-center border-b border-[#e0dbd3] dark:border-[#2d2824]">
+        <div className="px-5 py-5 h-16 flex items-center border-b border-var-secondary">
           <div className="flex items-center gap-2.5 w-full">
             <div className="w-8 h-8 rounded-lg bg-[#c96442] flex items-center justify-center flex-shrink-0">
               <Logo size={18} className="text-white" />
@@ -308,7 +308,7 @@ export default function AdminLayout({
         </nav>
 
         {/* 底部版权信息 */}
-        <div className="px-5 py-3 flex-shrink-0 border-t border-[#e0dbd3] dark:border-[#2d2824]">
+        <div className="px-5 py-3 flex-shrink-0 border-t border-var-secondary">
           <p className="text-[11px] text-[#9b9590] dark:text-[#5d5854] text-center">
             Powered by{' '}
             <a 
@@ -326,7 +326,7 @@ export default function AdminLayout({
       {/* 主内容区域 */}
       <div className={`flex flex-col flex-1 ${isMobile ? 'min-h-0' : 'h-full overflow-hidden'}`}>
         {/* 顶部导航栏 - Claude 风格 */}
-        <header className="bg-white dark:bg-[#231e1b] border-b border-[#e5e0d8] dark:border-[#2d2824] h-16 flex items-center justify-between px-5 lg:px-8 relative z-10">
+        <header className="bg-primary border-b border-var-secondary h-16 flex items-center justify-between px-5 lg:px-8 relative z-10">
           <div className="flex items-center gap-4">
             {/* 移动端菜单按钮 */}
             {isMobile && (
@@ -390,7 +390,7 @@ export default function AdminLayout({
         </header>
 
         {/* 主内容 - Claude 风格 */}
-        <main className={`flex-1 bg-[#f5f1eb] dark:bg-[#1a1614] ${isMobile ? '' : 'overflow-y-auto'}`}>
+        <main className={`flex-1 bg-tertiary ${isMobile ? '' : 'overflow-y-auto'}`}>
           {children}
         </main>
       </div>
@@ -410,7 +410,7 @@ export default function AdminLayout({
         <ModalContent>
           {(onClose: () => void) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4">
+              <ModalHeader className="flex flex-col gap-1 border-b border-var-secondary pb-4">
                 <h2 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">修改密码</h2>
               </ModalHeader>
               <ModalBody className="py-5">
@@ -448,7 +448,7 @@ export default function AdminLayout({
                   />
                 </div>
               </ModalBody>
-              <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+              <ModalFooter className="border-t border-var-secondary pt-4">
                 <Button variant="light" onPress={onClose} className="text-[#6b6560]">
                   取消
                 </Button>

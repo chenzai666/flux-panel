@@ -286,15 +286,15 @@ body {
 /* 卡片圆角 */
 .claude-card {
   border-radius: 12px;
-  border: 1px solid #e5e0d8;
-  background: #ffffff;
+  border: 1px solid var(--color-border-secondary);
+  background: var(--color-background-primary);
   box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
   transition: all 0.2s ease;
 }
 
 .dark .claude-card {
-  border-color: #3d3834;
-  background: #231e1b;
+  border-color: var(--color-border-secondary);
+  background: var(--color-background-primary);
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
@@ -310,32 +310,71 @@ body {
 }
 
 .claude-btn-primary {
-  background: #c96442;
+  background: var(--color-accent);
   color: white;
   border: none;
 }
 .claude-btn-primary:hover {
-  background: #b5583a;
+  background: var(--color-accent-hover);
 }
 
 /* Claude 风格 - Input 覆盖 */
 .claude-input {
   border-radius: 8px;
-  border: 1.5px solid #e5e0d8;
+  border: 1.5px solid var(--color-border-secondary);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .claude-input:focus {
-  border-color: #c96442;
+  border-color: var(--color-accent);
   box-shadow: 0 0 0 3px rgba(201, 100, 66, 0.1);
 }
 
 .dark .claude-input {
-  border-color: #3d3834;
+  border-color: var(--color-border-secondary);
 }
 .dark .claude-input:focus {
-  border-color: #d4856a;
+  border-color: var(--color-accent-hover);
   box-shadow: 0 0 0 3px rgba(212, 133, 106, 0.15);
 }
+
+/* =============================================
+   背景/边框/文字 全局工具类 — 用 CSS 变量驱动
+   避免 Tailwind 任意值在 HeroUI 组件上失效
+   ============================================= */
+
+/* 背景层级 */
+.bg-primary   { background: var(--color-background-primary); }
+.bg-secondary { background: var(--color-background-secondary); }
+.bg-tertiary  { background: var(--color-background-tertiary); }
+
+/* 文字层级 */
+.text-body-primary   { color: var(--color-text-primary); }
+.text-body-secondary { color: var(--color-text-secondary); }
+.text-body-tertiary  { color: var(--color-text-tertiary); }
+
+/* 边框 */
+.border-var-primary   { border-color: var(--color-border-primary); }
+.border-var-secondary { border-color: var(--color-border-secondary); }
+.border-var-tertiary  { border-color: var(--color-border-tertiary); }
+
+/* 语义色文字 */
+.text-success { color: var(--color-success-text); }
+.text-warning { color: var(--color-warning-text); }
+.text-danger  { color: var(--color-danger-text); }
+.text-info    { color: var(--color-info-text); }
+
+/* 语义色图标（徽章图标大小通配） */
+.icon-success { color: var(--color-success); }
+.icon-warning { color: var(--color-warning); }
+.icon-danger  { color: var(--color-danger); }
+.icon-info    { color: var(--color-info); }
+.icon-accent  { color: var(--color-accent); }
+
+/* 统计卡片图标背景 — 精确对应 Claude 调色板 */
+.icon-bg-info    { background: var(--color-info-bg); }
+.icon-bg-success { background: var(--color-success-bg); }
+.icon-bg-warning { background: var(--color-warning-bg); }
+.icon-bg-danger  { background: var(--color-danger-bg); }
 
 /* ===== H5 移动端专用样式 ===== */
 

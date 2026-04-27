@@ -169,7 +169,7 @@ export default function H5Layout({
   }, [location.pathname]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#f5f1eb] dark:bg-[#1a1614]">
+    <div className="flex flex-col min-h-screen bg-tertiary">
       {/* 顶部导航栏 - 毛玻璃效果 */}
       <header
         className="h-12 safe-top flex-shrink-0 flex items-center justify-between px-4 relative z-30"
@@ -198,7 +198,7 @@ export default function H5Layout({
       </header>
 
       {/* 主内容区域 */}
-      <main className="flex-1 bg-[#f5f1eb] dark:bg-[#1a1614] overflow-y-auto overflow-x-hidden">
+      <main className="flex-1 bg-tertiary overflow-y-auto overflow-x-hidden">
         <div className="h5-page-transition">
           {children}
         </div>
