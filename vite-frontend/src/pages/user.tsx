@@ -556,7 +556,7 @@ export default function UserPage() {
               isIconOnly
               className="min-h-10 w-10"
             >
-              <SearchIcon className="w-4 h-4" />
+              <SearchIcon className="w-4 h-4 text-white dark:text-white" />
             </Button>
           </div>
           
