@@ -551,12 +551,10 @@ export default function UserPage() {
             />
             <Button
               onClick={handleSearch}
-              variant="solid"
-              color="primary"
               isIconOnly
-              className="min-h-10 w-10"
+              className="claude-btn claude-btn-primary min-h-10 w-10"
             >
-              <SearchIcon className="w-4 h-4 text-white dark:text-white" />
+              <SearchIcon className="w-4 h-4" />
             </Button>
           </div>
           
