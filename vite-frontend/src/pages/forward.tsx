@@ -1358,8 +1358,7 @@ export default function ForwardPage() {
           <div className="flex gap-1.5 mt-3">
             <Button
               size="sm"
-              variant="flat"
-              color="primary"
+              className="claude-btn claude-btn-primary"
               onPress={() => handleEdit(forward)}
               className="flex-1 min-h-8"
               startContent={
@@ -1495,10 +1494,8 @@ export default function ForwardPage() {
 
             <Button
               size="sm"
-              variant="flat"
-              color="primary"
+              className="claude-btn claude-btn-primary"
               onPress={handleAdd}
-             
             >
               新增
             </Button>
@@ -1885,7 +1882,7 @@ export default function ForwardPage() {
                 {exportData && (
                   <div className="flex justify-between items-center">
                     <Button 
-                      color="primary" 
+                      className="claude-btn claude-btn-primary"
                       size="sm" 
                       onPress={executeExport}
                       isLoading={exportLoading}
