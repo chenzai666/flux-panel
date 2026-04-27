@@ -593,15 +593,18 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
         return new int[]{success, fail};
     }
 
-    private int[] importForward(List<Map<String, Object>> items) {
+    private int[] importForward(List<Map<String, Object>> items, Map<Long, Long> userIdMap, Map<Long, Long> tunnelIdMap) {
         int success = 0, fail = 0;
         for (Map<String, Object> item : items) {
             try {
                 Forward fwd = new Forward();
-                fwd.setUserId(getInt(item, "userId"));
+                // 使用 userIdMap 和 tunnelIdMap 映射关联 id
+                Long oldUserId = getLong(item, "userId");
+                fwd.setUserId(oldUserId != null ? userIdMap.getOrDefault(oldUserId, oldUserId).intValue() : null);
                 fwd.setUserName(getStr(item, "userName"));
                 fwd.setName(getStr(item, "name"));
-                fwd.setTunnelId(getInt(item, "tunnelId"));
+                Long oldTunnelId = getLong(item, "tunnelId");
+                fwd.setTunnelId(oldTunnelId != null ? tunnelIdMap.getOrDefault(oldTunnelId, oldTunnelId).intValue() : null);
                 fwd.setInPort(getInt(item, "inPort"));
                 fwd.setOutPort(getInt(item, "outPort"));
                 fwd.setRemoteAddr(getStr(item, "remoteAddr"));
