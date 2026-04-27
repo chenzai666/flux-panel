@@ -79,6 +79,9 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, Node> implements No
     @Resource
     ViteConfigService viteConfigService;
 
+    @Value("${app-version}")
+    private String appVersion;
+
 
     // ========== 公共接口实现 ==========
 
@@ -363,7 +366,7 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, Node> implements No
         StringBuilder command = new StringBuilder();
         
         // 第一部分：下载安装脚本  
-        command.append("curl -L https://github.com/chenzai666/flux-panel/releases/download/1.5.7/install.sh")
+        command.append("curl -L https://github.com/chenzai666/flux-panel/releases/download/").append(appVersion).append("/install.sh")
                .append(" -o ./install.sh && chmod +x ./install.sh && ");
         
         // 处理服务器地址，如果是IPv6需要添加方括号
