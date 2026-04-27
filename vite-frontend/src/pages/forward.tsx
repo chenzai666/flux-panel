@@ -1358,12 +1358,13 @@ export default function ForwardPage() {
           <div className="flex gap-1.5 mt-3">
             <Button
               size="sm"
-              className="claude-btn claude-btn-primary"
+              variant="flat"
+              color="primary"
               onPress={() => handleEdit(forward)}
               className="flex-1 min-h-8"
               startContent={
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
               }
             >
@@ -1494,7 +1495,8 @@ export default function ForwardPage() {
 
             <Button
               size="sm"
-              className="claude-btn claude-btn-primary"
+              variant="flat"
+              color="primary"
               onPress={handleAdd}
             >
               新增
