@@ -537,4 +537,67 @@ body {
   100% { background-position: -200% 0; }
 }
 
+/* =============================================
+   侧边栏 — 永久深色专用样式
+   ============================================= */
+
+/* 侧边栏导航 active indicator 动画 */
+.sidebar-nav-active {
+  position: relative;
+}
+.sidebar-nav-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  background: #c96442;
+  border-radius: 0 2px 2px 0;
+}
+
+/* =============================================
+   统计卡片 — hover 微提升
+   ============================================= */
+.stat-card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.stat-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+}
+
+/* =============================================
+   表格行 hover
+   ============================================= */
+.claude-table-row {
+  transition: background-color 0.1s ease;
+}
+.claude-table-row:hover {
+  background: var(--color-background-secondary);
+}
+
+/* =============================================
+   登录页输入框原生样式补充
+   ============================================= */
+.login-input {
+  font-family: var(--font-sans);
+  -webkit-appearance: none;
+}
+.login-input:focus {
+  outline: none;
+}
+
+/* =============================================
+   页面过渡动画
+   ============================================= */
+.page-enter {
+  animation: pageEnter 0.2s ease-out;
+}
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 @config "../../tailwind.config.js"

@@ -1239,7 +1239,7 @@ export default function ForwardPage() {
     const strategyDisplay = getStrategyDisplay(forward.strategy);
     
     return (
-      <Card key={forward.id} className="group shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] rounded-2xl hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200">
+      <Card key={forward.id} className="group border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow duration-200">
         <CardHeader className="pb-2">
           <div className="flex justify-between items-start w-full">
             <div className="flex items-start gap-2 flex-1 min-w-0">
@@ -1277,14 +1277,14 @@ export default function ForwardPage() {
                 onValueChange={() => handleServiceToggle(forward)}
                 isDisabled={forward.status !== 1 && forward.status !== 0}
               />
-              <Chip 
-                color={statusDisplay.color as any} 
-                variant="flat" 
-                size="sm"
-                className="text-xs"
-              >
+              <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border ${
+                statusDisplay.color === 'success' ? 'badge-status-success' :
+                statusDisplay.color === 'warning' ? 'badge-status-warning' :
+                statusDisplay.color === 'danger' ? 'badge-status-danger' :
+                'badge-status-info'
+              }`}>
                 {statusDisplay.text}
-              </Chip>
+              </span>
             </div>
           </div>
         </CardHeader>
@@ -1421,12 +1421,11 @@ export default function ForwardPage() {
 
   return (
     
-      <div className="px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+      <div className="px-4 lg:px-6 py-4 lg:py-5">
         {/* 页面头部 */}
-        <div className="flex items-center justify-between mb-4 sm:mb-6">
-          <div className="flex-1">
-          </div>
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">转发管理</h1>
+          <div className="flex items-center gap-2">
             {/* 批量删除按钮 */}
             {selectedIds.size > 0 && (
               <Button
@@ -1495,11 +1494,10 @@ export default function ForwardPage() {
 
             <Button
               size="sm"
-              variant="flat"
-              color="primary"
+              className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
               onPress={handleAdd}
             >
-              新增
+              新增转发
             </Button>
             
         
@@ -1513,7 +1511,7 @@ export default function ForwardPage() {
           userGroups.length > 0 ? (
             <div className="space-y-6">
               {userGroups.map((userGroup) => (
-                <Card key={userGroup.userId || 'unknown'} className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] rounded-2xl w-full overflow-hidden">
+                <Card key={userGroup.userId || 'unknown'} className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl w-full overflow-hidden">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between w-full min-w-0">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -1575,19 +1573,12 @@ export default function ForwardPage() {
             </div>
           ) : (
             /* 空状态 */
-            <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] rounded-2xl">
+            <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
               <CardBody className="text-center py-16">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
-                    <svg className="w-8 h-8 text-[#9b9590] dark:text-[#5d5854]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">暂无转发配置</h3>
-                    <p className="text-[#9b9590] dark:text-[#5d5854] text-sm mt-1">还没有创建任何转发配置，点击上方按钮开始创建</p>
-                  </div>
-                </div>
+                <svg className="w-10 h-10 text-[#d0cac2] dark:text-[#3d3834] mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                </svg>
+                <p className="text-sm text-[#9b9590] dark:text-[#5d5854]">暂无转发配置</p>
               </CardBody>
             </Card>
           )
@@ -1615,19 +1606,12 @@ export default function ForwardPage() {
             </DndContext>
           ) : (
             /* 空状态 */
-            <Card className="shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] rounded-2xl">
+            <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
               <CardBody className="text-center py-16">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
-                    <svg className="w-8 h-8 text-[#9b9590] dark:text-[#5d5854]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">暂无转发配置</h3>
-                    <p className="text-[#9b9590] dark:text-[#5d5854] text-sm mt-1">还没有创建任何转发配置，点击上方按钮开始创建</p>
-                  </div>
-                </div>
+                <svg className="w-10 h-10 text-[#d0cac2] dark:text-[#3d3834] mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                </svg>
+                <p className="text-sm text-[#9b9590] dark:text-[#5d5854]">暂无转发配置</p>
               </CardBody>
             </Card>
           )
@@ -1645,13 +1629,8 @@ export default function ForwardPage() {
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1">
-                  <h2 className="text-xl font-bold">
-                    {isEdit ? '编辑转发' : '新增转发'}
-                  </h2>
-                  <p className="text-small text-[#9b9590] dark:text-[#5d5854]">
-                    {isEdit ? '修改现有转发配置的信息' : '创建新的转发配置'}
-                  </p>
+                <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">
+                  {isEdit ? '编辑转发' : '新增转发'}
                 </ModalHeader>
                 <ModalBody>
                   <div className="space-y-4 pb-4">
@@ -1749,12 +1728,12 @@ export default function ForwardPage() {
                     )}
                   </div>
                 </ModalBody>
-                <ModalFooter>
-                  <Button variant="light" onPress={onClose}>
+                <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+                  <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onClose}>
                     取消
                   </Button>
                   <Button
-                    className="claude-btn claude-btn-primary"
+                    className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                     onPress={handleSubmit}
                     isLoading={submitLoading}
                   >
@@ -1778,23 +1757,21 @@ export default function ForwardPage() {
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1">
-                  <h2 className="text-lg font-bold text-danger">确认删除</h2>
-                </ModalHeader>
+                <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold text-[#791F1F] dark:text-[#f7a0a0]">确认删除</ModalHeader>
                 <ModalBody>
                   <p className="text-[#6b6560] dark:text-[#8a8480]">
                     确定要删除转发 <span className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">"{forwardToDelete?.name}"</span> 吗？
                   </p>
-                  <p className="text-small text-[#9b9590] dark:text-[#5d5854] mt-2">
+                  <p className="text-sm text-[#9b9590] dark:text-[#5d5854] mt-2">
                     此操作无法撤销，删除后该转发将永久消失。
                   </p>
                 </ModalBody>
-                <ModalFooter>
-                  <Button variant="light" onPress={onClose}>
+                <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+                  <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onClose}>
                     取消
                   </Button>
-                  <Button 
-                    color="danger" 
+                  <Button
+                    color="danger"
                     onPress={confirmDelete}
                     isLoading={deleteLoading}
                   >
@@ -1807,9 +1784,9 @@ export default function ForwardPage() {
         </Modal>
 
         {/* 地址列表弹窗 */}
-        <Modal isOpen={addressModalOpen} onClose={() => setAddressModalOpen(false)} size="lg" scrollBehavior="outside">
+        <Modal isOpen={addressModalOpen} onClose={() => setAddressModalOpen(false)} size="lg" scrollBehavior="outside" backdrop="blur" placement="center">
           <ModalContent>
-            <ModalHeader className="text-base">{addressModalTitle}</ModalHeader>
+            <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">{addressModalTitle}</ModalHeader>
             <ModalBody className="pb-6">
               <div className="mb-4 text-right">
                 <Button size="sm" onClick={copyAllAddresses}>

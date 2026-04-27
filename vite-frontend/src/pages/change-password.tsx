@@ -110,20 +110,19 @@ export default function ChangePasswordPage() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10 min-h-[calc(100dvh-200px)]">
-        <div className="w-full max-w-lg">
-          <Card className="w-full">
-            <CardHeader className="pb-0 pt-6 px-6 flex-col items-center">
-              <div className="w-12 h-12 bg-warning-100 rounded-full flex items-center justify-center mb-3">
-                <svg className="w-6 h-6 text-warning-600" fill="currentColor" viewBox="0 0 20 20">
+        <div className="w-full max-w-md">
+          <Card className="w-full border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
+            <CardHeader className="px-5 py-4 border-b border-[#e5e0d8] dark:border-[#2d2824] flex-col items-center">
+              <div className="w-10 h-10 bg-[#FAEEDA] dark:bg-[#2d1f00] rounded-xl flex items-center justify-center mb-3">
+                <svg className="w-5 h-5 icon-warning" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </svg>
               </div>
-              
-              <h1 className="text-xl font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">安全提醒</h1>
-              <p className="text-small text-[#9b9590] dark:text-[#5d5854] mt-2 text-center">检测到您使用的是默认账号密码，为了您的账户安全，请立即修改</p>
+              <h1 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">安全提醒</h1>
+              <p className="text-sm text-[#9b9590] dark:text-[#5d5854] mt-1 text-center">检测到您使用的是默认账号密码，为了您的账户安全，请立即修改</p>
             </CardHeader>
-            
-            <CardBody className="px-6 py-6">
+
+            <CardBody className="px-5 py-5">
               <div className="flex flex-col gap-4">
                 <Input
                   label="新用户名"
@@ -136,7 +135,7 @@ export default function ChangePasswordPage() {
                   isInvalid={!!errors.newUsername}
                   errorMessage={errors.newUsername}
                 />
-                
+
                 <Input
                   label="当前密码"
                   placeholder="请输入当前密码"
@@ -149,7 +148,7 @@ export default function ChangePasswordPage() {
                   isInvalid={!!errors.currentPassword}
                   errorMessage={errors.currentPassword}
                 />
-                
+
                 <Input
                   label="新密码"
                   placeholder="请输入新密码（至少6位）"
@@ -162,7 +161,7 @@ export default function ChangePasswordPage() {
                   isInvalid={!!errors.newPassword}
                   errorMessage={errors.newPassword}
                 />
-                
+
                 <Input
                   label="确认新密码"
                   placeholder="请再次输入新密码"
@@ -175,20 +174,19 @@ export default function ChangePasswordPage() {
                   isInvalid={!!errors.confirmPassword}
                   errorMessage={errors.confirmPassword}
                 />
-                
+
                 <Button
-                  color="warning"
+                  className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg mt-1"
                   size="lg"
                   onClick={handleSubmit}
                   isLoading={loading}
                   disabled={loading}
-                  className="mt-2"
                 >
                   {loading ? "修改中..." : "立即修改账号密码"}
                 </Button>
-                
-                <div className="bg-warning-50 border border-warning-200 text-warning-700 px-3 py-2 rounded-lg text-sm text-center">
-                  ⚠️ 注意：修改账号密码后需要重新登录
+
+                <div className="badge-status-warning px-3 py-2 rounded-lg text-sm text-center border">
+                  注意：修改账号密码后需要重新登录
                 </div>
               </div>
             </CardBody>

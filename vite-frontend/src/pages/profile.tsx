@@ -164,11 +164,11 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="px-4 py-5 flex flex-col h-full">
+    <div className="px-4 lg:px-6 py-4 lg:py-5 flex flex-col h-full">
 
       <div className="space-y-4 flex-1">
-        {/* 用户信息卡片 - 更精致的头像和布局 */}
-        <div className="bg-white dark:bg-[#231e1b] rounded-2xl border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-5">
+        {/* 用户信息卡片 */}
+        <div className="bg-white dark:bg-[#231e1b] rounded-xl border border-[#e5e0d8] dark:border-[#2d2824] shadow-none p-5">
           <div className="flex items-center space-x-4">
             {/* 头像 - 渐变背景 */}
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#c96442] to-[#d4856a] flex items-center justify-center shadow-md">
@@ -196,7 +196,7 @@ export default function ProfilePage() {
 
         {/* 管理员功能 - 列表式菜单项 */}
         {isAdmin && (
-          <div className="bg-white dark:bg-[#231e1b] rounded-2xl border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
+          <div className="bg-white dark:bg-[#231e1b] rounded-xl border border-[#e5e0d8] dark:border-[#2d2824] shadow-none overflow-hidden">
             <div className="px-4 pt-3 pb-1">
               <span className="text-[11px] font-semibold text-[#9b9590] dark:text-[#5d5854] uppercase tracking-wider">管理功能</span>
             </div>
@@ -224,7 +224,7 @@ export default function ProfilePage() {
         )}
 
         {/* 常用功能 - 列表式菜单项 */}
-        <div className="bg-white dark:bg-[#231e1b] rounded-2xl border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
+        <div className="bg-white dark:bg-[#231e1b] rounded-xl border border-[#e5e0d8] dark:border-[#2d2824] shadow-none overflow-hidden">
           <div className="px-4 pt-3 pb-1">
             <span className="text-[11px] font-semibold text-[#9b9590] dark:text-[#5d5854] uppercase tracking-wider">常用功能</span>
           </div>
@@ -302,7 +302,7 @@ export default function ProfilePage() {
         <ModalContent>
           {(onClose: () => void) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">修改密码</ModalHeader>
+              <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">修改密码</ModalHeader>
               <ModalBody>
                 <div className="space-y-4">
                   <Input
@@ -338,12 +338,12 @@ export default function ProfilePage() {
                   />
                 </div>
               </ModalBody>
-              <ModalFooter>
-                <Button color="default" variant="light" onPress={onClose}>
+              <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+                <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onClose}>
                   取消
                 </Button>
-                <Button 
-                  className="claude-btn claude-btn-primary" 
+                <Button
+                  className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                   onPress={handlePasswordSubmit}
                   isLoading={passwordLoading}
                 >

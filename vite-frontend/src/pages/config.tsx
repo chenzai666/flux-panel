@@ -11,7 +11,6 @@ import { Select, SelectItem } from "@heroui/select";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import toast from 'react-hot-toast';
 import { updateConfigs, exportConfig, importConfig } from '@/api';
-import { SettingsIcon } from '@/components/icons';
 
 import { isAdmin } from '@/utils/auth';
 import { getCachedConfigs, clearConfigCache, updateSiteConfig } from '@/config/site';
@@ -479,27 +478,16 @@ export default function ConfigPage() {
 
   return (
     
-      <div className="px-4 lg:px-6 py-4 sm:py-6 lg:py-8 max-w-4xl mx-auto">
+      <div className="px-4 lg:px-6 py-4 lg:py-5 max-w-4xl mx-auto">
         {/* 页面标题 */}
-        <div className="flex items-center gap-3 mb-4 sm:mb-6">
-          <SettingsIcon className="w-8 h-8 text-[#c96442] dark:text-[#d4856a]" />
-          <div>
-            <h1 className="text-2xl font-bold">网站配置</h1>
-            <p className="text-[#6b6560] dark:text-[#9b9590]">
-              管理网站的基本信息和显示设置
-            </p>
-          </div>
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">网站配置</h1>
         </div>
 
-        <Card className="rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-          <CardHeader className="pb-4">
+        <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
+          <CardHeader className="px-5 py-4 border-b border-[#e5e0d8] dark:border-[#2d2824]">
             <div className="flex justify-between items-center w-full">
-              <div>
-                <h2 className="text-xl font-semibold">基本设置</h2>
-                <p className="text-sm text-[#6b6560] dark:text-[#9b9590]">
-                  配置网站的基本信息，这些设置会影响网站的显示效果
-                </p>
-              </div>
+              <h2 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">基本设置</h2>
               <div className="flex gap-2">
                 {/* 隐藏的文件选择 input */}
                 <input
@@ -536,8 +524,8 @@ export default function ConfigPage() {
                   导入备份
                 </Button>
 
-<Button 
-                  className="claude-btn claude-btn-primary"
+<Button
+                  className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                   startContent={<SaveIcon className="w-4 h-4" />}
                   onClick={handleSave}
                   isLoading={saving}
@@ -565,7 +553,7 @@ export default function ConfigPage() {
               return (
                 <div key={item.key} className="space-y-3">
                   <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium text-[#1a1a1a] dark:text-[#9b9590]">
+                    <label className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da]">
                       {item.label}
                     </label>
                     {item.description && (
@@ -590,16 +578,12 @@ export default function ConfigPage() {
 
         {/* 操作提示 */}
         {hasChanges && (
-          <Card className="mt-4 rounded-2xl bg-warning-50 dark:bg-warning-900/20 border-warning-200 dark:border-warning-800">
-            <CardBody className="py-3">
-              <div className="flex items-center gap-2 text-warning-700 dark:text-warning-300">
-                <div className="w-2 h-2 bg-warning-500 rounded-full animate-pulse" />
-                <span className="text-sm">
-                  检测到配置变更，请记得保存您的修改
-                </span>
-              </div>
-            </CardBody>
-          </Card>
+          <div className="mt-4 flex items-center gap-2 px-4 py-3 bg-[#FAEEDA] dark:bg-[#2d1f00] border border-[#FAC775] dark:border-[#5d3a00] rounded-xl">
+            <div className="w-2 h-2 bg-[#FAC775] rounded-full animate-pulse flex-shrink-0" />
+            <span className="text-sm text-[#633806] dark:text-[#FAC775]">
+              检测到配置变更，请记得保存您的修改
+            </span>
+          </div>
         )}
 
         {/* 备份导入确认弹窗 */}
@@ -614,9 +598,7 @@ export default function ConfigPage() {
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1">
-                  <h2 className="text-lg font-bold">确认导入备份</h2>
-                </ModalHeader>
+                <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">确认导入备份</ModalHeader>
                 <ModalBody>
                   {importPreview && (
                     <>
@@ -651,12 +633,12 @@ export default function ConfigPage() {
                     </>
                   )}
                 </ModalBody>
-                <ModalFooter>
-                  <Button variant="light" onPress={onClose}>
+                <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+                  <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onClose}>
                     取消
                   </Button>
-                  <Button 
-                    className="claude-btn claude-btn-primary" 
+                  <Button
+                    className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                     onPress={confirmImport}
                     isLoading={importing}
                   >

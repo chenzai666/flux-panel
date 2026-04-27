@@ -613,12 +613,12 @@ export default function DashboardPage() {
     }
 
       return (
-      
-        <div className="px-4 lg:px-6 py-3 lg:py-4">
+
+        <div className="px-4 lg:px-6 py-4 lg:py-5 animate-fade-in">
 
                           {/* 公告 */}
          {announcement && (
-           <Card className="mb-4 border shadow-[0_1px_3px_rgba(0,0,0,0.04)]" style={{borderColor:'var(--color-warning-border)',background:'var(--color-warning-bg)'}}>
+           <Card className="mb-4 border border-[#FAC775] dark:border-[#5d3a00] bg-[#FAEEDA] dark:bg-[#2d1f00] shadow-none rounded-xl">
              <CardBody className="p-3 lg:p-4">
                <div className="flex items-start gap-3">
                  <div className="p-1.5 rounded-lg flex-shrink-0 mt-0.5" style={{background:'var(--color-warning-bg)'}}>
@@ -637,7 +637,7 @@ export default function DashboardPage() {
 
                           {/* 响应式统计卡片 */}
          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-5 lg:mb-8">
-           <Card className="border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] transition-shadow">
+           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
@@ -653,7 +653,7 @@ export default function DashboardPage() {
              </CardBody>
            </Card>
 
-           <Card className="border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] transition-shadow">
+           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
@@ -685,7 +685,7 @@ export default function DashboardPage() {
              </CardBody>
            </Card>
 
-           <Card className="border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] transition-shadow">
+           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
@@ -701,7 +701,7 @@ export default function DashboardPage() {
              </CardBody>
            </Card>
 
-           <Card className="border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] transition-shadow">
+           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
@@ -725,13 +725,13 @@ export default function DashboardPage() {
          </div>
 
          {/* 24小时流量统计图表 */}
-         <Card className="mb-5 lg:mb-8 border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-           <CardHeader className="pb-3 px-4 lg:px-6 pt-4 lg:pt-6">
+         <Card className="mb-5 lg:mb-8 border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
+           <CardHeader className="px-5 py-4 border-b border-[#e5e0d8] dark:border-[#2d2824]">
              <div className="flex items-center gap-2">
                <svg className="w-5 h-5 text-[#c96442] dark:text-[#d4856a]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
                </svg>
-               <h2 className="text-base lg:text-xl font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">24小时流量统计</h2>
+               <h2 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">24小时流量统计</h2>
              </div>
            </CardHeader>
            <CardBody className="pt-0 px-4 lg:px-6 pb-4 lg:pb-6">
@@ -801,14 +801,14 @@ export default function DashboardPage() {
 
                  {/* 隧道权限 - 管理员不显示 */}
          {!isAdmin && (
-          <Card className="mb-6 lg:mb-8 border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-           <CardHeader className="pb-3">
+          <Card className="mb-6 lg:mb-8 border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
+           <CardHeader className="px-5 py-4 border-b border-[#e5e0d8] dark:border-[#2d2824]">
              <div className="flex items-center gap-2">
                <svg className="w-5 h-5 text-[#c96442] dark:text-[#d4856a]" fill="currentColor" viewBox="0 0 20 20">
                  <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
                </svg>
-               <h2 className="text-lg lg:text-xl font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">隧道权限</h2>
-               <span className="px-2 py-1 bg-[#f0ece6] dark:bg-[#2d2824] dark:bg-[#faf8f5] dark:bg-[#2d2824] text-[#6b6560] dark:text-[#8a8480] rounded-full text-xs">
+               <h2 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">隧道权限</h2>
+               <span className="px-2 py-0.5 bg-[#f0ece5] dark:bg-[#2d2824] text-[#6b6560] dark:text-[#8a8480] rounded-full text-xs font-medium">
                  {userTunnels.length}
                </span>
              </div>
@@ -884,14 +884,14 @@ export default function DashboardPage() {
          )}
 
                  {/* 转发配置 */}
-         <Card className="border border-[#e5e0d8] dark:border-[#2d2824] shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-           <CardHeader className="pb-3">
+         <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
+           <CardHeader className="px-5 py-4 border-b border-[#e5e0d8] dark:border-[#2d2824]">
              <div className="flex items-center gap-2">
                <svg className="w-5 h-5 text-[#c96442] dark:text-[#d4856a]" fill="currentColor" viewBox="0 0 20 20">
                  <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                </svg>
-               <h2 className="text-lg lg:text-xl font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">转发配置</h2>
-               <span className="px-2 py-1 bg-[#f0ece6] dark:bg-[#2d2824] dark:bg-[#faf8f5] dark:bg-[#2d2824] text-[#6b6560] dark:text-[#8a8480] rounded-full text-xs">
+               <h2 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">转发配置</h2>
+               <span className="px-2 py-0.5 bg-[#f0ece5] dark:bg-[#2d2824] text-[#6b6560] dark:text-[#8a8480] rounded-full text-xs font-medium">
                  {forwardList.length}
                </span>
              </div>
@@ -917,23 +917,21 @@ export default function DashboardPage() {
                      
                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                        {group.forwards.map((forward) => (
-                         <div key={forward.id} className="bg-white dark:bg-[#f0ece6] dark:bg-[#2d2824]/50 border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg p-3 hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow">
+                         <div key={forward.id} className="bg-[#f9f8f6] dark:bg-[#2d2824]/50 border border-[#e5e0d8] dark:border-[#2d2824] rounded-xl p-3 hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors">
                           <div className="space-y-3">
                             <div>
                               <h4 className="font-medium text-[#1a1a1a] dark:text-[#e8e2da] text-sm mb-2 truncate">{forward.name}</h4>
                               <div className="space-y-1">
-                                <code 
-                                  className={`block px-2 py-1 rounded font-mono text-xs truncate ${hasMultipleIps(forward.inIp) ? 'cursor-pointer' : ''}`}
-                                  style={{ background:'var(--color-success-bg)', color:'var(--color-success-text)' }}
+                                <code
+                                  className={`block px-2 py-1.5 rounded-md font-mono text-xs truncate badge-status-success ${hasMultipleIps(forward.inIp) ? 'cursor-pointer hover:opacity-80' : ''}`}
                                   onClick={() => hasMultipleIps(forward.inIp) && showAddressModal(forward.inIp, forward.inPort, '入口地址')}
                                   title={formatInAddress(forward.inIp, forward.inPort)}
                                 >
                                   {formatInAddress(forward.inIp, forward.inPort)}
                                 </code>
-                                <div className="text-center text-[#9b9590] dark:text-[#5d5854] text-xs">↓</div>
-                                <code 
-                                  className={`block px-2 py-1 rounded font-mono text-xs truncate ${hasMultipleRemoteAddresses(forward.remoteAddr) ? 'cursor-pointer' : ''}`}
-                                  style={{ background:'var(--color-info-bg)', color:'var(--color-info-text)' }}
+                                <div className="text-center text-[#9b9590] dark:text-[#5d5854] text-xs leading-none">↓</div>
+                                <code
+                                  className={`block px-2 py-1.5 rounded-md font-mono text-xs truncate badge-status-info ${hasMultipleRemoteAddresses(forward.remoteAddr) ? 'cursor-pointer hover:opacity-80' : ''}`}
                                   onClick={() => hasMultipleRemoteAddresses(forward.remoteAddr) && showRemoteAddressModal(forward.remoteAddr, '出口地址')}
                                   title={formatRemoteAddress(forward.remoteAddr)}
                                 >
@@ -970,12 +968,12 @@ export default function DashboardPage() {
         </Card>
 
         {/* 地址列表弹窗 */}
-        <Modal isOpen={addressModalOpen} onClose={() => setAddressModalOpen(false)} size="2xl" 
+        <Modal isOpen={addressModalOpen} onClose={() => setAddressModalOpen(false)} size="2xl"
         scrollBehavior="outside"
         backdrop="blur"
         placement="center">
           <ModalContent>
-            <ModalHeader className="text-base">{addressModalTitle}</ModalHeader>
+            <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">{addressModalTitle}</ModalHeader>
             <ModalBody className="pb-6">
               <div className="mb-4 text-right">
                 <Button size="sm" onClick={copyAllAddresses}>

@@ -425,22 +425,17 @@ export default function TunnelPage() {
 
   return (
     
-      <div className="px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+      <div className="px-4 lg:px-6 py-4 lg:py-5">
         {/* 页面头部 */}
-        <div className="flex items-center justify-between mb-4 sm:mb-6">
-        <div className="flex-1">
-        </div>
-
-        <Button
-              size="sm"
-              variant="flat"
-              color="primary"
-              onPress={handleAdd}
-             
-            >
-              新增
-            </Button>
-     
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">隧道管理</h1>
+          <Button
+            size="sm"
+            className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
+            onPress={handleAdd}
+          >
+            新增隧道
+          </Button>
         </div>
 
         {/* 隧道卡片网格 */}
@@ -451,28 +446,23 @@ export default function TunnelPage() {
               const typeDisplay = getTypeDisplay(tunnel.type);
               
               return (
-                <Card key={tunnel.id} className="rounded-2xl shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200">
+                <Card key={tunnel.id} className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow duration-200">
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start w-full">
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da] truncate text-sm">{tunnel.name}</h3>
                         <div className="flex items-center gap-1.5 mt-1">
-                          <Chip 
-                            color={typeDisplay.color as any} 
-                            variant="flat" 
-                            size="sm"
-                            className="text-xs"
-                          >
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border badge-status-info">
                             {typeDisplay.text}
-                          </Chip>
-                          <Chip 
-                            color={statusDisplay.color as any} 
-                            variant="flat" 
-                            size="sm"
-                            className="text-xs"
-                          >
+                          </span>
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border ${
+                            statusDisplay.color === 'success' ? 'badge-status-success' :
+                            statusDisplay.color === 'warning' ? 'badge-status-warning' :
+                            statusDisplay.color === 'danger' ? 'badge-status-danger' :
+                            'badge-status-info'
+                          }`}>
                             {statusDisplay.text}
-                          </Chip>
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -582,19 +572,12 @@ export default function TunnelPage() {
           </div>
         ) : (
           /* 空状态 */
-          <Card className="rounded-2xl shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
+          <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
             <CardBody className="text-center py-16">
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
-                  <svg className="w-8 h-8 text-[#9b9590] dark:text-[#5d5854]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">暂无隧道配置</h3>
-                  <p className="text-[#9b9590] dark:text-[#5d5854] text-sm mt-1">还没有创建任何隧道配置，点击上方按钮开始创建</p>
-                </div>
-              </div>
+              <svg className="w-10 h-10 text-[#d0cac2] dark:text-[#3d3834] mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+              </svg>
+              <p className="text-sm text-[#9b9590] dark:text-[#5d5854]">暂无隧道配置</p>
             </CardBody>
           </Card>
         )}
@@ -611,13 +594,8 @@ export default function TunnelPage() {
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1">
-                  <h2 className="text-xl font-bold">
-                    {isEdit ? '编辑隧道' : '新增隧道'}
-                  </h2>
-                  <p className="text-small text-[#9b9590] dark:text-[#5d5854]">
-                    {isEdit ? '修改现有隧道配置的信息' : '创建新的隧道配置'}
-                  </p>
+                <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">
+                  {isEdit ? '编辑隧道' : '新增隧道'}
                 </ModalHeader>
                 <ModalBody>
                   <div className="space-y-4">
@@ -858,12 +836,12 @@ export default function TunnelPage() {
                       />
                   </div>
                 </ModalBody>
-                <ModalFooter>
-                  <Button variant="light" onPress={onClose}>
+                <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+                  <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onClose}>
                     取消
                   </Button>
-                  <Button 
-                    className="claude-btn claude-btn-primary" 
+                  <Button
+                    className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                     onPress={handleSubmit}
                     isLoading={submitLoading}
                   >
@@ -887,15 +865,13 @@ export default function TunnelPage() {
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1">
-                  <h2 className="text-xl font-bold">确认删除</h2>
-                </ModalHeader>
+                <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold text-[#791F1F] dark:text-[#f7a0a0]">确认删除</ModalHeader>
                 <ModalBody>
-                  <p>确定要删除隧道 <strong>"{tunnelToDelete?.name}"</strong> 吗？</p>
-                  <p className="text-small text-[#9b9590] dark:text-[#5d5854]">此操作不可恢复，请谨慎操作。</p>
+                  <p className="text-[#6b6560] dark:text-[#8a8480]">确定要删除隧道 <span className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">"{tunnelToDelete?.name}"</span> 吗？</p>
+                  <p className="text-sm text-[#9b9590] dark:text-[#5d5854] mt-2">此操作不可恢复，请谨慎操作。</p>
                 </ModalBody>
-                <ModalFooter>
-                  <Button variant="light" onPress={onClose}>
+                <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+                  <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onClose}>
                     取消
                   </Button>
                   <Button 
@@ -923,8 +899,8 @@ export default function TunnelPage() {
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1">
-                  <h2 className="text-xl font-bold">隧道诊断结果</h2>
+                <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">
+                  隧道诊断结果
                   {currentDiagnosisTunnel && (
                     <div className="flex items-center gap-2">
                       <span className="text-small text-[#9b9590] dark:text-[#5d5854]">{currentDiagnosisTunnel.name}</span>

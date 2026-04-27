@@ -48,7 +48,7 @@ import {
   getSpeedLimitList,
   resetUserFlow
 } from '@/api';
-import { SearchIcon, EditIcon, DeleteIcon, UserIcon, SettingsIcon } from '@/components/icons';
+import { SearchIcon, EditIcon, DeleteIcon, SettingsIcon } from '@/components/icons';
 import { parseDate } from "@internationalized/date";
 
 
@@ -528,44 +528,39 @@ export default function UserPage() {
 
   return (
     
-      <div className="px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+      <div className="px-4 lg:px-6 py-4 lg:py-5">
       {/* 页面头部 */}
-      <div className="flex flex-col gap-4 mb-4 sm:mb-6">
-        <div className="flex items-center gap-3">
-        </div>
-        
+      <div className="flex flex-col gap-4 mb-5">
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-          <div className="flex items-center gap-3 flex-1 max-w-md">
+          <h1 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">用户管理</h1>
+          <div className="flex items-center gap-2 flex-1 max-w-sm justify-end">
             <Input
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               placeholder="搜索用户名"
               startContent={<SearchIcon className="w-4 h-4 text-[#9b9590] dark:text-[#5d5854]" />}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              className="flex-1"
+              size="sm"
               classNames={{
-                base: "bg-[#f0ece6] dark:bg-[#2d2824]",
-                input: "bg-transparent",
-                inputWrapper: "bg-[#f0ece6] dark:bg-[#2d2824] border-2 border-[#e5e0d8] dark:border-[#2d2824] hover:border-[#c96442] focus-within:border-[#c96442] data-[hover=true]:border-[#c96442]"
+                inputWrapper: "border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b]"
               }}
             />
             <Button
               onClick={handleSearch}
               isIconOnly
-              className="claude-btn claude-btn-primary min-h-10 w-10"
+              size="sm"
+              className="bg-[#f0ece5] dark:bg-[#2d2824] text-[#6b6560] dark:text-[#8a8480] border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg"
             >
               <SearchIcon className="w-4 h-4" />
             </Button>
-          </div>
-          
-          <Button
-              variant="flat"
-              color="primary"
+            <Button
+              size="sm"
+              className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
               onPress={handleAdd}
-             
             >
-              新增
+              新增用户
             </Button>
+          </div>
         </div>
       </div>
 
@@ -578,17 +573,12 @@ export default function UserPage() {
           </div>
         </div>
       ) : users.length === 0 ? (
-        <Card className="rounded-2xl shadow-sm border border-[#e5e0d8] dark:border-[#2d2824]">
+        <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
           <CardBody className="text-center py-16">
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center">
-                <UserIcon className="w-8 h-8 text-[#9b9590] dark:text-[#5d5854]" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">暂无用户数据</h3>
-                <p className="text-[#9b9590] dark:text-[#5d5854] text-sm mt-1">还没有创建任何用户，点击上方按钮开始创建</p>
-              </div>
-            </div>
+            <svg className="w-10 h-10 text-[#d0cac2] dark:text-[#3d3834] mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <p className="text-sm text-[#9b9590] dark:text-[#5d5854]">暂无用户数据</p>
           </CardBody>
         </Card>
       ) : (
@@ -600,9 +590,9 @@ export default function UserPage() {
             const flowPercent = user.flow > 0 ? Math.min((usedFlow / (user.flow * 1024 * 1024 * 1024)) * 100, 100) : 0;
             
             return (
-              <Card 
-                key={user.id} 
-                className="rounded-2xl shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200"
+              <Card
+                key={user.id}
+                className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow duration-200"
               >
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start w-full">
@@ -613,14 +603,13 @@ export default function UserPage() {
                       <p className="text-xs text-[#9b9590] dark:text-[#5d5854] truncate">@{user.user}</p>
                     </div>
                     <div className="flex items-center gap-1.5 ml-2">
-                      <Chip 
-                        color={userStatus.color} 
-                        variant="flat" 
-                        size="sm"
-                        className="text-xs"
-                      >
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border ${
+                        userStatus.color === 'success' ? 'badge-status-success' :
+                        userStatus.color === 'danger' ? 'badge-status-danger' :
+                        'badge-status-warning'
+                      }`}>
                         {userStatus.text}
-                      </Chip>
+                      </span>
                     </div>
                   </div>
                 </CardHeader>
@@ -661,16 +650,15 @@ export default function UserPage() {
                           <span className="text-[#6b6560] dark:text-[#8a8480]">过期时间</span>
                           <div className="text-right">
                             {expStatus && expStatus.color === 'success' ? (
-                              <div className="text-xs">{formatDate(user.expTime)}</div>
+                              <div className="text-xs text-[#6b6560] dark:text-[#8a8480]">{formatDate(user.expTime)}</div>
                             ) : (
-                              <Chip 
-                                color={expStatus?.color || 'default'} 
-                                variant="flat" 
-                                size="sm"
-                                className="text-xs"
-                              >
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border ${
+                                expStatus?.color === 'danger' ? 'badge-status-danger' :
+                                expStatus?.color === 'warning' ? 'badge-status-warning' :
+                                'badge-status-info'
+                              }`}>
                                 {expStatus?.text || '未知状态'}
-                              </Chip>
+                              </span>
                             )}
                           </div>
                         </div>
@@ -749,7 +737,7 @@ export default function UserPage() {
       placement="center"
       >
         <ModalContent>
-          <ModalHeader>
+          <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">
             {isEdit ? '编辑用户' : '新增用户'}
           </ModalHeader>
           <ModalBody>
@@ -838,12 +826,12 @@ export default function UserPage() {
               <Radio value="0">禁用</Radio>
             </RadioGroup>
           </ModalBody>
-          <ModalFooter>
-            <Button onPress={onUserModalClose}>
+          <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+            <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onUserModalClose}>
               取消
             </Button>
             <Button
-              className="claude-btn claude-btn-primary"
+              className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
               onPress={handleSubmitUser}
               isLoading={userFormLoading}
             >
@@ -867,7 +855,7 @@ export default function UserPage() {
         }}
       >
         <ModalContent>
-          <ModalHeader>
+          <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">
             用户 {currentUser?.user} 的隧道权限管理
           </ModalHeader>
           <ModalBody>
@@ -972,7 +960,7 @@ export default function UserPage() {
                   </div>
                   
                   <Button
-                    className="claude-btn claude-btn-primary"
+                    className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                     onPress={handleAssignTunnel}
                     isLoading={assignLoading}
                   >
@@ -1086,8 +1074,8 @@ export default function UserPage() {
               </div>
             </div>
           </ModalBody>
-          <ModalFooter>
-            <Button onPress={onTunnelModalClose}>
+          <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+            <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onTunnelModalClose}>
               关闭
             </Button>
           </ModalFooter>
@@ -1105,7 +1093,7 @@ export default function UserPage() {
         isDismissable={false}
       >
         <ModalContent>
-          <ModalHeader>
+          <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">
             编辑隧道权限 - {editTunnelForm?.tunnelName}
           </ModalHeader>
           <ModalBody>
@@ -1203,12 +1191,12 @@ export default function UserPage() {
               </>
             )}
           </ModalBody>
-          <ModalFooter>
-            <Button onPress={onEditTunnelModalClose}>
+          <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+            <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onEditTunnelModalClose}>
               取消
             </Button>
             <Button
-              className="claude-btn claude-btn-primary"
+              className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
               onPress={handleUpdateTunnel}
               isLoading={editTunnelLoading}
             >
@@ -1228,33 +1216,27 @@ export default function UserPage() {
       placement="center"
       >
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
+          <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold text-[#791F1F] dark:text-[#f7a0a0]">
             确认删除用户
           </ModalHeader>
           <ModalBody>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-danger-100 rounded-full flex items-center justify-center">
-                <DeleteIcon className="w-6 h-6 text-danger" />
-              </div>
-              <div className="flex-1">
-                <p className="text-[#1a1a1a] dark:text-[#e8e2da]">
-                  确定要删除用户 <span className="font-semibold text-danger">"{userToDelete?.user}"</span> 吗？
-                </p>
-                <p className="text-small text-[#9b9590] dark:text-[#5d5854] mt-1">
-                  此操作不可撤销，用户的所有数据将被永久删除。
-                </p>
-              </div>
-            </div>
+            <p className="text-[#6b6560] dark:text-[#8a8480]">
+              确定要删除用户 <span className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">"{userToDelete?.user}"</span> 吗？
+            </p>
+            <p className="text-sm text-[#9b9590] dark:text-[#5d5854] mt-2">
+              此操作不可撤销，用户的所有数据将被永久删除。
+            </p>
           </ModalBody>
-          <ModalFooter>
-            <Button 
-              variant="light" 
+          <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+            <Button
+              variant="light"
+              className="text-[#6b6560] dark:text-[#8a8480]"
               onPress={onDeleteModalClose}
             >
               取消
             </Button>
-            <Button 
-              color="danger" 
+            <Button
+              color="danger"
               onPress={handleConfirmDelete}
             >
               确认删除
@@ -1273,33 +1255,27 @@ export default function UserPage() {
       placement="center"
       >
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
+          <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold text-[#791F1F] dark:text-[#f7a0a0]">
             确认删除隧道权限
           </ModalHeader>
           <ModalBody>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-danger-100 rounded-full flex items-center justify-center">
-                <DeleteIcon className="w-6 h-6 text-danger" />
-              </div>
-              <div className="flex-1">
-                <p className="text-[#1a1a1a] dark:text-[#e8e2da]">
-                  确定要删除用户 <span className="font-semibold">{currentUser?.user}</span> 对隧道 <span className="font-semibold text-danger">"{tunnelToDelete?.tunnelName}"</span> 的权限吗？
-                </p>
-                <p className="text-small text-[#9b9590] dark:text-[#5d5854] mt-1">
-                  删除后该用户将无法使用此隧道创建转发，此操作不可撤销。
-                </p>
-              </div>
-            </div>
+            <p className="text-[#6b6560] dark:text-[#8a8480]">
+              确定要删除用户 <span className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{currentUser?.user}</span> 对隧道 <span className="font-semibold text-[#791F1F] dark:text-[#f7a0a0]">"{tunnelToDelete?.tunnelName}"</span> 的权限吗？
+            </p>
+            <p className="text-sm text-[#9b9590] dark:text-[#5d5854] mt-2">
+              删除后该用户将无法使用此隧道创建转发，此操作不可撤销。
+            </p>
           </ModalBody>
-          <ModalFooter>
-            <Button 
-              variant="light" 
+          <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+            <Button
+              variant="light"
+              className="text-[#6b6560] dark:text-[#8a8480]"
               onPress={onDeleteTunnelModalClose}
             >
               取消
             </Button>
-            <Button 
-              color="danger" 
+            <Button
+              color="danger"
               onPress={handleConfirmRemoveTunnel}
             >
               确认删除
@@ -1318,21 +1294,16 @@ export default function UserPage() {
       placement="center"
       >
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
+          <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">
             确认重置流量
           </ModalHeader>
           <ModalBody>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-warning-100 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-warning" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
-                </svg>
-              </div>
+            <div className="flex items-start gap-4">
               <div className="flex-1">
-                <p className="text-[#1a1a1a] dark:text-[#e8e2da]">
-                  确定要重置用户 <span className="font-semibold text-warning">"{userToReset?.user}"</span> 的流量吗？
+                <p className="text-[#6b6560] dark:text-[#8a8480]">
+                  确定要重置用户 <span className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">"{userToReset?.user}"</span> 的流量吗？
                 </p>
-                <p className="text-small text-[#9b9590] dark:text-[#5d5854] mt-1">
+                <p className="text-sm text-[#9b9590] dark:text-[#5d5854] mt-1">
                   该操作只会重置账号流量不会重置隧道权限流量，重置后该用户的上下行流量将归零，此操作不可撤销。
                 </p>
                 <div className="mt-2 p-2 bg-warning-50 dark:bg-warning-100/10 rounded text-xs">
@@ -1359,15 +1330,16 @@ export default function UserPage() {
               </div>
             </div>
           </ModalBody>
-          <ModalFooter>
-            <Button 
-              variant="light" 
+          <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+            <Button
+              variant="light"
+              className="text-[#6b6560] dark:text-[#8a8480]"
               onPress={onResetFlowModalClose}
             >
               取消
             </Button>
-            <Button 
-              color="warning" 
+            <Button
+              color="warning"
               onPress={handleConfirmResetFlow}
               isLoading={resetFlowLoading}
             >
@@ -1387,21 +1359,16 @@ export default function UserPage() {
       placement="center"
       >
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
+          <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">
             确认重置隧道流量
           </ModalHeader>
           <ModalBody>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-warning-100 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-warning" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
-                </svg>
-              </div>
+            <div className="flex items-start gap-4">
               <div className="flex-1">
-                <p className="text-[#1a1a1a] dark:text-[#e8e2da]">
-                  确定要重置用户 <span className="font-semibold">{currentUser?.user}</span> 对隧道 <span className="font-semibold text-warning">"{tunnelToReset?.tunnelName}"</span> 的流量吗？
+                <p className="text-[#6b6560] dark:text-[#8a8480]">
+                  确定要重置用户 <span className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{currentUser?.user}</span> 对隧道 <span className="font-semibold text-[#633806] dark:text-[#FAC775]">"{tunnelToReset?.tunnelName}"</span> 的流量吗？
                 </p>
-                <p className="text-small text-[#9b9590] dark:text-[#5d5854] mt-1">
+                <p className="text-sm text-[#9b9590] dark:text-[#5d5854] mt-1">
                   该操作只会重置隧道权限流量不会重置账号流量，重置后该隧道权限的上下行流量将归零，此操作不可撤销。
                 </p>
                 <div className="mt-2 p-2 bg-warning-50 dark:bg-warning-100/10 rounded text-xs">
@@ -1428,15 +1395,16 @@ export default function UserPage() {
               </div>
             </div>
           </ModalBody>
-          <ModalFooter>
-            <Button 
-              variant="light" 
+          <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+            <Button
+              variant="light"
+              className="text-[#6b6560] dark:text-[#8a8480]"
               onPress={onResetTunnelFlowModalClose}
             >
               取消
             </Button>
-            <Button 
-              color="warning" 
+            <Button
+              color="warning"
               onPress={handleConfirmResetTunnelFlow}
               isLoading={resetTunnelFlowLoading}
             >
