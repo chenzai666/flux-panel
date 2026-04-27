@@ -247,149 +247,148 @@ export default function AdminLayout({
       {/* 移动端遮罩层 */}
       {isMobile && mobileMenuVisible && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
           onClick={hideMobileMenu}
         />
       )}
 
-      {/* 左侧菜单栏 — 永久深色，对齐 Claude.ai 真实侧边栏 */}
+      {/* 侧边栏 — 浅色，对齐参考设计 */}
       <aside className={`
         ${isMobile ? 'fixed' : 'relative'}
         ${isMobile && !mobileMenuVisible ? '-translate-x-full' : 'translate-x-0'}
-        ${isMobile ? 'w-[272px]' : 'w-[252px]'}
-        bg-[#1c1917]
-        border-r border-[#2a2522]
+        ${isMobile ? 'w-[260px]' : 'w-[220px]'}
+        bg-white dark:bg-[#231e1b]
+        border-r border-[#ebe7e1] dark:border-[#2d2824]
         z-50
         transition-transform duration-300 ease-in-out
         flex flex-col
         ${isMobile ? 'h-screen' : 'h-full'}
         ${isMobile ? 'top-0 left-0' : ''}
       `}>
-        {/* Logo 区域 */}
-        <div className="px-4 py-4 h-14 flex items-center border-b border-[#2a2522]">
-          <div className="flex items-center gap-2.5 w-full">
-            <div className="w-8 h-8 rounded-xl bg-[#c96442] flex items-center justify-center flex-shrink-0 shadow-sm">
-              <Logo size={16} className="text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-[13px] font-semibold text-[#e8e2da] overflow-hidden whitespace-nowrap leading-tight">{siteConfig.name}</h1>
-              <p className="text-[10px] text-[#4d4844] leading-tight mt-0.5">v{siteConfig.version}</p>
-            </div>
+        {/* Logo */}
+        <div className="px-4 py-5 border-b border-[#ebe7e1] dark:border-[#2d2824] flex items-center gap-2.5">
+          <div className="w-[28px] h-[28px] rounded-lg bg-[#1a1a1a] dark:bg-[#e8e2da] flex items-center justify-center flex-shrink-0">
+            <Logo size={14} className="text-white dark:text-[#1a1a1a]" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[15px] font-medium text-[#1a1a1a] dark:text-[#e8e2da] leading-tight truncate tracking-[-0.01em]">{siteConfig.name}</div>
+            <div className="text-[11px] text-[#9b9590] dark:text-[#5d5854] leading-tight mt-[1px]">v{siteConfig.version}</div>
           </div>
         </div>
 
-        {/* 菜单导航 */}
-        <nav className="flex-1 px-2 py-3 overflow-y-auto">
-          <ul className="space-y-0.5">
-            {filteredMenuItems.map((item) => {
+        {/* 导航 */}
+        <nav className="flex-1 overflow-y-auto">
+          {/* 概览 */}
+          <div className="px-2.5 pt-4 pb-2">
+            <div className="px-2 pb-[6px] text-[11px] font-medium text-[#9b9590] dark:text-[#5d5854] uppercase tracking-[0.04em]">概览</div>
+            {filteredMenuItems.filter(item => item.path === '/dashboard').map(item => {
               const isActive = location.pathname === item.path;
               return (
-                <li key={item.path}>
-                  <button
-                    onClick={() => handleMenuClick(item.path)}
-                    className={`
-                      w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left
-                      transition-all duration-150 min-h-[38px]
-                      ${isActive
-                        ? 'bg-[#2d2824] text-[#d4856a]'
-                        : 'text-[#7a7470] hover:bg-[#262220] hover:text-[#c8c2bc]'
-                      }
-                    `}
-                  >
-                    <div className={`flex-shrink-0 w-[18px] h-[18px] ${isActive ? 'text-[#d4856a]' : ''}`}>
-                      {item.icon}
-                    </div>
-                    <span className={`text-[13px] ${isActive ? 'font-semibold text-[#d4856a]' : 'font-medium'}`}>{item.label}</span>
-                    {isActive && (
-                      <div className="ml-auto w-1 h-4 rounded-full bg-[#c96442] opacity-80" />
-                    )}
-                  </button>
-                </li>
+                <button
+                  key={item.path}
+                  onClick={() => handleMenuClick(item.path)}
+                  className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-left transition-all duration-100 mb-[1px]
+                    ${isActive
+                      ? 'bg-[#f3f0eb] dark:bg-[#2d2824] text-[#1a1a1a] dark:text-[#e8e2da] font-medium'
+                      : 'text-[#6b6560] dark:text-[#8a8480] hover:bg-[#f9f8f6] dark:hover:bg-[#2d2824]/60 hover:text-[#1a1a1a] dark:hover:text-[#e8e2da]'
+                    }`}
+                >
+                  <div className="w-4 h-4 flex-shrink-0 opacity-70">{item.icon}</div>
+                  <span className="text-[13.5px]">{item.label}</span>
+                </button>
               );
             })}
-          </ul>
+          </div>
+
+          {/* 管理 */}
+          {filteredMenuItems.filter(item => item.path !== '/dashboard').length > 0 && (
+            <div className="px-2.5 pt-3 pb-2">
+              <div className="px-2 pb-[6px] text-[11px] font-medium text-[#9b9590] dark:text-[#5d5854] uppercase tracking-[0.04em]">管理</div>
+              {filteredMenuItems.filter(item => item.path !== '/dashboard').map(item => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => handleMenuClick(item.path)}
+                    className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-left transition-all duration-100 mb-[1px]
+                      ${isActive
+                        ? 'bg-[#f3f0eb] dark:bg-[#2d2824] text-[#1a1a1a] dark:text-[#e8e2da] font-medium'
+                        : 'text-[#6b6560] dark:text-[#8a8480] hover:bg-[#f9f8f6] dark:hover:bg-[#2d2824]/60 hover:text-[#1a1a1a] dark:hover:text-[#e8e2da]'
+                      }`}
+                  >
+                    <div className="w-4 h-4 flex-shrink-0 opacity-70">{item.icon}</div>
+                    <span className="text-[13.5px]">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </nav>
 
-        {/* 底部版权信息 */}
-        <div className="px-4 py-3 flex-shrink-0 border-t border-[#2a2522]">
-          <p className="text-[10px] text-[#3d3834] text-center">
-            Powered by{' '}
-            <a
-              href="https://github.com/chenzai666/flux-panel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#4d4844] hover:text-[#c96442] transition-colors"
-            >
-              flux-panel
-            </a>
-          </p>
+        {/* 用户 footer — 点击弹出菜单 */}
+        <div className="border-t border-[#ebe7e1] dark:border-[#2d2824] p-2.5">
+          <Dropdown placement="top-start">
+            <DropdownTrigger>
+              <button className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors text-left">
+                <div className="w-[28px] h-[28px] rounded-lg bg-[#f3f0eb] dark:bg-[#2d2824] border border-[#e5e0d8] dark:border-[#3d3834] flex items-center justify-center text-[12px] font-medium text-[#1a1a1a] dark:text-[#e8e2da] flex-shrink-0">
+                  {username.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13px] font-medium text-[#1a1a1a] dark:text-[#e8e2da] leading-tight truncate">{username}</div>
+                  <div className="text-[11px] text-[#9b9590] dark:text-[#5d5854] leading-tight">{isAdmin ? '超级管理员' : '普通用户'}</div>
+                </div>
+                <svg className="w-3.5 h-3.5 text-[#9b9590] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                </svg>
+              </button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="用户菜单" className="min-w-[180px]">
+              <DropdownItem
+                key="change-password"
+                startContent={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                  </svg>
+                }
+                onPress={onOpen}
+              >
+                修改密码
+              </DropdownItem>
+              <DropdownItem
+                key="logout"
+                startContent={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                  </svg>
+                }
+                className="text-[#c53030]"
+                color="danger"
+                onPress={handleLogout}
+              >
+                退出登录
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       </aside>
 
       {/* 主内容区域 */}
       <div className={`flex flex-col flex-1 ${isMobile ? 'min-h-0' : 'h-full overflow-hidden'}`}>
         {/* 顶部导航栏 */}
-        <header className="bg-white dark:bg-[#231e1b] border-b border-[#e8e2da] dark:border-[#2d2824] h-14 flex items-center justify-between px-5 lg:px-6 relative z-10">
-          <div className="flex items-center gap-3">
-            {/* 移动端菜单按钮 */}
-            {isMobile && (
-              <button
-                onClick={toggleMobileMenu}
-                className="p-1.5 rounded-lg text-[#6b6560] dark:text-[#8a8480] hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-              </button>
-            )}
-            {/* 当前页面标题 */}
-            <h2 className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da] hidden sm:block">
-              {filteredMenuItems.find(item => item.path === location.pathname)?.label || ''}
-            </h2>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* 用户菜单 */}
-            <Dropdown placement="bottom-end">
-              <DropdownTrigger>
-                <button className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-sm font-medium text-[#6b6560] dark:text-[#8a8480] hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors">
-                  <div className="w-6 h-6 rounded-full bg-[#c96442] flex items-center justify-center">
-                    <span className="text-[11px] font-semibold text-white">{username.charAt(0).toUpperCase()}</span>
-                  </div>
-                  <span className="hidden sm:inline text-[13px]">{username}</span>
-                  <svg className="w-3 h-3 text-[#9b9590]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                  </svg>
-                </button>
-              </DropdownTrigger>
-              <DropdownMenu aria-label="用户菜单" className="min-w-[180px]">
-                <DropdownItem
-                  key="change-password"
-                  startContent={
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                    </svg>
-                  }
-                  onPress={onOpen}
-                >
-                  修改密码
-                </DropdownItem>
-                <DropdownItem
-                  key="logout"
-                  startContent={
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
-                    </svg>
-                  }
-                  className="text-[#c53030]"
-                  color="danger"
-                  onPress={handleLogout}
-                >
-                  退出登录
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
+        <header className="bg-white dark:bg-[#231e1b] border-b border-[#ebe7e1] dark:border-[#2d2824] h-[54px] flex items-center px-6 gap-3 flex-shrink-0 relative z-10">
+          {isMobile && (
+            <button
+              onClick={toggleMobileMenu}
+              className="p-1.5 rounded-lg text-[#6b6560] dark:text-[#8a8480] hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </button>
+          )}
+          <h2 className="text-[15px] font-medium text-[#1a1a1a] dark:text-[#e8e2da]">
+            {filteredMenuItems.find(item => item.path === location.pathname)?.label || ''}
+          </h2>
         </header>
 
         {/* 主内容 */}
