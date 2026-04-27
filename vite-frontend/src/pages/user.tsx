@@ -843,7 +843,7 @@ export default function UserPage() {
               取消
             </Button>
             <Button
-              color="primary"
+              className="claude-btn claude-btn-primary"
               onPress={handleSubmitUser}
               isLoading={userFormLoading}
             >
@@ -972,7 +972,7 @@ export default function UserPage() {
                   </div>
                   
                   <Button
-                    color="primary"
+                    className="claude-btn claude-btn-primary"
                     onPress={handleAssignTunnel}
                     isLoading={assignLoading}
                   >
@@ -1208,7 +1208,7 @@ export default function UserPage() {
               取消
             </Button>
             <Button
-              color="primary"
+              className="claude-btn claude-btn-primary"
               onPress={handleUpdateTunnel}
               isLoading={editTunnelLoading}
             >

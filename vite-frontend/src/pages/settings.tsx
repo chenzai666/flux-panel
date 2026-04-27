@@ -119,7 +119,7 @@ export const SettingsPage = () => {
                     onChange={(e) => setNewAddress(e.target.value)}
                   />
                 </div>
-                <Button color="primary" onClick={addPanelAddress}>
+                <Button className="claude-btn claude-btn-primary" onClick={addPanelAddress}>
                   添加
                 </Button>
               </div>

@@ -536,8 +536,8 @@ export default function ConfigPage() {
                   导入备份
                 </Button>
 
-                <Button
-                  color="primary"
+<Button 
+                  className="claude-btn claude-btn-primary"
                   startContent={<SaveIcon className="w-4 h-4" />}
                   onClick={handleSave}
                   isLoading={saving}
@@ -656,7 +656,7 @@ export default function ConfigPage() {
                     取消
                   </Button>
                   <Button 
-                    color="primary" 
+                    className="claude-btn claude-btn-primary" 
                     onPress={confirmImport}
                     isLoading={importing}
                   >

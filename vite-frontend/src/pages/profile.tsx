@@ -343,7 +343,7 @@ export default function ProfilePage() {
                   取消
                 </Button>
                 <Button 
-                  color="primary" 
+                  className="claude-btn claude-btn-primary" 
                   onPress={handlePasswordSubmit}
                   isLoading={passwordLoading}
                 >

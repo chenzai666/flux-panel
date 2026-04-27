@@ -863,7 +863,7 @@ export default function TunnelPage() {
                     取消
                   </Button>
                   <Button 
-                    color="primary" 
+                    className="claude-btn claude-btn-primary" 
                     onPress={handleSubmit}
                     isLoading={submitLoading}
                   >
@@ -1036,7 +1036,7 @@ export default function TunnelPage() {
                   </Button>
                   {currentDiagnosisTunnel && (
                     <Button 
-                      color="primary" 
+                      className="claude-btn claude-btn-primary" 
                       onPress={() => handleDiagnose(currentDiagnosisTunnel)}
                       isLoading={diagnosisLoading}
                     >

@@ -417,7 +417,7 @@ export default function LimitPage() {
                     取消
                   </Button>
                   <Button 
-                    color="primary" 
+                    className="claude-btn claude-btn-primary" 
                     onPress={handleSubmit}
                     isLoading={submitLoading}
                   >
