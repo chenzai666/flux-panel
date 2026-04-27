@@ -637,7 +637,9 @@ export default function NodePage() {
             {nodeList.map((node) => (
               <Card 
                 key={node.id} 
-                className="rounded-2xl shadow-sm border border-[#e5e0d8] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow duration-200"
+                className={`rounded-2xl shadow-sm border border-[#ebe7e1] dark:border-[#2d2824] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-all duration-200 ${
+                  node.connectionStatus !== 'online' ? 'opacity-50 grayscale-[20%]' : ''
+                }`}
               >
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start w-full">
@@ -663,27 +665,27 @@ export default function NodePage() {
                   <div className="space-y-2 mb-4">
                     <div className="flex justify-between items-center text-sm min-w-0">
                       <span className="text-[#6b6560] dark:text-[#8a8480] flex-shrink-0">入口IP</span>
-                      <div className="text-right text-xs min-w-0 flex-1 ml-2">
+                      <div className="text-right min-w-0 flex-1 ml-2">
                         {node.ip ? (
                           node.ip.split(',').length > 1 ? (
-                            <span className="font-mono truncate block" title={node.ip.split(',')[0].trim()}>
-                              {node.ip.split(',')[0].trim()} +{node.ip.split(',').length - 1}个
+                            <span className="font-mono text-xs text-[#6b6560] dark:text-[#8a8480] truncate block" title={node.ip.split(',')[0].trim()}>
+                              {node.ip.split(',')[0].trim()} <span className="text-[#9b9590]">+{node.ip.split(',').length - 1}</span>
                             </span>
                           ) : (
-                            <span className="font-mono truncate block" title={node.ip.trim()}>
+                            <span className="font-mono text-xs text-[#6b6560] dark:text-[#8a8480] truncate block" title={node.ip.trim()}>
                               {node.ip.trim()}
                             </span>
                           )
-                        ) : '-'}
+                        ) : <span className="text-[#9b9590] text-xs">—</span>}
                       </div>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-[#6b6560] dark:text-[#8a8480]">端口</span>
-                      <span className="text-xs">{node.portSta}-{node.portEnd}</span>
+                      <span className="font-mono text-xs text-[#6b6560] dark:text-[#8a8480]">{node.portSta}–{node.portEnd}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-[#6b6560] dark:text-[#8a8480]">版本</span>
-                      <span className="text-xs">{node.version || '未知'}</span>
+                      <span className="font-mono text-xs text-[#6b6560] dark:text-[#8a8480]">{node.version || '—'}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-[#6b6560] dark:text-[#8a8480]">开机时间</span>

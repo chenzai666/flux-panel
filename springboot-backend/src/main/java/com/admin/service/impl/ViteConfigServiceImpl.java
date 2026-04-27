@@ -348,6 +348,8 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
 
     /**
      * 导入备份数据
+     * 导入顺序：vite_config → node → tunnel → user → user_tunnel → speed_limit → forward
+     * 使用 id 映射表确保关联关系正确（因为自增 id 会变）
      */
     @Override
     @Transactional
@@ -362,6 +364,11 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
             int totalFailed = 0;
             List<String> details = new ArrayList<>();
 
+            // ID 映射表：旧id → 新id
+            Map<Long, Long> nodeIdMap = new HashMap<>();
+            Map<Long, Long> tunnelIdMap = new HashMap<>();
+            Map<Long, Long> userIdMap = new HashMap<>();
+
             // 导入 vite_config
             if (backupData.containsKey("vite_config")) {
                 int[] counts = importViteConfig((List<Map<String, Object>>) backupData.get("vite_config"));
@@ -370,33 +377,33 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
                 totalFailed += counts[1];
             }
 
-            // 导入 node
+            // 导入 node（记录 id 映射）
             if (backupData.containsKey("node")) {
-                int[] counts = importNode((List<Map<String, Object>>) backupData.get("node"));
+                int[] counts = importNode((List<Map<String, Object>>) backupData.get("node"), nodeIdMap);
                 details.add("节点: " + counts[0] + "条成功" + (counts[1] > 0 ? ", " + counts[1] + "条失败" : ""));
                 totalImported += counts[0];
                 totalFailed += counts[1];
             }
 
-            // 导入 tunnel
+            // 导入 tunnel（记录 id 映射，使用 nodeIdMap 替换 inNodeId/outNodeId）
             if (backupData.containsKey("tunnel")) {
-                int[] counts = importTunnel((List<Map<String, Object>>) backupData.get("tunnel"));
+                int[] counts = importTunnel((List<Map<String, Object>>) backupData.get("tunnel"), nodeIdMap, tunnelIdMap);
                 details.add("隧道: " + counts[0] + "条成功" + (counts[1] > 0 ? ", " + counts[1] + "条失败" : ""));
                 totalImported += counts[0];
                 totalFailed += counts[1];
             }
 
-            // 导入 user
+            // 导入 user（记录 id 映射）
             if (backupData.containsKey("user")) {
-                int[] counts = importUser((List<Map<String, Object>>) backupData.get("user"));
+                int[] counts = importUser((List<Map<String, Object>>) backupData.get("user"), userIdMap);
                 details.add("用户: " + counts[0] + "条成功" + (counts[1] > 0 ? ", " + counts[1] + "条失败" : ""));
                 totalImported += counts[0];
                 totalFailed += counts[1];
             }
 
-            // 导入 user_tunnel
+            // 导入 user_tunnel（使用 userIdMap 和 tunnelIdMap 替换关联 id）
             if (backupData.containsKey("user_tunnel")) {
-                int[] counts = importUserTunnel((List<Map<String, Object>>) backupData.get("user_tunnel"));
+                int[] counts = importUserTunnel((List<Map<String, Object>>) backupData.get("user_tunnel"), userIdMap, tunnelIdMap);
                 details.add("用户隧道: " + counts[0] + "条成功" + (counts[1] > 0 ? ", " + counts[1] + "条失败" : ""));
                 totalImported += counts[0];
                 totalFailed += counts[1];
@@ -410,9 +417,9 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
                 totalFailed += counts[1];
             }
 
-            // 导入 forward
+            // 导入 forward（使用 userIdMap 和 tunnelIdMap 替换关联 id）
             if (backupData.containsKey("forward")) {
-                int[] counts = importForward((List<Map<String, Object>>) backupData.get("forward"));
+                int[] counts = importForward((List<Map<String, Object>>) backupData.get("forward"), userIdMap, tunnelIdMap);
                 details.add("转发: " + counts[0] + "条成功" + (counts[1] > 0 ? ", " + counts[1] + "条失败" : ""));
                 totalImported += counts[0];
                 totalFailed += counts[1];
@@ -449,10 +456,11 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
         return new int[]{success, fail};
     }
 
-    private int[] importNode(List<Map<String, Object>> items) {
+    private int[] importNode(List<Map<String, Object>> items, Map<Long, Long> nodeIdMap) {
         int success = 0, fail = 0;
         for (Map<String, Object> item : items) {
             try {
+                Long oldId = getLong(item, "id");
                 Node node = new Node();
                 node.setName(getStr(item, "name"));
                 node.setSecret(getStr(item, "secret"));
@@ -468,21 +476,28 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
                 node.setUpdatedTime(getLong(item, "updatedTime"));
                 node.setStatus(getInt(item, "status"));
                 nodeService.save(node);
+                if (oldId != null && oldId > 0) {
+                    nodeIdMap.put(oldId, node.getId());
+                }
                 success++;
             } catch (Exception e) { fail++; }
         }
         return new int[]{success, fail};
     }
 
-    private int[] importTunnel(List<Map<String, Object>> items) {
+    private int[] importTunnel(List<Map<String, Object>> items, Map<Long, Long> nodeIdMap, Map<Long, Long> tunnelIdMap) {
         int success = 0, fail = 0;
         for (Map<String, Object> item : items) {
             try {
+                Long oldId = getLong(item, "id");
                 Tunnel tunnel = new Tunnel();
                 tunnel.setName(getStr(item, "name"));
-                tunnel.setInNodeId(getLong(item, "inNodeId"));
+                // 使用 nodeIdMap 映射 inNodeId 和 outNodeId
+                Long oldInNodeId = getLong(item, "inNodeId");
+                tunnel.setInNodeId(oldInNodeId != null ? nodeIdMap.getOrDefault(oldInNodeId, oldInNodeId) : null);
                 tunnel.setInIp(getStr(item, "inIp"));
-                tunnel.setOutNodeId(getLong(item, "outNodeId"));
+                Long oldOutNodeId = getLong(item, "outNodeId");
+                tunnel.setOutNodeId(oldOutNodeId != null ? nodeIdMap.getOrDefault(oldOutNodeId, oldOutNodeId) : null);
                 tunnel.setOutIp(getStr(item, "outIp"));
                 tunnel.setType(getInt(item, "type"));
                 tunnel.setFlow(getInt(item, "flow"));
@@ -497,16 +512,20 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
                 tunnel.setUpdatedTime(getLong(item, "updatedTime"));
                 tunnel.setStatus(getInt(item, "status"));
                 tunnelService.save(tunnel);
+                if (oldId != null && oldId > 0) {
+                    tunnelIdMap.put(oldId, tunnel.getId());
+                }
                 success++;
             } catch (Exception e) { fail++; }
         }
         return new int[]{success, fail};
     }
 
-    private int[] importUser(List<Map<String, Object>> items) {
+    private int[] importUser(List<Map<String, Object>> items, Map<Long, Long> userIdMap) {
         int success = 0, fail = 0;
         for (Map<String, Object> item : items) {
             try {
+                Long oldId = getLong(item, "id");
                 User user = new User();
                 user.setUser(getStr(item, "user"));
                 user.setPwd(getStr(item, "pwd"));
@@ -521,19 +540,25 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
                 user.setUpdatedTime(getLong(item, "updatedTime"));
                 user.setStatus(getInt(item, "status"));
                 userService.save(user);
+                if (oldId != null && oldId > 0) {
+                    userIdMap.put(oldId, user.getId());
+                }
                 success++;
             } catch (Exception e) { fail++; }
         }
         return new int[]{success, fail};
     }
 
-    private int[] importUserTunnel(List<Map<String, Object>> items) {
+    private int[] importUserTunnel(List<Map<String, Object>> items, Map<Long, Long> userIdMap, Map<Long, Long> tunnelIdMap) {
         int success = 0, fail = 0;
         for (Map<String, Object> item : items) {
             try {
                 UserTunnel ut = new UserTunnel();
-                ut.setUserId(getInt(item, "userId"));
-                ut.setTunnelId(getInt(item, "tunnelId"));
+                // 使用 userIdMap 和 tunnelIdMap 映射关联 id
+                Long oldUserId = getLong(item, "userId");
+                ut.setUserId(oldUserId != null ? userIdMap.getOrDefault(oldUserId, oldUserId).intValue() : null);
+                Long oldTunnelId = getLong(item, "tunnelId");
+                ut.setTunnelId(oldTunnelId != null ? tunnelIdMap.getOrDefault(oldTunnelId, oldTunnelId).intValue() : null);
                 ut.setFlow(getLong(item, "flow"));
                 ut.setInFlow(getLong(item, "inFlow"));
                 ut.setOutFlow(getLong(item, "outFlow"));

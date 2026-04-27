@@ -337,10 +337,18 @@ export default function DashboardPage() {
     return 0;
   };
 
+  // 配额条颜色随使用率变化：绿 → 琥珀 → 红（精确对齐参考 HTML 色值）
   const getUsageColor = (percentage: number) => {
-    if (percentage >= 90) return 'bg-red-500 dark:bg-red-600';
-    if (percentage >= 70) return 'bg-orange-500 dark:bg-orange-600';
-    return 'bg-blue-500 dark:bg-blue-600';
+    if (percentage >= 90) return 'bg-[#E24B4A]';           // 红色
+    if (percentage >= 70) return 'bg-[#BA7517]';           // 琥珀色
+    return 'bg-[#639922]';                                  // 绿色
+  };
+
+  // 配额值文字颜色（≥ 90% 红色加粗提醒）
+  const getUsageTextColor = (percentage: number) => {
+    if (percentage >= 90) return 'text-[#E24B4A] font-medium';
+    if (percentage >= 70) return 'text-[#BA7517]';
+    return 'text-[#9b9590] dark:text-[#5d5854]';
   };
 
   const renderProgressBar = (percentage: number, size: 'sm' | 'md' = 'md', isUnlimited: boolean = false) => {
@@ -349,8 +357,8 @@ export default function DashboardPage() {
     if (isUnlimited) {
       return (
         <div className="w-full">
-          <div className={`w-full bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-500/30 dark:to-purple-500/30 rounded-full ${height}`}>
-            <div className={`${height} bg-gradient-to-r from-blue-500 to-purple-500 rounded-full w-full opacity-60`}></div>
+          <div className={`w-full bg-gradient-to-r from-[#E6F1FB] to-[#EAF3DE] dark:from-blue-500/20 dark:to-green-500/20 rounded-full ${height}`}>
+            <div className={`${height} bg-gradient-to-r from-[#378ADD] to-[#639922] rounded-full w-full opacity-60`}></div>
           </div>
         </div>
       );
@@ -358,7 +366,7 @@ export default function DashboardPage() {
     
     return (
       <div className="w-full">
-        <div className={`w-full bg-[#e5e0d8] dark:bg-[#2d2824] rounded-full ${height}`}>
+        <div className={`w-full bg-[#ebe7e1] dark:bg-[#2d2824] rounded-full ${height}`}>
           <div 
             className={`${height} rounded-full transition-all duration-300 ${getUsageColor(percentage)}`}
             style={{ width: `${Math.min(percentage, 100)}%` }}
@@ -666,7 +674,7 @@ export default function DashboardPage() {
                  <div className="mt-1">
                    {renderProgressBar(calculateUsagePercentage('flow'), 'sm', userInfo.flow === 99999)}
                    <div className="flex items-center justify-between mt-1">
-                     <p className="text-xs text-[#9b9590] dark:text-[#5d5854] truncate">
+                     <p className={`text-xs truncate ${getUsageTextColor(calculateUsagePercentage('flow'))}`}>
                        {userInfo.flow === 99999 ? '无限制' : `${calculateUsagePercentage('flow').toFixed(1)}%`}
                      </p>
                      {(userInfo.flowResetTime !== undefined && userInfo.flowResetTime !== null) && (
@@ -713,7 +721,7 @@ export default function DashboardPage() {
                  <p className="text-base lg:text-xl font-bold text-[#1a1a1a] dark:text-[#e8e2da] truncate">{forwardList.length}</p>
                  <div className="mt-1">
                    {renderProgressBar(calculateUsagePercentage('forwards'), 'sm', userInfo.num === 99999)}
-                   <p className="text-xs text-[#9b9590] dark:text-[#5d5854] mt-1 truncate">
+                   <p className={`text-xs mt-1 truncate ${getUsageTextColor(calculateUsagePercentage('forwards'))}`}>
                      {userInfo.num === 99999 ? '无限制' : `${calculateUsagePercentage('forwards').toFixed(1)}%`}
                    </p>
                  </div>

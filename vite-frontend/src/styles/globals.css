@@ -1,5 +1,144 @@
 @import "tailwindcss";
 
+/* =============================================
+   Claude 精确配色 CSS 变量体系
+   与 claude.ai 保持一致 — 白色主面板、细边框、干净克制
+   ============================================= */
+:root {
+  /* 背景层级：主面板白色，次级用极浅暖灰，三级用浅暖灰 */
+  --color-background-primary:   #ffffff;
+  --color-background-secondary: #f9f8f6;
+  --color-background-tertiary:  #f3f0eb;
+
+  /* 边框：0.5px 细线，三个层级 */
+  --color-border-primary:   #d0cac2;
+  --color-border-secondary: #e0dbd3;
+  --color-border-tertiary:  #ebe7e1;
+
+  /* 文字 */
+  --color-text-primary:   #1a1a1a;
+  --color-text-secondary: #6b6560;
+  --color-text-tertiary:  #9b9590;
+
+  /* 字体 */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', ui-monospace, monospace;
+
+  /* 状态色 — 与参考 HTML 精确对齐 */
+  /* 绿色（运行中/在线） */
+  --color-success:       #639922;
+  --color-success-bg:    #EAF3DE;
+  --color-success-text:  #27500A;
+  --color-success-border:#C0DD97;
+
+  /* 琥珀色（流量告警/警告） */
+  --color-warning:       #BA7517;
+  --color-warning-bg:    #FAEEDA;
+  --color-warning-text:  #633806;
+  --color-warning-border:#FAC775;
+
+  /* 红色（已停止/错误） */
+  --color-danger:        #E24B4A;
+  --color-danger-bg:     #FCEBEB;
+  --color-danger-text:   #791F1F;
+  --color-danger-border: #F7C1C1;
+
+  /* 蓝色（信息/TCP） */
+  --color-info:          #378ADD;
+  --color-info-bg:       #E6F1FB;
+  --color-info-text:     #0C447C;
+  --color-info-border:   #B5D4F4;
+
+  /* 进度条颜色 */
+  --color-progress-low:    #639922;   /* < 70% 绿色 */
+  --color-progress-medium: #BA7517;   /* 70–89% 琥珀 */
+  --color-progress-high:   #E24B4A;   /* ≥ 90% 红色 */
+
+  /* 主题强调色（Claude 橙褐） */
+  --color-accent:       #c96442;
+  --color-accent-hover: #b5583a;
+  --color-accent-light: #fdf0eb;
+}
+
+/* 暗色主题 */
+.dark {
+  --color-background-primary:   #231e1b;
+  --color-background-secondary: #2d2824;
+  --color-background-tertiary:  #1a1614;
+
+  --color-border-primary:   #4d4844;
+  --color-border-secondary: #3d3834;
+  --color-border-tertiary:  #2d2824;
+
+  --color-text-primary:   #e8e2da;
+  --color-text-secondary: #8a8480;
+  --color-text-tertiary:  #5d5854;
+
+  --color-success:       #639922;
+  --color-success-bg:    #1a2e0a;
+  --color-success-text:  #96cc5a;
+  --color-success-border:#2d5214;
+
+  --color-warning:       #BA7517;
+  --color-warning-bg:    #2d1e08;
+  --color-warning-text:  #d4956a;
+  --color-warning-border:#5a3810;
+
+  --color-danger:        #E24B4A;
+  --color-danger-bg:     #2d1010;
+  --color-danger-text:   #f07070;
+  --color-danger-border: #5a1e1e;
+
+  --color-info:          #378ADD;
+  --color-info-bg:       #0d1e35;
+  --color-info-text:     #70aee8;
+  --color-info-border:   #1a3d6a;
+
+  --color-accent:       #d4856a;
+  --color-accent-hover: #c87860;
+  --color-accent-light: #2d2420;
+}
+
+/* =============================================
+   CSS 变量驱动的语义化工具类
+   ============================================= */
+
+/* 状态徽章 — 精确对齐参考 HTML */
+.badge-status-success {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 0.5px solid var(--color-success-border);
+}
+.badge-status-warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border: 0.5px solid var(--color-warning-border);
+}
+.badge-status-danger {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  border: 0.5px solid var(--color-danger-border);
+}
+.badge-status-info {
+  background: var(--color-info-bg);
+  color: var(--color-info-text);
+  border: 0.5px solid var(--color-info-border);
+}
+
+/* 进度条（配额条）颜色 — 动态由 JS 决定 className */
+.progress-fill-low    { background: var(--color-progress-low); }
+.progress-fill-medium { background: var(--color-progress-medium); }
+.progress-fill-high   { background: var(--color-progress-high); }
+
+/* 节点离线透明度 */
+.node-offline-dim { opacity: 0.5; }
+
+/* 等宽字体工具类 */
+.font-mono-addr {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
 
 /* 移动端视口高度优化 */
 html, body {
