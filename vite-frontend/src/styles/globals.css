@@ -188,7 +188,7 @@ body {
 
 
 /* 安全区域变量与工具类（适配刘海/底部手势条） */
-::root {
+:root {
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -243,8 +243,7 @@ body {
   transition: all 0.2s ease;
 }
 .claude-hover:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  transform: translateY(-1px);
+  background: var(--color-background-secondary);
 }
 
 /* 验证码弹层动画 */
@@ -288,18 +287,18 @@ body {
   border-radius: 12px;
   border: 1px solid var(--color-border-secondary);
   background: var(--color-background-primary);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  box-shadow: none;
   transition: all 0.2s ease;
 }
 
 .dark .claude-card {
   border-color: var(--color-border-secondary);
   background: var(--color-background-primary);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  box-shadow: none;
 }
 
 .claude-card:hover {
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+  box-shadow: none;
 }
 
 /* Claude 风格 - 按钮覆盖 */
@@ -310,12 +309,12 @@ body {
 }
 
 .claude-btn-primary {
-  background: var(--color-accent);
-  color: white;
+  background: var(--color-text-primary);
+  color: var(--color-background-primary);
   border: none;
 }
 .claude-btn-primary:hover {
-  background: var(--color-accent-hover);
+  opacity: 0.85;
 }
 
 /* Claude 风格 - Input 覆盖 */
@@ -325,16 +324,16 @@ body {
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .claude-input:focus {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(201, 100, 66, 0.1);
+  border-color: var(--color-border-primary);
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
 }
 
 .dark .claude-input {
   border-color: var(--color-border-secondary);
 }
 .dark .claude-input:focus {
-  border-color: var(--color-accent-hover);
-  box-shadow: 0 0 0 3px rgba(212, 133, 106, 0.15);
+  border-color: var(--color-border-primary);
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.15);
 }
 
 /* =============================================
