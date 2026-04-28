@@ -1675,9 +1675,9 @@ export default function ForwardPage() {
                       placeholder="留空自动分配"
                       type="number"
                       value={form.inPort?.toString() || ''}
-                      onChange={(e) => setForm(prev => ({ 
-                        ...prev, 
-                        inPort: e.target.value ? parseInt(e.target.value) : null 
+                      onChange={(e) => setForm(prev => ({
+                        ...prev,
+                        inPort: e.target.value ? parseInt(e.target.value) : null
                       }))}
                       isInvalid={!!errors.inPort}
                       errorMessage={errors.inPort}
@@ -1686,6 +1686,20 @@ export default function ForwardPage() {
                         selectedTunnel && selectedTunnel.inNodePortSta && selectedTunnel.inNodePortEnd
                           ? `允许范围: ${selectedTunnel.inNodePortSta}-${selectedTunnel.inNodePortEnd}`
                           : '留空将自动分配可用端口'
+                      }
+                      endContent={
+                        <button
+                          type="button"
+                          className="text-xs text-[#c96442] hover:text-[#a0512e] font-medium whitespace-nowrap px-1 py-0.5 rounded transition-colors"
+                          onClick={() => {
+                            const min = selectedTunnel?.inNodePortSta || 10000;
+                            const max = selectedTunnel?.inNodePortEnd || 60000;
+                            const port = Math.floor(Math.random() * (max - min + 1)) + min;
+                            setForm(prev => ({ ...prev, inPort: port }));
+                          }}
+                        >
+                          随机
+                        </button>
                       }
                     />
                     
