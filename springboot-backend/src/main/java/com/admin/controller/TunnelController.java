@@ -65,6 +65,32 @@ public class TunnelController extends BaseController {
         return tunnelService.deleteTunnel(id);
     }
 
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/force-delete")
+    public R forceDelete(@RequestBody Map<String, Object> params) {
+        Long id = Long.valueOf(params.get("id").toString());
+        return tunnelService.forceDeleteTunnel(id);
+    }
+
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/batch-delete")
+    public R batchDelete(@RequestBody Map<String, Object> params) {
+        java.util.List<Long> ids = ((java.util.List<?>) params.get("ids"))
+                .stream().map(o -> Long.valueOf(o.toString())).collect(java.util.stream.Collectors.toList());
+        return tunnelService.batchDeleteTunnels(ids);
+    }
+
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/batch-force-delete")
+    public R batchForceDelete(@RequestBody Map<String, Object> params) {
+        java.util.List<Long> ids = ((java.util.List<?>) params.get("ids"))
+                .stream().map(o -> Long.valueOf(o.toString())).collect(java.util.stream.Collectors.toList());
+        return tunnelService.batchForceDeleteTunnels(ids);
+    }
+
     // ============ 用户隧道权限管理相关方法 ============
     
     /**

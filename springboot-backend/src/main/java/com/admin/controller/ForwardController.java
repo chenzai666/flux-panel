@@ -79,6 +79,18 @@ public class ForwardController extends BaseController {
     }
 
     @LogAnnotation
+    @PostMapping("/batch-force-delete")
+    public R batchForceDelete(@RequestBody Map<String, Object> params) {
+        @SuppressWarnings("unchecked")
+        List<Number> idNumbers = (List<Number>) params.get("ids");
+        if (idNumbers == null || idNumbers.isEmpty()) {
+            return R.err("请选择要删除的转发");
+        }
+        List<Long> ids = idNumbers.stream().map(Number::longValue).collect(java.util.stream.Collectors.toList());
+        return forwardService.batchForceDeleteForwards(ids);
+    }
+
+    @LogAnnotation
     @PostMapping("/pause")
     public R pause(@RequestBody Map<String, Object> params) {
         Long id = Long.valueOf(params.get("id").toString());

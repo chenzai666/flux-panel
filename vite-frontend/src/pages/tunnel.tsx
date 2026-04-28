@@ -32,6 +32,8 @@ import {
   getTunnelList,
   updateTunnel,
   deleteTunnel,
+  batchDeleteTunnel,
+  batchForceDeleteTunnel,
   getNodeList,
   diagnoseTunnel
 } from "@/api";
@@ -269,6 +271,7 @@ export default function TunnelPage() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [batchDeleteModalOpen, setBatchDeleteModalOpen] = useState(false);
   const [batchDeleteLoading, setBatchDeleteLoading] = useState(false);
+  const [isBatchForce, setIsBatchForce] = useState(false);
 
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
@@ -370,17 +373,25 @@ export default function TunnelPage() {
   const exitBatchMode = () => {
     setIsBatchMode(false);
     setSelectedIds(new Set());
+    setIsBatchForce(false);
   };
 
   const handleBatchDelete = async () => {
     if (selectedIds.size === 0) return;
     setBatchDeleteLoading(true);
     try {
-      await Promise.all(Array.from(selectedIds).map(id => deleteTunnel(id)));
-      toast.success(`成功删除 ${selectedIds.size} 条隧道`);
-      setBatchDeleteModalOpen(false);
-      exitBatchMode();
-      loadData();
+      const ids = Array.from(selectedIds);
+      const res = isBatchForce
+        ? await batchForceDeleteTunnel(ids)
+        : await batchDeleteTunnel(ids);
+      if (res.code === 0) {
+        toast.success(res.data || `成功删除 ${selectedIds.size} 条隧道`);
+        setBatchDeleteModalOpen(false);
+        exitBatchMode();
+        loadData();
+      } else {
+        toast.error(res.msg || '批量删除失败');
+      }
     } catch {
       toast.error('批量删除失败，请重试');
     } finally {
@@ -750,6 +761,16 @@ export default function TunnelPage() {
               <ModalBody>
                 <p className="text-[#6b6560] dark:text-[#8a8480]">确定要删除选中的 <span className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{selectedIds.size}</span> 条隧道吗？</p>
                 <p className="text-sm text-[#9b9590] dark:text-[#5d5854] mt-2">此操作不可恢复，请谨慎操作。</p>
+                <label className="flex items-center gap-2 mt-3 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={isBatchForce}
+                    onChange={e => setIsBatchForce(e.target.checked)}
+                    className="w-4 h-4 accent-[#c96442] rounded"
+                  />
+                  <span className="text-sm text-[#6b6560] dark:text-[#8a8480]">强制删除</span>
+                  <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">（跳过节点服务验证，同时删除关联转发）</span>
+                </label>
               </ModalBody>
               <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
                 <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onClose}>取消</Button>

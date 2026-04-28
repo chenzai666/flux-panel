@@ -87,5 +87,7 @@ public interface ForwardService extends IService<Forward> {
      */
     R batchDeleteForwards(java.util.List<Long> ids);
 
+    R batchForceDeleteForwards(java.util.List<Long> ids);
+
     void updateForwardA(Forward forward);
 }

@@ -40,7 +40,7 @@ mybatis-plus:
 
 jwt-secret: ${JWT_SECRET}
 log-dir: ${LOG_DIR}
-app-version: ${APP_VERSION:1.6.9}
+app-version: ${APP_VERSION:1.6.12}
 
 
 captcha:

@@ -246,6 +246,42 @@ public class TunnelServiceImpl extends ServiceImpl<TunnelMapper, Tunnel> impleme
         return result ? R.ok(SUCCESS_DELETE_MSG) : R.err(ERROR_DELETE_MSG);
     }
 
+    @Override
+    public R forceDeleteTunnel(Long id) {
+        if (!isTunnelExists(id)) {
+            return R.err(ERROR_TUNNEL_NOT_FOUND);
+        }
+        // 级联删除关联的转发和用户权限
+        forwardService.remove(new QueryWrapper<Forward>().eq("tunnel_id", id));
+        userTunnelService.remove(new QueryWrapper<UserTunnel>().eq("tunnel_id", id));
+        boolean result = this.removeById(id);
+        return result ? R.ok("隧道强制删除成功") : R.err("隧道强制删除失败");
+    }
+
+    @Override
+    public R batchDeleteTunnels(java.util.List<Long> ids) {
+        if (ids == null || ids.isEmpty()) return R.err("请选择要删除的隧道");
+        int success = 0, fail = 0;
+        for (Long id : ids) {
+            if (deleteTunnel(id).getCode() == 0) success++; else fail++;
+        }
+        if (fail == 0) return R.ok("批量删除成功，共删除" + success + "条隧道");
+        if (success == 0) return R.err("批量删除失败");
+        return R.ok("批量删除完成，成功" + success + "条，失败" + fail + "条");
+    }
+
+    @Override
+    public R batchForceDeleteTunnels(java.util.List<Long> ids) {
+        if (ids == null || ids.isEmpty()) return R.err("请选择要删除的隧道");
+        int success = 0, fail = 0;
+        for (Long id : ids) {
+            if (forceDeleteTunnel(id).getCode() == 0) success++; else fail++;
+        }
+        if (fail == 0) return R.ok("批量强制删除成功，共删除" + success + "条隧道");
+        if (success == 0) return R.err("批量强制删除失败");
+        return R.ok("批量强制删除完成，成功" + success + "条，失败" + fail + "条");
+    }
+
     /**
      * 获取用户可用的隧道列表
      * 管理员可以看到所有启用的隧道，普通用户只能看到有权限的启用隧道

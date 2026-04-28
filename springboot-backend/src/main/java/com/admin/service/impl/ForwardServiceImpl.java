@@ -1412,6 +1412,18 @@ public class ForwardServiceImpl extends ServiceImpl<ForwardMapper, Forward> impl
         }
     }
 
+    @Override
+    public R batchForceDeleteForwards(java.util.List<Long> ids) {
+        if (ids == null || ids.isEmpty()) return R.err("请选择要删除的转发");
+        int success = 0, fail = 0;
+        for (Long id : ids) {
+            if (forceDeleteForward(id).getCode() == 0) success++; else fail++;
+        }
+        if (fail == 0) return R.ok("批量强制删除成功，共删除" + success + "条转发");
+        if (success == 0) return R.err("批量强制删除失败");
+        return R.ok("批量强制删除完成，成功" + success + "条，失败" + fail + "条");
+    }
+
 
     public void updateForwardA(Forward forward) {
         Tunnel tunnel = validateTunnel(forward.getTunnelId());

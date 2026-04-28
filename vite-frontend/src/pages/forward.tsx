@@ -33,14 +33,15 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 
-import { 
-  createForward, 
-  getForwardList, 
-  updateForward, 
+import {
+  createForward,
+  getForwardList,
+  updateForward,
   deleteForward,
   batchDeleteForward,
+  batchForceDeleteForward,
   forceDeleteForward,
-  userTunnel, 
+  userTunnel,
   pauseForwardService,
   resumeForwardService,
   diagnoseForward,
@@ -171,6 +172,7 @@ export default function ForwardPage() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [batchDeleteModalOpen, setBatchDeleteModalOpen] = useState(false);
   const [batchDeleteLoading, setBatchDeleteLoading] = useState(false);
+  const [isBatchForce, setIsBatchForce] = useState(false);
   const [addressList, setAddressList] = useState<AddressItem[]>([]);
   
   // 导出相关状态
@@ -553,11 +555,14 @@ export default function ForwardPage() {
     setBatchDeleteLoading(true);
     try {
       const ids = Array.from(selectedIds);
-      const res = await batchDeleteForward(ids);
+      const res = isBatchForce
+        ? await batchForceDeleteForward(ids)
+        : await batchDeleteForward(ids);
       if (res.code === 0) {
         toast.success(res.data || '批量删除成功');
         setSelectedIds(new Set());
         setBatchDeleteModalOpen(false);
+        setIsBatchForce(false);
         loadData();
       } else {
         toast.error(res.msg || '批量删除失败');
@@ -2255,13 +2260,23 @@ export default function ForwardPage() {
                   <p className="text-small text-[#9b9590] dark:text-[#5d5854] mt-2">
                     此操作无法撤销，删除后这些转发将永久消失。
                   </p>
+                  <label className="flex items-center gap-2 mt-3 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={isBatchForce}
+                      onChange={e => setIsBatchForce(e.target.checked)}
+                      className="w-4 h-4 accent-[#c96442] rounded"
+                    />
+                    <span className="text-sm text-[#6b6560] dark:text-[#8a8480]">强制删除</span>
+                    <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">（跳过节点服务验证）</span>
+                  </label>
                 </ModalBody>
                 <ModalFooter>
                   <Button variant="light" onPress={onClose}>
                     取消
                   </Button>
-                  <Button 
-                    color="danger" 
+                  <Button
+                    color="danger"
                     onPress={confirmBatchDelete}
                     isLoading={batchDeleteLoading}
                   >
