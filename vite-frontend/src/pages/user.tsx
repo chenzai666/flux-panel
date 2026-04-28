@@ -592,7 +592,7 @@ export default function UserPage() {
             return (
               <Card
                 key={user.id}
-                className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow duration-200"
+                className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors duration-200"
               >
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start w-full">

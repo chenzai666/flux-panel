@@ -637,7 +637,7 @@ export default function DashboardPage() {
 
                           {/* 响应式统计卡片 */}
          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-5 lg:mb-8">
-           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow">
+           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
@@ -653,7 +653,7 @@ export default function DashboardPage() {
              </CardBody>
            </Card>
 
-           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow">
+           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
@@ -685,7 +685,7 @@ export default function DashboardPage() {
              </CardBody>
            </Card>
 
-           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow">
+           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
@@ -701,7 +701,7 @@ export default function DashboardPage() {
              </CardBody>
            </Card>
 
-           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow">
+           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
@@ -789,7 +789,7 @@ export default function DashboardPage() {
                            stroke="#c96442"
                            strokeWidth={3}
                            dot={false}
-                           activeDot={{ r: 4, stroke: '#8b5cf6', strokeWidth: 2, fill: '#fff' }}
+                           activeDot={{ r: 4, stroke: '#c96442', strokeWidth: 2, fill: '#fff' }}
                          />
                        </LineChart>
                      </ResponsiveContainer>
@@ -826,7 +826,7 @@ export default function DashboardPage() {
                  {userTunnels.map((tunnel) => {
                    const tunnelExpStatus = getExpStatus(tunnel.expTime);
                    return (
-                     <div key={tunnel.id} className="border border-[#e5e0d8] dark:border-[#e5e0d8] dark:border-[#2d2824] rounded-lg p-3 lg:p-4 hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow">
+                     <div key={tunnel.id} className="border border-[#e5e0d8] dark:border-[#e5e0d8] dark:border-[#2d2824] rounded-lg p-3 lg:p-4 hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors">
                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-3">
                          <div>
                            <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{tunnel.tunnelName} ID: {tunnel.id}</h3>

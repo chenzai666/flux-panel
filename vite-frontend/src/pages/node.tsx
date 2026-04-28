@@ -120,7 +120,7 @@ function SortableNodeCard({
   return (
     <div ref={setNodeRef} style={style}>
       <Card
-        className={`border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-all duration-200 select-none ${
+        className={`border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-all duration-200 select-none ${
           !isOnline ? 'opacity-60 grayscale-[20%]' : ''
         } ${isSelected ? 'ring-2 ring-[#c96442] ring-offset-1' : ''}`}
         onClick={isBatchMode ? () => onToggleSelect(node.id) : undefined}

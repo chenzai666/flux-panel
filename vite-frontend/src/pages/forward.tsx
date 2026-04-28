@@ -1239,7 +1239,7 @@ export default function ForwardPage() {
     const strategyDisplay = getStrategyDisplay(forward.strategy);
     
     return (
-      <Card key={forward.id} className="group border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:shadow-sm transition-shadow duration-200">
+      <Card key={forward.id} className="group border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors duration-200">
         <CardHeader className="pb-2">
           <div className="flex justify-between items-start w-full">
             <div className="flex items-start gap-2 flex-1 min-w-0">
