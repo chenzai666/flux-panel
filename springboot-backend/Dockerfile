@@ -8,6 +8,8 @@ RUN mvn clean package -DskipTests
 # 运行阶段
 FROM eclipse-temurin:21-jre
 WORKDIR /app
+ARG APP_VERSION=dev
+ENV APP_VERSION=${APP_VERSION}
 ENV JAVA_OPTS="-Xmx512m -Xms256m -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai"
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
