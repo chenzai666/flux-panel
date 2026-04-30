@@ -499,9 +499,17 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
         for (Map<String, Object> item : items) {
             try {
                 Long oldId = getLong(item, "id");
+                String name = getStr(item, "name");
+                // 按隧道名称判重，已存在则复用 id 映射，不重复创建
+                if (name != null) {
+                    Tunnel existing = tunnelService.getOne(new QueryWrapper<Tunnel>().eq("name", name));
+                    if (existing != null) {
+                        if (oldId != null && oldId > 0) tunnelIdMap.put(oldId, existing.getId());
+                        fail++; continue;
+                    }
+                }
                 Tunnel tunnel = new Tunnel();
-                tunnel.setName(getStr(item, "name"));
-                // 使用 nodeIdMap 映射 inNodeId 和 outNodeId
+                tunnel.setName(name);
                 Long oldInNodeId = getLong(item, "inNodeId");
                 tunnel.setInNodeId(oldInNodeId != null ? nodeIdMap.getOrDefault(oldInNodeId, oldInNodeId) : null);
                 tunnel.setInIp(getStr(item, "inIp"));
@@ -603,8 +611,15 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
         int success = 0, fail = 0;
         for (Map<String, Object> item : items) {
             try {
+                String name = getStr(item, "name");
+                Long tunnelId = getLong(item, "tunnelId");
+                if (name != null && tunnelId != null) {
+                    long count = speedLimitService.count(new QueryWrapper<SpeedLimit>()
+                            .eq("name", name).eq("tunnel_id", tunnelId));
+                    if (count > 0) { fail++; continue; }
+                }
                 SpeedLimit sl = new SpeedLimit();
-                sl.setName(getStr(item, "name"));
+                sl.setName(name);
                 sl.setSpeed(getInt(item, "speed"));
                 sl.setTunnelId(getLong(item, "tunnelId"));
                 sl.setTunnelName(getStr(item, "tunnelName"));
