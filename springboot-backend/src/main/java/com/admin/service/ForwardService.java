@@ -6,6 +6,7 @@ import com.admin.common.lang.R;
 import com.admin.entity.Forward;
 import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -87,7 +88,10 @@ public interface ForwardService extends IService<Forward> {
      */
     R batchDeleteForwards(java.util.List<Long> ids);
 
+    /**
+     * 批量强制删除端口转发
+     * @param ids 转发ID列表
+     * @return 结果
+     */
     R batchForceDeleteForwards(java.util.List<Long> ids);
-
-    void updateForwardA(Forward forward);
 }

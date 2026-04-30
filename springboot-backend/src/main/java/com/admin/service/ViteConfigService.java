@@ -44,17 +44,4 @@ public interface ViteConfigService extends IService<ViteConfig> {
      */
     R updateConfig(String name, String value);
 
-    /**
-     * 导出所有配置数据（含节点、隧道、用户、转发等）
-     * @return 备份JSON数据
-     */
-    R exportBackup();
-
-    /**
-     * 导入备份数据
-     * @param backupData 备份JSON数据
-     * @return 导入结果
-     */
-    R importBackup(java.util.Map<String, Object> backupData);
-
 }

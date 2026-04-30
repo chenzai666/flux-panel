@@ -1,10 +1,14 @@
-﻿import { useState, useEffect, useRef } from "react";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { isWebViewFunc } from '@/utils/panel';
 import { siteConfig } from '@/config/site';
-import { Logo } from '@/components/icons';
+import { title } from "@/components/primitives";
+import DefaultLayout from "@/layouts/default";
 import { login, LoginData, checkCaptcha } from "@/api";
 import "@/utils/tac.css";
 import "@/utils/tac.min.js";
@@ -139,7 +143,7 @@ export default function IndexPage() {
                         window.matchMedia('(prefers-color-scheme: dark)').matches;
       
       // 根据主题调整颜色
-      const trackColor = isDarkMode ? "#4a5568" : "#c96442"; // Claude accent color
+      const trackColor = isDarkMode ? "#4a5568" : "#7db0be"; // 暗黑模式使用更深的灰蓝色
       
       const style: CaptchaStyle = {
         bgUrl: bgImage,
@@ -248,134 +252,100 @@ export default function IndexPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f3f0eb] dark:bg-[#1a1614] flex flex-col">
-      {/* 主体：三段式垂直居中 */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-
-        {/* Logo + 品牌名 */}
-        <div className="flex flex-col items-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-[#c96442] flex items-center justify-center shadow-md">
-            <Logo size={22} className="text-white" />
-          </div>
-          <h1 className="text-[22px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da] tracking-tight">
-            {siteConfig.name}
-          </h1>
-        </div>
-
-        {/* 登录卡片 */}
-        <div className="w-full max-w-sm">
-          <div className="bg-white dark:bg-[#231e1b] border border-[#dbd5cc] dark:border-[#2d2824] rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden">
-            <div className="px-7 pt-7 pb-2">
-              <h2 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da] mb-1">
-                登录到您的账户
-              </h2>
-              <p className="text-[13px] text-[#9b9590] dark:text-[#5d5854]">
-                请输入用户名和密码继续
-              </p>
-            </div>
-
-            <div className="px-7 pb-7 pt-5 flex flex-col gap-3.5">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[12px] font-medium text-[#6b6560] dark:text-[#8a8480] uppercase tracking-wide">
-                  用户名
-                </label>
-                <input
-                  type="text"
+    <DefaultLayout>
+      <section className="flex flex-col items-center justify-center gap-4 py-4 sm:py-8 md:py-10 pb-20 min-h-[calc(100dvh-120px)] sm:min-h-[calc(100dvh-200px)]">
+        <div className="w-full max-w-md px-4 sm:px-0">
+          <Card className="w-full">
+            <CardHeader className="pb-0 pt-6 px-6 flex-col items-center">
+              <h1 className={title({ size: "sm" })}>登陆</h1>
+              <p className="text-small text-default-500 mt-2">请输入您的账号信息</p>
+            </CardHeader>
+            <CardBody className="px-6 py-6">
+              <div className="flex flex-col gap-4">
+                <Input
+                  label="用户名"
                   placeholder="请输入用户名"
                   value={form.username}
                   onChange={(e) => handleInputChange('username', e.target.value)}
                   onKeyDown={handleKeyPress}
-                  disabled={loading}
-                  className={`w-full px-3.5 py-2.5 text-[14px] rounded-xl border bg-white dark:bg-[#1a1614] text-[#1a1a1a] dark:text-[#e8e2da] placeholder-[#c4bdb6] dark:placeholder-[#4d4844] outline-none transition-all
-                    ${errors.username
-                      ? 'border-[#E24B4A] focus:ring-2 focus:ring-[#E24B4A]/20'
-                      : 'border-[#dbd5cc] dark:border-[#3d3834] focus:border-[#c96442] focus:ring-2 focus:ring-[#c96442]/15'
-                    }
-                    disabled:opacity-50`}
+                  variant="bordered"
+                  isDisabled={loading}
+                  isInvalid={!!errors.username}
+                  errorMessage={errors.username}
                 />
-                {errors.username && (
-                  <p className="text-[12px] text-[#E24B4A]">{errors.username}</p>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[12px] font-medium text-[#6b6560] dark:text-[#8a8480] uppercase tracking-wide">
-                  密码
-                </label>
-                <input
-                  type="password"
+                
+                <Input
+                  label="密码"
                   placeholder="请输入密码"
+                  type="password"
                   value={form.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   onKeyDown={handleKeyPress}
-                  disabled={loading}
-                  className={`w-full px-3.5 py-2.5 text-[14px] rounded-xl border bg-white dark:bg-[#1a1614] text-[#1a1a1a] dark:text-[#e8e2da] placeholder-[#c4bdb6] dark:placeholder-[#4d4844] outline-none transition-all
-                    ${errors.password
-                      ? 'border-[#E24B4A] focus:ring-2 focus:ring-[#E24B4A]/20'
-                      : 'border-[#dbd5cc] dark:border-[#3d3834] focus:border-[#c96442] focus:ring-2 focus:ring-[#c96442]/15'
-                    }
-                    disabled:opacity-50`}
+                  variant="bordered"
+                  isDisabled={loading}
+                  isInvalid={!!errors.password}
                 />
-                {errors.password && (
-                  <p className="text-[12px] text-[#E24B4A]">{errors.password}</p>
-                )}
+
+                
+                <Button
+                  color="primary"
+                  size="lg"
+                  onClick={handleLogin}
+                  isLoading={loading}
+                  disabled={loading}
+                  className="mt-2"
+                >
+                  {loading ? (showCaptcha ? "验证中..." : "登录中...") : "登录"}
+                </Button>
               </div>
+            </CardBody>
+          </Card>
+        </div>
 
-              <button
-                onClick={handleLogin}
-                disabled={loading}
-                className="mt-1 w-full py-2.5 px-4 bg-[#c96442] hover:bg-[#b5583a] active:bg-[#a34e34] text-white text-[14px] font-semibold rounded-xl transition-all duration-150 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <>
-                    <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    {showCaptcha ? "验证中…" : "登录中…"}
-                  </>
-                ) : "登录"}
-              </button>
-            </div>
+
+      {/* 版权信息 - 固定在底部，不占据布局空间 */}
+      
+               <div className="fixed inset-x-0 bottom-4 text-center py-4">
+               <p className="text-xs text-gray-400 dark:text-gray-500">
+                 Powered by{' '}
+                 <a 
+                   href="https://github.com/bqlpfy/flux-panel" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   className="text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                 >
+                   flux-panel
+                 </a>
+               </p>
+               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                 v{ isWebView ? siteConfig.app_version : siteConfig.version}
+               </p>
+             </div>
+      
+   
+
+        {/* 验证码弹层 */}
+        {showCaptcha && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            {/* 背景遮罩层 - 模糊效果，暗黑模式下更深 */}
+            <div className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm captcha-backdrop-enter" />
+           {/* 验证码容器 */}
+           <div className="mb-4">
+                <div 
+                  id="captcha-container" 
+                  ref={captchaContainerRef}
+                  className="w-full flex justify-center"
+                  style={{
+                    filter: document.documentElement.classList.contains('dark') || 
+                           document.documentElement.getAttribute('data-theme') === 'dark' ||
+                           window.matchMedia('(prefers-color-scheme: dark)').matches 
+                           ? 'brightness(0.8) contrast(0.9)' : 'none'
+                  }}
+                />
+              </div>
           </div>
-        </div>
-
-        {/* 底部版权 */}
-        <div className="mt-8 text-center space-y-1">
-          <p className="text-[12px] text-[#b8b0a8] dark:text-[#3d3834]">
-            Powered by{' '}
-            <a
-              href="https://github.com/chenzai666/flux-panel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#9b9590] dark:text-[#4d4844] hover:text-[#c96442] dark:hover:text-[#c96442] transition-colors"
-            >
-              flux-panel
-            </a>
-            {' '}v{isWebView ? siteConfig.app_version : siteConfig.version}
-          </p>
-        </div>
-      </div>
-
-      {/* 验证码弹层 */}
-      {showCaptcha && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm captcha-backdrop-enter" />
-          <div className="mb-4 relative z-10">
-            <div
-              id="captcha-container"
-              ref={captchaContainerRef}
-              className="w-full flex justify-center"
-              style={{
-                filter: document.documentElement.classList.contains('dark') ||
-                  document.documentElement.getAttribute('data-theme') === 'dark' ||
-                  window.matchMedia('(prefers-color-scheme: dark)').matches
-                  ? 'brightness(0.8) contrast(0.9)' : 'none'
-              }}
-            />
-          </div>
-        </div>
-      )}
-    </div>
+        )}
+      </section>
+    </DefaultLayout>
   );
 }

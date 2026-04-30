@@ -4,11 +4,8 @@ export type SiteConfig = typeof siteConfig;
 
 // 缓存相关常量
 const CACHE_PREFIX = 'vite_config_';
-// 版本号由 Vite define 在构建时注入（来自 CI 的 VITE_APP_VERSION 环境变量）
-// 本地开发时为 'dev'
-declare const __APP_VERSION__: string;
-const VERSION = __APP_VERSION__;
-const APP_VERSION = __APP_VERSION__;
+const VERSION = "2.0.7-beta";
+const APP_VERSION = "1.0.3";
 
 const getInitialConfig = () => {
   if (typeof window === 'undefined') {

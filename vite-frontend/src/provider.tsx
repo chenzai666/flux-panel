@@ -29,7 +29,7 @@ export function Provider({ children }: ProvidersProps) {
             position="top-center"
             toastOptions={{
               duration: 2000,
-              className: 'dark:bg-[#231e1b] dark:text-[#e8e2da]',
+              className: 'dark:bg-gray-800 dark:text-white',
               style: {
                 background: 'var(--toaster-bg, #ffffff)',
                 color: 'var(--toaster-color, #000000)',

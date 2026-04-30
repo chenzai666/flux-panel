@@ -4,13 +4,13 @@ export const title = tv({
   base: "tracking-tight inline font-semibold",
   variants: {
     color: {
-      violet: "from-[#c96442] to-[#a85e4c]",
-      yellow: "from-[#c96442] to-[#e07d55]",
-      blue: "from-[#3b7dd8] to-[#5b9ae6]",
-      cyan: "from-[#2d8a56] to-[#3da86a]",
-      green: "from-[#2d8a56] to-[#4aae78]",
-      pink: "from-[#c96442] to-[#d4856a]",
-      foreground: "dark:from-[#e8e2da] dark:to-[#a09a94]",
+      violet: "from-[#FF1CF7] to-[#b249f8]",
+      yellow: "from-[#FF705B] to-[#FFB457]",
+      blue: "from-[#5EA2EF] to-[#0072F5]",
+      cyan: "from-[#00b7fa] to-[#01cfea]",
+      green: "from-[#6FEE8D] to-[#17c964]",
+      pink: "from-[#FF72E1] to-[#F54C7A]",
+      foreground: "dark:from-[#FFFFFF] dark:to-[#4B4B4B]",
     },
     size: {
       sm: "text-3xl lg:text-4xl",

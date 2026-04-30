@@ -40,7 +40,6 @@ export const getTunnelList = () => Network.post("/tunnel/list");
 export const getTunnelById = (id: number) => Network.post("/tunnel/get", { id });
 export const updateTunnel = (data: any) => Network.post("/tunnel/update", data);
 export const deleteTunnel = (id: number) => Network.post("/tunnel/delete", { id });
-export const forceDeleteTunnel = (id: number) => Network.post("/tunnel/force-delete", { id });
 export const batchDeleteTunnel = (ids: number[]) => Network.post("/tunnel/batch-delete", { ids });
 export const batchForceDeleteTunnel = (ids: number[]) => Network.post("/tunnel/batch-force-delete", { ids });
 export const diagnoseTunnel = (tunnelId: number) => Network.post("/tunnel/diagnose", { tunnelId });
@@ -57,8 +56,8 @@ export const createForward = (data: any) => Network.post("/forward/create", data
 export const getForwardList = () => Network.post("/forward/list");
 export const updateForward = (data: any) => Network.post("/forward/update", data);
 export const deleteForward = (id: number) => Network.post("/forward/delete", { id });
-export const batchDeleteForward = (ids: number[]) => Network.post("/forward/batch-delete", { ids });
 export const forceDeleteForward = (id: number) => Network.post("/forward/force-delete", { id });
+export const batchDeleteForward = (ids: number[]) => Network.post("/forward/batch-delete", { ids });
 export const batchForceDeleteForward = (ids: number[]) => Network.post("/forward/batch-force-delete", { ids });
 
 // 转发服务控制操作 - 通过Java后端接口
@@ -88,8 +87,6 @@ export const getConfigs = () => Network.post("/config/list");
 export const getConfigByName = (name: string) => Network.post("/config/get", { name });
 export const updateConfigs = (configMap: Record<string, string>) => Network.post("/config/update", configMap);
 export const updateConfig = (name: string, value: string) => Network.post("/config/update-single", { name, value });
-export const exportConfig = () => Network.post("/config/export");
-export const importConfig = (backupData: any) => Network.post("/config/import", backupData);
 
 
 // 验证码相关接口

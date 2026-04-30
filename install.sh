@@ -19,12 +19,12 @@ get_architecture() {
 # 构建下载地址
 build_download_url() {
     local ARCH=$(get_architecture)
-    echo "https://github.com/chenzai666/flux-panel/releases/download/1.5.7/gost-${ARCH}"
+    echo "https://github.com/bqlpfy/flux-panel/releases/download/2.0.7-beta/gost-${ARCH}"
 }
 
 # 下载地址
 DOWNLOAD_URL=$(build_download_url)
-INSTALL_DIR="/etc/gost"
+INSTALL_DIR="/etc/flux_agent"
 COUNTRY=$(curl -s https://ipinfo.io/country)
 if [ "$COUNTRY" = "CN" ]; then
     # 拼接 URL
@@ -154,8 +154,8 @@ while getopts "a:s:" opt; do
 done
 
 # 安装功能
-install_gost() {
-  echo "🚀 开始安装 GOST..."
+install_flux_agent() {
+  echo "🚀 开始安装 flux_agent..."
   get_config_params
 
     # 检查并安装 tcpkill
@@ -165,27 +165,27 @@ install_gost() {
   mkdir -p "$INSTALL_DIR"
 
   # 停止并禁用已有服务
-  if systemctl list-units --full -all | grep -Fq "gost.service"; then
-    echo "🔍 检测到已存在的gost服务"
-    systemctl stop gost 2>/dev/null && echo "🛑 停止服务"
-    systemctl disable gost 2>/dev/null && echo "🚫 禁用自启"
+  if systemctl list-units --full -all | grep -Fq "flux_agent.service"; then
+    echo "🔍 检测到已存在的flux_agent服务"
+    systemctl stop flux_agent 2>/dev/null && echo "🛑 停止服务"
+    systemctl disable flux_agent 2>/dev/null && echo "🚫 禁用自启"
   fi
 
   # 删除旧文件
-  [[ -f "$INSTALL_DIR/gost" ]] && echo "🧹 删除旧文件 gost" && rm -f "$INSTALL_DIR/gost"
+  [[ -f "$INSTALL_DIR/flux_agent" ]] && echo "🧹 删除旧文件 flux_agent" && rm -f "$INSTALL_DIR/flux_agent"
 
-  # 下载 gost
-  echo "⬇️ 下载 gost 中..."
-  curl -L "$DOWNLOAD_URL" -o "$INSTALL_DIR/gost"
-  if [[ ! -f "$INSTALL_DIR/gost" || ! -s "$INSTALL_DIR/gost" ]]; then
+  # 下载 flux_agent
+  echo "⬇️ 下载 flux_agent 中..."
+  curl -L "$DOWNLOAD_URL" -o "$INSTALL_DIR/flux_agent"
+  if [[ ! -f "$INSTALL_DIR/flux_agent" || ! -s "$INSTALL_DIR/flux_agent" ]]; then
     echo "❌ 下载失败，请检查网络或下载链接。"
     exit 1
   fi
-  chmod +x "$INSTALL_DIR/gost"
+  chmod +x "$INSTALL_DIR/flux_agent"
   echo "✅ 下载完成"
 
   # 打印版本
-  echo "🔎 gost 版本：$($INSTALL_DIR/gost -V)"
+  echo "🔎 flux_agent 版本：$($INSTALL_DIR/flux_agent -V)"
 
   # 写入 config.json (安装时总是创建新的)
   CONFIG_FILE="$INSTALL_DIR/config.json"
@@ -212,15 +212,15 @@ EOF
   chmod 600 "$INSTALL_DIR"/*.json
 
   # 创建 systemd 服务
-  SERVICE_FILE="/etc/systemd/system/gost.service"
+  SERVICE_FILE="/etc/systemd/system/flux_agent.service"
   cat > "$SERVICE_FILE" <<EOF
 [Unit]
-Description=Gost Proxy Service
+Description=Flux_agent Proxy Service
 After=network.target
 
 [Service]
 WorkingDirectory=$INSTALL_DIR
-ExecStart=$INSTALL_DIR/gost
+ExecStart=$INSTALL_DIR/flux_agent
 Restart=on-failure
 
 [Install]
@@ -229,27 +229,27 @@ EOF
 
   # 启动服务
   systemctl daemon-reload
-  systemctl enable gost
-  systemctl start gost
+  systemctl enable flux_agent
+  systemctl start flux_agent
 
   # 检查状态
   echo "🔄 检查服务状态..."
-  if systemctl is-active --quiet gost; then
-    echo "✅ 安装完成，gost服务已启动并设置为开机启动。"
+  if systemctl is-active --quiet flux_agent; then
+    echo "✅ 安装完成，flux_agent服务已启动并设置为开机启动。"
     echo "📁 配置目录: $INSTALL_DIR"
-    echo "🔧 服务状态: $(systemctl is-active gost)"
+    echo "🔧 服务状态: $(systemctl is-active flux_agent)"
   else
-    echo "❌ gost服务启动失败，请执行以下命令查看日志："
-    echo "journalctl -u gost -f"
+    echo "❌ flux_agent服务启动失败，请执行以下命令查看日志："
+    echo "journalctl -u flux_agent -f"
   fi
 }
 
 # 更新功能
-update_gost() {
-  echo "🔄 开始更新 GOST..."
+update_flux_agent() {
+  echo "🔄 开始更新 flux_agent..."
   
   if [[ ! -d "$INSTALL_DIR" ]]; then
-    echo "❌ GOST 未安装，请先选择安装。"
+    echo "❌ flux_agent 未安装，请先选择安装。"
     return 1
   fi
   
@@ -260,52 +260,52 @@ update_gost() {
   
   # 先下载新版本
   echo "⬇️ 下载最新版本..."
-  curl -L "$DOWNLOAD_URL" -o "$INSTALL_DIR/gost.new"
-  if [[ ! -f "$INSTALL_DIR/gost.new" || ! -s "$INSTALL_DIR/gost.new" ]]; then
+  curl -L "$DOWNLOAD_URL" -o "$INSTALL_DIR/flux_agent.new"
+  if [[ ! -f "$INSTALL_DIR/flux_agent.new" || ! -s "$INSTALL_DIR/flux_agent.new" ]]; then
     echo "❌ 下载失败。"
     return 1
   fi
 
   # 停止服务
-  if systemctl list-units --full -all | grep -Fq "gost.service"; then
-    echo "🛑 停止 gost 服务..."
-    systemctl stop gost
+  if systemctl list-units --full -all | grep -Fq "flux_agent.service"; then
+    echo "🛑 停止 flux_agent 服务..."
+    systemctl stop flux_agent
   fi
 
   # 替换文件
-  mv "$INSTALL_DIR/gost.new" "$INSTALL_DIR/gost"
-  chmod +x "$INSTALL_DIR/gost"
+  mv "$INSTALL_DIR/flux_agent.new" "$INSTALL_DIR/flux_agent"
+  chmod +x "$INSTALL_DIR/flux_agent"
   
   # 打印版本
-  echo "🔎 新版本：$($INSTALL_DIR/gost -V)"
+  echo "🔎 新版本：$($INSTALL_DIR/flux_agent -V)"
 
   # 重启服务
   echo "🔄 重启服务..."
-  systemctl start gost
+  systemctl start flux_agent
   
   echo "✅ 更新完成，服务已重新启动。"
 }
 
 # 卸载功能
-uninstall_gost() {
-  echo "🗑️ 开始卸载 GOST..."
+uninstall_flux_agent() {
+  echo "🗑️ 开始卸载 flux_agent..."
   
-  read -p "确认卸载 GOST 吗？此操作将删除所有相关文件 (y/N): " confirm
+  read -p "确认卸载 flux_agent 吗？此操作将删除所有相关文件 (y/N): " confirm
   if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
     echo "❌ 取消卸载"
     return 0
   fi
 
   # 停止并禁用服务
-  if systemctl list-units --full -all | grep -Fq "gost.service"; then
+  if systemctl list-units --full -all | grep -Fq "flux_agent.service"; then
     echo "🛑 停止并禁用服务..."
-    systemctl stop gost 2>/dev/null
-    systemctl disable gost 2>/dev/null
+    systemctl stop flux_agent 2>/dev/null
+    systemctl disable flux_agent 2>/dev/null
   fi
 
   # 删除服务文件
-  if [[ -f "/etc/systemd/system/gost.service" ]]; then
-    rm -f "/etc/systemd/system/gost.service"
+  if [[ -f "/etc/systemd/system/flux_agent.service" ]]; then
+    rm -f "/etc/systemd/system/flux_agent.service"
     echo "🧹 删除服务文件"
   fi
 
@@ -325,7 +325,7 @@ uninstall_gost() {
 main() {
   # 如果提供了命令行参数，直接执行安装
   if [[ -n "$SERVER_ADDR" && -n "$SECRET" ]]; then
-    install_gost
+    install_flux_agent
     delete_self
     exit 0
   fi
@@ -333,36 +333,31 @@ main() {
   # 显示交互式菜单
   while true; do
     show_menu
-    read -p "请输入选项 (1-5): " choice
+    read -p "请输入选项 (1-4): " choice
     
     case $choice in
       1)
-        install_gost
+        install_flux_agent
         delete_self
         exit 0
         ;;
       2)
-        update_gost
+        update_flux_agent
         delete_self
         exit 0
         ;;
       3)
-        uninstall_gost
+        uninstall_flux_agent
         delete_self
         exit 0
         ;;
       4)
-        block_protocol
-        delete_self
-        exit 0
-        ;;
-      5)
         echo "👋 退出脚本"
         delete_self
         exit 0
         ;;
       *)
-        echo "❌ 无效选项，请输入 1-5"
+        echo "❌ 无效选项，请输入 1-4"
         echo ""
         ;;
     esac

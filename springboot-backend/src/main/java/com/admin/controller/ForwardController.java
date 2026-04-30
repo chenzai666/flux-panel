@@ -61,35 +61,6 @@ public class ForwardController extends BaseController {
         return forwardService.forceDeleteForward(id);
     }
 
-    /**
-     * 批量删除转发
-     * @param params 包含ids列表的参数
-     * @return 批量删除结果
-     */
-    @LogAnnotation
-    @PostMapping("/batch-delete")
-    public R batchDelete(@RequestBody Map<String, Object> params) {
-        @SuppressWarnings("unchecked")
-        List<Number> idNumbers = (List<Number>) params.get("ids");
-        if (idNumbers == null || idNumbers.isEmpty()) {
-            return R.err("请选择要删除的转发");
-        }
-        List<Long> ids = idNumbers.stream().map(Number::longValue).collect(java.util.stream.Collectors.toList());
-        return forwardService.batchDeleteForwards(ids);
-    }
-
-    @LogAnnotation
-    @PostMapping("/batch-force-delete")
-    public R batchForceDelete(@RequestBody Map<String, Object> params) {
-        @SuppressWarnings("unchecked")
-        List<Number> idNumbers = (List<Number>) params.get("ids");
-        if (idNumbers == null || idNumbers.isEmpty()) {
-            return R.err("请选择要删除的转发");
-        }
-        List<Long> ids = idNumbers.stream().map(Number::longValue).collect(java.util.stream.Collectors.toList());
-        return forwardService.batchForceDeleteForwards(ids);
-    }
-
     @LogAnnotation
     @PostMapping("/pause")
     public R pause(@RequestBody Map<String, Object> params) {
@@ -125,6 +96,24 @@ public class ForwardController extends BaseController {
     @PostMapping("/update-order")
     public R updateForwardOrder(@RequestBody Map<String, Object> params) {
         return forwardService.updateForwardOrder(params);
+    }
+
+    @LogAnnotation
+    @PostMapping("/batch-delete")
+    public R batchDelete(@RequestBody Map<String, Object> params) {
+        @SuppressWarnings("unchecked")
+        List<Integer> rawIds = (List<Integer>) params.get("ids");
+        List<Long> ids = rawIds.stream().map(Long::valueOf).collect(java.util.stream.Collectors.toList());
+        return forwardService.batchDeleteForwards(ids);
+    }
+
+    @LogAnnotation
+    @PostMapping("/batch-force-delete")
+    public R batchForceDelete(@RequestBody Map<String, Object> params) {
+        @SuppressWarnings("unchecked")
+        List<Integer> rawIds = (List<Integer>) params.get("ids");
+        List<Long> ids = rawIds.stream().map(Long::valueOf).collect(java.util.stream.Collectors.toList());
+        return forwardService.batchForceDeleteForwards(ids);
     }
 
 }

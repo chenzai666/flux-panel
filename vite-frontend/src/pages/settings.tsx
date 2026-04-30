@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
@@ -77,33 +77,33 @@ export const SettingsPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f3f0eb] dark:bg-[#1a1614]">
+    <div className="min-h-screen bg-gray-50 dark:bg-black">
       {/* 顶部导航 */}
-      <div className="bg-white dark:bg-[#231e1b] border-b border-[#e5e0d8] dark:border-[#2d2824]">
+      <div className="bg-white dark:bg-black border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
             <Button
               isIconOnly
               variant="light"
               onClick={() => navigate(-1)}
-              className="text-[#6b6560] dark:text-[#8a8480]"
+              className="text-gray-600 dark:text-gray-300"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </Button>
-            <h1 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">面板设置</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">面板设置</h1>
           </div>
         </div>
       </div>
 
       {/* 内容区域 */}
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="space-y-5">
+        <div className="space-y-6">
           {/* 添加新地址 */}
-          <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
-            <CardBody className="p-5">
-              <h2 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da] mb-4 pb-3 border-b border-[#e5e0d8] dark:border-[#2d2824]">添加新面板地址</h2>
+          <Card className="border border-gray-200 dark:border-gray-700">
+            <CardBody className="p-6">
+              <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">添加新面板地址</h2>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input
@@ -111,20 +111,15 @@ export const SettingsPage = () => {
                     placeholder="请输入面板名称"
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
-                    variant="bordered"
                   />
                   <Input
                     label="地址"
                     placeholder="http://192.168.1.100:3000"
                     value={newAddress}
                     onChange={(e) => setNewAddress(e.target.value)}
-                    variant="bordered"
                   />
                 </div>
-                <Button
-                  className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
-                  onClick={addPanelAddress}
-                >
+                <Button color="primary" onClick={addPanelAddress}>
                   添加
                 </Button>
               </div>
@@ -132,33 +127,33 @@ export const SettingsPage = () => {
           </Card>
 
           {/* 地址列表 */}
-          <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
-            <CardBody className="p-5">
-              <h2 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da] mb-4 pb-3 border-b border-[#e5e0d8] dark:border-[#2d2824]">已保存的面板地址</h2>
+          <Card className="border border-gray-200 dark:border-gray-700">
+            <CardBody className="p-6">
+              <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">已保存的面板地址</h2>
               {panelAddresses.length === 0 ? (
-                <p className="text-sm text-[#9b9590] dark:text-[#5d5854] text-center py-8">暂无保存的面板地址</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-8">暂无保存的面板地址</p>
               ) : (
                 <div className="space-y-3">
                   {panelAddresses.map((panel, index) => (
-                    <div key={index} className="border border-[#e5e0d8] dark:border-[#2d2824] rounded-xl p-4 hover:bg-[#f9f8f6] dark:hover:bg-[#2d2824] transition-colors">
+                    <div key={index} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-[#1a1a1a] dark:text-[#e8e2da] text-sm">{panel.name}</span>
+                            <span className="font-medium text-gray-900 dark:text-white">{panel.name}</span>
                             {panel.inx && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border badge-status-success">
+                              <span className="px-2 py-1 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 text-xs rounded">
                                 当前
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-[#9b9590] dark:text-[#5d5854] mt-1 font-mono">{panel.address}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{panel.address}</p>
                         </div>
-                        <div className="flex items-center gap-2 ml-4">
+                        <div className="flex items-center gap-2">
                           {!panel.inx && (
                             <Button
                               size="sm"
+                              color="primary"
                               variant="flat"
-                              className="text-[#c96442] dark:text-[#d4856a] border border-[#e5e0d8] dark:border-[#2d2824]"
                               onClick={() => setCurrentPanel(panel.name)}
                             >
                               设为当前
