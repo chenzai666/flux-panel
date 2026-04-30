@@ -1,86 +1,120 @@
-# flux-panel转发面板 哆啦A梦转发面板
+# flux-panel 转发面板 Beta 版（2.0.x）
 
-# 赞助商
-<p align="center">
-  <a href="https://vps.town" style="margin: 0 20px; text-align:center;">
-    <img src="./doc/vpstown.png" width="300">
-  </a>
+> **当前分支为 beta 开发版**，包含转发链、负载均衡等新功能，使用 SQLite 数据库。  
+> 稳定版（1.x MySQL）请切换到 [main 分支](https://github.com/chenzai666/flux-panel/tree/main)。
 
-  <a href="https://whmcs.as211392.com" style="margin: 0 20px; text-align:center;">
-    <img src="./doc/as211392.png" width="300">
-  </a>
-</p>
-
-
-本项目基于 [go-gost/gost](https://github.com/go-gost/gost) 和 [go-gost/x](https://github.com/go-gost/x) 两个开源库，实现了转发面板。
 ---
-## 特性
 
-- 支持按 **隧道账号级别** 管理流量转发数量，可用于用户/隧道配额控制
-- 支持 **TCP** 和 **UDP** 协议的转发
-- 支持两种转发模式：**端口转发** 与 **隧道转发**
-- 可针对 **指定用户的指定隧道进行限速** 设置
-- 支持配置 **单向或双向流量计费方式**，灵活适配不同计费模型
-- 提供灵活的转发策略配置，适用于多种网络场景
+## 新功能（相比稳定版 1.x）
 
+- **转发链（多跳中转）**：入口节点 → 中转节点（多跳）→ 出口节点，完整的链路诊断
+- **负载均衡**：每一跳支持多个节点，策略可选 主备(fifo) / 轮询(round) / 随机(rand) / IP哈希(hash)
+- **SQLite 数据库**：无需 MySQL，部署更轻量，数据存为单文件方便迁移备份
+- **随机端口分配**：创建转发时可一键随机填入可用端口
+- **批量删除 / 强制删除**：隧道与转发均支持批量操作
+- **拖拽排序**：转发和隧道卡片支持拖拽调整顺序
+- **链路诊断**：逐跳 TCP Ping，直观展示每段链路连通状态
 
-## 部署流程
 ---
-### Docker Compose部署
-#### 快速部署
-面板端(稳定版)：
-```bash
-curl -L https://raw.githubusercontent.com/bqlpfy/flux-panel/refs/heads/main/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
-```
-节点端(稳定版)：
-```bash
-curl -L https://raw.githubusercontent.com/bqlpfy/flux-panel/refs/heads/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 
+## 部署
+
+### 快速部署（beta 版）
+
+面板端：
+```bash
+curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
 ```
 
-面板端(开发版)：
+节点端：
 ```bash
-curl -L https://raw.githubusercontent.com/bqlpfy/flux-panel/refs/heads/beta/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
+curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
-节点端(开发版)：
-```bash
-curl -L https://raw.githubusercontent.com/bqlpfy/flux-panel/refs/heads/beta/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 
-```
+### 手动 Docker Compose 部署
+
+1. 下载配置文件（IPv4 / IPv6 二选一）：
+   ```bash
+   # IPv4
+   curl -LO https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/docker-compose-v4.yml
+   # IPv6
+   curl -LO https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/docker-compose-v6.yml
+   ```
+
+2. 创建 `.env` 文件：
+   ```env
+   JWT_SECRET=你的密钥（至少32位随机字符串）
+   BACKEND_PORT=6365
+   FRONTEND_PORT=80
+   ```
+
+3. 启动：
+   ```bash
+   docker compose -f docker-compose-v4.yml up -d
+   ```
 
 #### 默认管理员账号
 
-- **账号**: admin_user
-- **密码**: admin_user
+- **账号**: admin_user  
+- **密码**: admin_user  
 
 > ⚠️ 首次登录后请立即修改默认密码！
 
+---
+
+## 从稳定版（1.x）升级到 Beta 版（2.x）
+
+> 稳定版使用 **MySQL**，Beta 版使用 **SQLite**，数据库类型不同，**无法直接原地升级**，需手动迁移数据。
+
+### 方式一：全新部署（推荐）
+
+转发规则不多时，直接新部署 Beta 版，在面板中重新创建节点、隧道、用户和转发即可。
+
+### 方式二：通过导出/导入迁移转发规则
+
+1. 在**稳定版**面板 → 转发管理 → 点击「导出」，选择对应隧道，复制导出文本  
+   （格式：`目标地址|转发名称|入口端口`，每行一个）
+
+2. 在 **Beta 版**中重新创建对应的隧道和节点
+
+3. 在 Beta 版面板 → 转发管理 → 点击「导入」，选择对应隧道，粘贴数据导入
+
+> 用户账号、节点配置需在 Beta 版中重新创建，无法从稳定版直接迁移。  
+> 隧道结构发生根本性变化（新增 chain_tunnel 表），数据库层面无法直接迁移隧道数据。
+
+---
+
+## 项目说明
+
+本项目基于 [go-gost/gost](https://github.com/go-gost/gost) 和 [go-gost/x](https://github.com/go-gost/x) 两个开源库，实现了转发面板。
+
+### 特性
+
+- 支持按**隧道账号级别**管理流量转发数量，可用于用户/隧道配额控制
+- 支持 **TCP** 和 **UDP** 协议的转发
+- 支持**端口转发**与**隧道转发（多跳链路）**两种模式
+- 可针对**指定用户的指定隧道**进行限速设置
+- 支持配置**单向或双向流量计费**，灵活适配不同计费模型
+
+---
 
 ## 免责声明
 
-本项目仅供个人学习与研究使用，基于开源项目进行二次开发。  
+本项目仅供个人学习与研究使用，基于开源项目进行二次开发。
 
-使用本项目所带来的任何风险均由使用者自行承担，包括但不限于：  
+使用本项目所带来的任何风险均由使用者自行承担，包括但不限于：
 
-- 配置不当或使用错误导致的服务异常或不可用；  
-- 使用本项目引发的网络攻击、封禁、滥用等行为；  
-- 服务器因使用本项目被入侵、渗透、滥用导致的数据泄露、资源消耗或损失；  
-- 因违反当地法律法规所产生的任何法律责任。  
+- 配置不当或使用错误导致的服务异常或不可用；
+- 使用本项目引发的网络攻击、封禁、滥用等行为；
+- 服务器因使用本项目被入侵、渗透、滥用导致的数据泄露、资源消耗或损失；
+- 因违反当地法律法规所产生的任何法律责任。
 
-本项目为开源的流量转发工具，仅限合法、合规用途。  
-使用者必须确保其使用行为符合所在国家或地区的法律法规。  
+本项目为开源的流量转发工具，仅限合法、合规用途。使用者必须确保其使用行为符合所在国家或地区的法律法规。
 
-**作者不对因使用本项目导致的任何法律责任、经济损失或其他后果承担责任。**  
-**禁止将本项目用于任何违法或未经授权的行为，包括但不限于网络攻击、数据窃取、非法访问等。**  
-
-如不同意上述条款，请立即停止使用本项目。  
-
-作者对因使用本项目所造成的任何直接或间接损失概不负责，亦不提供任何形式的担保、承诺或技术支持。  
-
-
-请务必在合法、合规、安全的前提下使用本项目。  
+**作者不对因使用本项目导致的任何法律责任、经济损失或其他后果承担责任。**
 
 ---
+
 ## ⭐ 喝杯咖啡！（USDT）
 
 | 网络       | 地址                                                                 |
@@ -89,4 +123,4 @@ curl -L https://raw.githubusercontent.com/bqlpfy/flux-panel/refs/heads/beta/inst
 | TRC20      | `TYh2L3xxXpuJhAcBWnt3yiiADiCSJLgUm7`                                  |
 | Aptos      | `0xf2f9fb14749457748506a8281628d556e8540d1eb586d202cd8b02b99d369ef8`  |
 
-[![Star History Chart](https://api.star-history.com/svg?repos=bqlpfy/flux-panel&type=Date)](https://www.star-history.com/#bqlpfy/flux-panel&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=chenzai666/flux-panel&type=Date)](https://www.star-history.com/#chenzai666/flux-panel&Date)
