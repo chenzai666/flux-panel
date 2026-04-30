@@ -160,6 +160,14 @@ public class ForwardServiceImpl extends ServiceImpl<ForwardMapper, Forward> impl
         if (permissionResult.isHasError()) {
             return R.err(permissionResult.getErrorMessage());
         }
+
+        long existCount = this.count(new QueryWrapper<Forward>()
+                .eq("tunnel_id", forwardDto.getTunnelId())
+                .eq("name", forwardDto.getName()));
+        if (existCount > 0) {
+            return R.err("同名转发已存在，请修改转发名称");
+        }
+
         Forward forward = new Forward();
         BeanUtils.copyProperties(forwardDto, forward);
         forward.setStatus(1);
@@ -169,7 +177,11 @@ public class ForwardServiceImpl extends ServiceImpl<ForwardMapper, Forward> impl
         forward.setUpdatedTime(System.currentTimeMillis());
         List<JSONObject> success = new ArrayList<>();
         List<ChainTunnel> chainTunnels = chainTunnelService.list(new QueryWrapper<ChainTunnel>().eq("tunnel_id", tunnel.getId()).eq("chain_type", 1));
-        chainTunnels = get_port(chainTunnels, forwardDto.getInPort(), 0L);
+        try {
+            chainTunnels = get_port(chainTunnels, forwardDto.getInPort(), 0L);
+        } catch (RuntimeException e) {
+            return R.err(e.getMessage());
+        }
         this.save(forward);
 
         for (ChainTunnel chainTunnel : chainTunnels) {
