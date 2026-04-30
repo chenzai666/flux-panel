@@ -185,6 +185,7 @@ export default function ForwardPage() {
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [importData, setImportData] = useState('');
   const [importLoading, setImportLoading] = useState(false);
+  const [importIgnorePort, setImportIgnorePort] = useState(false);
   const [selectedTunnelForImport, setSelectedTunnelForImport] = useState<number | null>(null);
   const [importResults, setImportResults] = useState<Array<{
     line: string;
@@ -937,6 +938,7 @@ export default function ForwardPage() {
     setImportData('');
     setImportResults([]);
     setSelectedTunnelForImport(null);
+    setImportIgnorePort(false);
     setImportModalOpen(true);
   };
 
@@ -999,7 +1001,7 @@ export default function ForwardPage() {
         try {
           // 处理入口端口
           let portNumber: number | null = null;
-          if (inPort && inPort.trim()) {
+          if (!importIgnorePort && inPort && inPort.trim()) {
             const port = parseInt(inPort.trim());
             if (isNaN(port) || port < 1 || port > 65535) {
               setImportResults(prev => [{
@@ -1015,8 +1017,8 @@ export default function ForwardPage() {
           // 调用创建转发接口
           const response = await createForward({
             name: name.trim(),
-            tunnelId: selectedTunnelForImport, // 使用用户选择的隧道
-            inPort: portNumber, // 使用指定端口或自动分配
+            tunnelId: selectedTunnelForImport,
+            inPort: importIgnorePort ? null : portNumber,
             remoteAddr: remoteAddr.trim(),
             strategy: 'fifo'
           });
@@ -2017,7 +2019,17 @@ export default function ForwardPage() {
                     }}
                   />
 
-                
+                  <div className="flex items-center justify-between mt-3 px-1">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-medium">忽略端口号（自动分配）</span>
+                      <span className="text-xs text-default-400">开启后跳过数据中的端口号，由系统自动分配</span>
+                    </div>
+                    <Switch
+                      isSelected={importIgnorePort}
+                      onValueChange={setImportIgnorePort}
+                      size="sm"
+                    />
+                  </div>
                 </div>
 
                 {/* 导入结果 */}

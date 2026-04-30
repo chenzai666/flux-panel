@@ -84,6 +84,14 @@ public class ForwardServiceImpl extends ServiceImpl<ForwardMapper, Forward> impl
             return R.err(permissionResult.getErrorMessage());
         }
 
+        // 3.5. 检查同名转发是否已存在（同一隧道下不允许重名）
+        long existCount = this.count(new QueryWrapper<Forward>()
+                .eq("tunnel_id", forwardDto.getTunnelId())
+                .eq("name", forwardDto.getName()));
+        if (existCount > 0) {
+            return R.err("同名转发已存在，请修改转发名称");
+        }
+
         // 4. 分配端口
         PortAllocation portAllocation = allocatePorts(tunnel, forwardDto.getInPort());
         if (portAllocation.isHasError()) {
