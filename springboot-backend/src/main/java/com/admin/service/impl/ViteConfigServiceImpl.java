@@ -461,9 +461,18 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
         for (Map<String, Object> item : items) {
             try {
                 Long oldId = getLong(item, "id");
+                String secret = getStr(item, "secret");
+                // 按 secret 判重，secret 唯一标识节点
+                if (secret != null) {
+                    Node existing = nodeService.getOne(new QueryWrapper<Node>().eq("secret", secret));
+                    if (existing != null) {
+                        if (oldId != null && oldId > 0) nodeIdMap.put(oldId, existing.getId());
+                        fail++; continue;
+                    }
+                }
                 Node node = new Node();
                 node.setName(getStr(item, "name"));
-                node.setSecret(getStr(item, "secret"));
+                node.setSecret(secret);
                 node.setIp(getStr(item, "ip"));
                 node.setServerIp(getStr(item, "serverIp"));
                 node.setVersion(getStr(item, "version"));
@@ -526,8 +535,17 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
         for (Map<String, Object> item : items) {
             try {
                 Long oldId = getLong(item, "id");
+                String username = getStr(item, "user");
+                // 按用户名判重
+                if (username != null) {
+                    User existing = userService.getOne(new QueryWrapper<User>().eq("user", username));
+                    if (existing != null) {
+                        if (oldId != null && oldId > 0) userIdMap.put(oldId, existing.getId());
+                        fail++; continue;
+                    }
+                }
                 User user = new User();
-                user.setUser(getStr(item, "user"));
+                user.setUser(username);
                 user.setPwd(getStr(item, "pwd"));
                 user.setRoleId(getInt(item, "roleId"));
                 user.setExpTime(getLong(item, "expTime"));
@@ -553,12 +571,19 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
         int success = 0, fail = 0;
         for (Map<String, Object> item : items) {
             try {
-                UserTunnel ut = new UserTunnel();
-                // 使用 userIdMap 和 tunnelIdMap 映射关联 id
                 Long oldUserId = getLong(item, "userId");
-                ut.setUserId(oldUserId != null ? userIdMap.getOrDefault(oldUserId, oldUserId).intValue() : null);
                 Long oldTunnelId = getLong(item, "tunnelId");
-                ut.setTunnelId(oldTunnelId != null ? tunnelIdMap.getOrDefault(oldTunnelId, oldTunnelId).intValue() : null);
+                Long newUserId = oldUserId != null ? userIdMap.getOrDefault(oldUserId, oldUserId) : null;
+                Long newTunnelId = oldTunnelId != null ? tunnelIdMap.getOrDefault(oldTunnelId, oldTunnelId) : null;
+                // 按 (user_id, tunnel_id) 判重
+                if (newUserId != null && newTunnelId != null) {
+                    long count = userTunnelService.count(new QueryWrapper<UserTunnel>()
+                            .eq("user_id", newUserId).eq("tunnel_id", newTunnelId));
+                    if (count > 0) { fail++; continue; }
+                }
+                UserTunnel ut = new UserTunnel();
+                ut.setUserId(newUserId != null ? newUserId.intValue() : null);
+                ut.setTunnelId(newTunnelId != null ? newTunnelId.intValue() : null);
                 ut.setFlow(getLong(item, "flow"));
                 ut.setInFlow(getLong(item, "inFlow"));
                 ut.setOutFlow(getLong(item, "outFlow"));
@@ -597,14 +622,23 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
         int success = 0, fail = 0;
         for (Map<String, Object> item : items) {
             try {
+                String name = getStr(item, "name");
+                Long oldTunnelId = getLong(item, "tunnelId");
+                Long newTunnelId = oldTunnelId != null ? tunnelIdMap.getOrDefault(oldTunnelId, oldTunnelId) : null;
+
+                // 跳过已存在的同名转发（同一隧道下），防止重复导入导致数据库错误
+                if (name != null && newTunnelId != null) {
+                    long count = forwardService.count(new QueryWrapper<Forward>()
+                            .eq("name", name).eq("tunnel_id", newTunnelId));
+                    if (count > 0) { fail++; continue; }
+                }
+
                 Forward fwd = new Forward();
-                // 使用 userIdMap 和 tunnelIdMap 映射关联 id
                 Long oldUserId = getLong(item, "userId");
                 fwd.setUserId(oldUserId != null ? userIdMap.getOrDefault(oldUserId, oldUserId).intValue() : null);
                 fwd.setUserName(getStr(item, "userName"));
-                fwd.setName(getStr(item, "name"));
-                Long oldTunnelId = getLong(item, "tunnelId");
-                fwd.setTunnelId(oldTunnelId != null ? tunnelIdMap.getOrDefault(oldTunnelId, oldTunnelId).intValue() : null);
+                fwd.setName(name);
+                fwd.setTunnelId(newTunnelId != null ? newTunnelId.intValue() : null);
                 fwd.setInPort(getInt(item, "inPort"));
                 fwd.setOutPort(getInt(item, "outPort"));
                 fwd.setRemoteAddr(getStr(item, "remoteAddr"));
@@ -616,7 +650,12 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
                 fwd.setCreatedTime(getLong(item, "createdTime"));
                 fwd.setUpdatedTime(getLong(item, "updatedTime"));
                 fwd.setStatus(getInt(item, "status"));
-                forwardService.updateForwardA(fwd);
+                // 先持久化到数据库（原代码 Bug：只调用 updateForwardA 而未 save，导致转发不入库）
+                forwardService.save(fwd);
+                // 再启动 GOST 服务（仅对启用状态的转发）
+                if (Integer.valueOf(1).equals(fwd.getStatus())) {
+                    forwardService.updateForwardA(fwd);
+                }
                 success++;
             } catch (Exception e) { fail++; }
         }
