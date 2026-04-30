@@ -150,8 +150,8 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             --push \
-            -t chenzai666/vite-frontend:latest \
-            -t chenzai666/vite-frontend:${VERSION} \
+            -t bats666/vite-frontend:latest \
+            -t bats666/vite-frontend:${VERSION} \
             ./vite-frontend
 
   build-java:
@@ -194,8 +194,8 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             --push \
-            -t chenzai666/springboot-backend:latest \
-            -t chenzai666/springboot-backend:${VERSION} \
+            -t bats666/springboot-backend:latest \
+            -t bats666/springboot-backend:${VERSION} \
             ./springboot-backend
 
   create-release:
