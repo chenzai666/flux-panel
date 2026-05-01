@@ -1,4 +1,22 @@
 services:
+  mysql:
+    image: mysql:8.0
+    container_name: flux-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: gost
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - gost-network
+    healthcheck:
+      test: ["CMD", "sh", "-c", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
   backend:
     image: bats666/springboot-backend:latest
     container_name: springboot-backend
@@ -7,11 +25,12 @@ services:
       # --- MySQL 模式（默认）---
       DB_TYPE: mysql
       DB_DRIVER: com.mysql.cj.jdbc.Driver
-      DB_URL: jdbc:mysql://127.0.0.1:3306/gost?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+      DB_URL: jdbc:mysql://flux-mysql:3306/gost?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
       DB_USERNAME: root
-      DB_PASSWORD: your_password
-      DB_INIT_MODE: always   # 首次启动后可改为 never
-      # --- SQLite 模式（备用，取消注释下方并删除上面 MySQL 变量）---
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_INIT_MODE: always
+      # --- SQLite 模式（备用）---
+      # 删除上面所有 DB_* 变量，取消注释下面一行，并删除 depends_on mysql 条件
       # DB_PATH: /app/data/gost.db
       JWT_SECRET: ${JWT_SECRET}
       LOG_DIR: /app/logs
@@ -20,7 +39,9 @@ services:
       - "${BACKEND_PORT}:6365"
     volumes:
       - backend_logs:/app/logs
-      - sqlite_data:/app/data
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - gost-network
     stop_grace_period: 30s
@@ -46,8 +67,8 @@ services:
 
 
 volumes:
-  sqlite_data:
-    name: sqlite_data
+  mysql_data:
+    name: flux_mysql_data
     driver: local
   backend_logs:
     name: backend_logs
@@ -60,4 +81,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/16 
+        - subnet: 172.20.0.0/16

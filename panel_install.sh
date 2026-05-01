@@ -8,8 +8,8 @@ export LC_ALL=C
 
 
 # 全局下载地址配置
-DOCKER_COMPOSEV4_URL="https://github.com/bqlpfy/flux-panel/releases/download/2.0.7-beta/docker-compose-v4.yml"
-DOCKER_COMPOSEV6_URL="https://github.com/bqlpfy/flux-panel/releases/download/2.0.7-beta/docker-compose-v6.yml"
+DOCKER_COMPOSEV4_URL="https://github.com/chenzai666/flux-panel/releases/download/2.0.12-beta/docker-compose-v4.yml"
+DOCKER_COMPOSEV6_URL="https://github.com/chenzai666/flux-panel/releases/download/2.0.12-beta/docker-compose-v6.yml"
 
 COUNTRY=$(curl -s https://ipinfo.io/country)
 if [ "$COUNTRY" = "CN" ]; then
@@ -176,8 +176,9 @@ get_config_params() {
   read -p "后端端口（默认 6365）: " BACKEND_PORT
   BACKEND_PORT=${BACKEND_PORT:-6365}
 
-  # 生成JWT密钥
+  # 生成JWT密钥和MySQL密码
   JWT_SECRET=$(generate_random)
+  MYSQL_ROOT_PASSWORD=$(generate_random)
 }
 
 # 安装功能
@@ -202,6 +203,7 @@ install_panel() {
 JWT_SECRET=$JWT_SECRET
 FRONTEND_PORT=$FRONTEND_PORT
 BACKEND_PORT=$BACKEND_PORT
+MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
 EOF
 
   echo "🚀 启动 docker 服务..."
