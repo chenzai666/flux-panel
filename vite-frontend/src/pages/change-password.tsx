@@ -111,10 +111,10 @@ export default function ChangePasswordPage() {
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10 min-h-[calc(100dvh-200px)]">
         <div className="w-full max-w-lg">
-          <Card className="w-full">
+          <Card className="w-full border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none">
             <CardHeader className="pb-0 pt-6 px-6 flex-col items-center">
-              <div className="w-12 h-12 bg-warning-100 rounded-full flex items-center justify-center mb-3">
-                <svg className="w-6 h-6 text-warning-600" fill="currentColor" viewBox="0 0 20 20">
+              <div className="w-12 h-12 bg-orange-100 dark:bg-orange-500/20 rounded-full flex items-center justify-center mb-3">
+                <svg className="w-6 h-6 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </svg>
               </div>
@@ -177,17 +177,16 @@ export default function ChangePasswordPage() {
                 />
                 
                 <Button
-                  color="warning"
                   size="lg"
                   onClick={handleSubmit}
                   isLoading={loading}
                   disabled={loading}
-                  className="mt-2"
+                  className="mt-2 bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                 >
                   {loading ? "修改中..." : "立即修改账号密码"}
                 </Button>
                 
-                <div className="bg-warning-50 border border-warning-200 text-warning-700 px-3 py-2 rounded-lg text-sm text-center">
+                <div className="bg-[#faf8f5] dark:bg-[#2d2824]/50 border border-[#e5e0d8] dark:border-[#2d2824] text-[#6b5a4e] dark:text-[#b5a99a] px-3 py-2 rounded-lg text-sm text-center">
                   ⚠️ 注意：修改账号密码后需要重新登录
                 </div>
               </div>
