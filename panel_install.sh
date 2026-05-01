@@ -176,9 +176,11 @@ get_config_params() {
   read -p "后端端口（默认 6365）: " BACKEND_PORT
   BACKEND_PORT=${BACKEND_PORT:-6365}
 
-  # 生成JWT密钥和MySQL密码
+  # 生成所有随机密钥
   JWT_SECRET=$(generate_random)
-  MYSQL_ROOT_PASSWORD=$(generate_random)
+  DB_NAME="flux_$(generate_random)"
+  DB_USER="flux_$(generate_random)"
+  DB_PASSWORD=$(generate_random)
 }
 
 # 安装功能
@@ -203,7 +205,9 @@ install_panel() {
 JWT_SECRET=$JWT_SECRET
 FRONTEND_PORT=$FRONTEND_PORT
 BACKEND_PORT=$BACKEND_PORT
-MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+DB_NAME=$DB_NAME
+DB_USER=$DB_USER
+DB_PASSWORD=$DB_PASSWORD
 EOF
 
   echo "🚀 启动 docker 服务..."

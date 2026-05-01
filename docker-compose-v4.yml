@@ -4,14 +4,16 @@ services:
     container_name: flux-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: gost
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - gost-network
     healthcheck:
-      test: ["CMD", "sh", "-c", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
       interval: 10s
       timeout: 5s
       retries: 6
@@ -25,9 +27,9 @@ services:
       # --- MySQL 模式（默认）---
       DB_TYPE: mysql
       DB_DRIVER: com.mysql.cj.jdbc.Driver
-      DB_URL: jdbc:mysql://flux-mysql:3306/gost?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-      DB_USERNAME: root
-      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_URL: jdbc:mysql://flux-mysql:3306/${DB_NAME}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+      DB_USERNAME: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
       DB_INIT_MODE: always
       # --- SQLite 模式（备用）---
       # 删除上面所有 DB_* 变量，取消注释下面一行，并删除 depends_on mysql 条件
@@ -68,7 +70,7 @@ services:
 
 volumes:
   mysql_data:
-    name: flux_mysql_data
+    name: mysql_data
     driver: local
   backend_logs:
     name: backend_logs
