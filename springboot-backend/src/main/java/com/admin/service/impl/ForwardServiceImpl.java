@@ -1167,6 +1167,42 @@ public class ForwardServiceImpl extends ServiceImpl<ForwardMapper, Forward> impl
         return R.ok();
     }
 
+    @Override
+    public void syncAllToGost() {
+        List<Forward> forwards = this.list(new QueryWrapper<Forward>().eq("status", 1));
+        log.info("开始同步 {} 条转发到Gost节点", forwards.size());
+        int ok = 0, skip = 0;
+        for (Forward forward : forwards) {
+            try {
+                Tunnel tunnel = tunnelService.getById(forward.getTunnelId());
+                if (tunnel == null) { skip++; continue; }
+
+                UserTunnel userTunnel = getUserTunnel(forward.getUserId(), tunnel.getId().intValue());
+                String serviceName = buildServiceName(forward.getId(), forward.getUserId(), userTunnel);
+                Integer limiter = (userTunnel != null) ? userTunnel.getSpeedId() : null;
+
+                List<ChainTunnel> entryChains = chainTunnelService.list(
+                        new QueryWrapper<ChainTunnel>().eq("tunnel_id", tunnel.getId()).eq("chain_type", 1));
+
+                for (ChainTunnel ct : entryChains) {
+                    ForwardPort fp = forwardPortService.getOne(
+                            new QueryWrapper<ForwardPort>()
+                                    .eq("forward_id", forward.getId())
+                                    .eq("node_id", ct.getNodeId()));
+                    if (fp == null) continue;
+                    Node node = nodeService.getById(ct.getNodeId());
+                    if (node == null) continue;
+                    GostUtil.AddAndUpdateService(serviceName, limiter, node, forward, fp, tunnel, "AddService");
+                }
+                ok++;
+            } catch (Exception e) {
+                log.warn("同步转发 {} 到Gost失败: {}", forward.getId(), e.getMessage());
+                skip++;
+            }
+        }
+        log.info("Gost同步完成，推送: {}, 跳过: {}", ok, skip);
+    }
+
     @Data
     private static class UserPermissionResult {
         private final boolean hasError;

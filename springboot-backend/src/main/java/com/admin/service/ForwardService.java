@@ -94,4 +94,10 @@ public interface ForwardService extends IService<Forward> {
      * @return 结果
      */
     R batchForceDeleteForwards(java.util.List<Long> ids);
+
+    /**
+     * 将数据库中所有 status=1 的转发重新推送到 Gost 节点
+     * 用于备份恢复/迁移后使节点配置与数据库保持一致
+     */
+    void syncAllToGost();
 }

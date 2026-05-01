@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
@@ -137,7 +138,8 @@ public class BackupController extends BaseController {
             speedLimitService.saveBatch(speedLimitsArr.toJavaList(SpeedLimit.class));
         }
 
-        return R.ok("导入成功");
+        CompletableFuture.runAsync(() -> forwardService.syncAllToGost());
+        return R.ok("导入成功，正在后台同步转发配置到Gost节点");
     }
 
     private R importStableFormat(JSONObject data) {
@@ -269,7 +271,8 @@ public class BackupController extends BaseController {
             speedLimitService.saveBatch(speedLimitsArr.toJavaList(SpeedLimit.class));
         }
 
-        return R.ok("稳定版数据迁移完成，各隧道的转发链节点已自动创建入口/出口，中间链路节点需手动配置");
+        CompletableFuture.runAsync(() -> forwardService.syncAllToGost());
+        return R.ok("稳定版数据迁移完成，转发配置正在后台同步到Gost节点，中间链路节点需手动配置");
     }
 
     /** 解析稳定版 tcpListenAddr，支持 ":8080"、"0.0.0.0:8080"、"8080" 三种格式 */
