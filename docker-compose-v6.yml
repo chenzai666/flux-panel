@@ -4,15 +4,15 @@ services:
     container_name: springboot-backend
     restart: unless-stopped
     environment:
-      # --- SQLite 模式（默认）---
-      DB_PATH: /app/data/gost.db
-      # --- MySQL 模式（取消注释以下变量并注释上面的 DB_PATH）---
-      # DB_TYPE: mysql
-      # DB_DRIVER: com.mysql.cj.jdbc.Driver
-      # DB_URL: jdbc:mysql://127.0.0.1:3306/gost?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-      # DB_USERNAME: root
-      # DB_PASSWORD: your_password
-      # DB_INIT_MODE: always   # 首次启动后可改为 never
+      # --- MySQL 模式（默认）---
+      DB_TYPE: mysql
+      DB_DRIVER: com.mysql.cj.jdbc.Driver
+      DB_URL: jdbc:mysql://127.0.0.1:3306/gost?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+      DB_USERNAME: root
+      DB_PASSWORD: your_password
+      DB_INIT_MODE: always   # 首次启动后可改为 never
+      # --- SQLite 模式（备用，取消注释下方并删除上面 MySQL 变量）---
+      # DB_PATH: /app/data/gost.db
       JWT_SECRET: ${JWT_SECRET}
       LOG_DIR: /app/logs
       JAVA_OPTS: "-Xms256m -Xmx512m -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai"
