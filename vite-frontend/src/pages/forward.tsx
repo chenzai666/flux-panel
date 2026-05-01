@@ -1437,10 +1437,9 @@ export default function ForwardPage() {
                 <Button
                   size="sm"
                   variant="flat"
-                  className="text-[#6b5a4e] dark:text-[#b5a99a]"
+                  className="text-sm text-[#6b5a4e] dark:text-[#b5a99a]"
                   onPress={handleViewModeChange}
                   isIconOnly
-                  className="text-sm"
                   title={viewMode === 'grouped' ? '切换到直接显示' : '切换到分类显示'}
                 >
                   {viewMode === 'grouped' ? (
