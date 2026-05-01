@@ -20,7 +20,7 @@ services:
       start_period: 30s
 
   backend:
-    image: chenzai666/springboot-backend:latest
+    image: bats666/springboot-backend-beta:latest
     container_name: springboot-backend
     restart: unless-stopped
     environment:
@@ -56,7 +56,7 @@ services:
       start_period: 60s
 
   frontend:
-    image: chenzai666/vite-frontend:latest
+    image: bats666/vite-frontend-beta:latest
     container_name: vite-frontend
     restart: unless-stopped
     ports:
