@@ -191,6 +191,9 @@ public class BackupController extends BaseController {
 
                 Long inNodeId = coalesce(j.getLong("inNodeId"), j.getLong("in_node_id"));
                 Long outNodeId = coalesce(j.getLong("outNodeId"), j.getLong("out_node_id"));
+                // 出口节点监听端口：稳定版存在 tcpListenAddr，格式如 ":8080" 或 "0.0.0.0:8080"
+                Integer exitPort = parseListenPort(
+                        coalesce(j.getString("tcpListenAddr"), j.getString("tcp_listen_addr")));
 
                 if (inNodeId != null && inNodeId > 0) {
                     ChainTunnel entry = new ChainTunnel();
@@ -206,6 +209,7 @@ public class BackupController extends BaseController {
                     exit.setTunnelId(tunnel.getId());
                     exit.setChainType(3);
                     exit.setNodeId(outNodeId);
+                    exit.setPort(exitPort);
                     chainTunnelService.save(exit);
                 }
             }
@@ -266,6 +270,19 @@ public class BackupController extends BaseController {
         }
 
         return R.ok("稳定版数据迁移完成，各隧道的转发链节点已自动创建入口/出口，中间链路节点需手动配置");
+    }
+
+    /** 解析稳定版 tcpListenAddr，支持 ":8080"、"0.0.0.0:8080"、"8080" 三种格式 */
+    private static Integer parseListenPort(String addr) {
+        if (addr == null || addr.isBlank()) return null;
+        int colonIdx = addr.lastIndexOf(':');
+        String portStr = colonIdx >= 0 ? addr.substring(colonIdx + 1) : addr.trim();
+        try {
+            int port = Integer.parseInt(portStr.trim());
+            return (port > 0 && port <= 65535) ? port : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     @SafeVarargs
