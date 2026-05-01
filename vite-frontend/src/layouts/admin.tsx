@@ -242,10 +242,10 @@ export default function AdminLayout({
   );
 
   return (
-          <div className={`flex ${isMobile ? 'min-h-screen' : 'h-screen'} bg-gray-100 dark:bg-black`}>
+          <div className={`flex ${isMobile ? 'min-h-screen' : 'h-screen'} bg-[#f3f0eb] dark:bg-[#1a1612]`}>
       {/* 移动端遮罩层 */}
       {isMobile && mobileMenuVisible && (
-        <div 
+        <div
           className="fixed inset-0 backdrop-blur-sm bg-white/50 dark:bg-black/30 z-40"
           onClick={hideMobileMenu}
         />
@@ -253,13 +253,13 @@ export default function AdminLayout({
 
       {/* 左侧菜单栏 */}
       <aside className={`
-        ${isMobile ? 'fixed' : 'relative'} 
+        ${isMobile ? 'fixed' : 'relative'}
         ${isMobile && !mobileMenuVisible ? '-translate-x-full' : 'translate-x-0'}
-        ${isMobile ? 'w-64' : 'w-72'} 
-        bg-white dark:bg-black 
-        shadow-lg 
-        border-r border-gray-200 dark:border-gray-600
-        z-50 
+        ${isMobile ? 'w-64' : 'w-72'}
+        bg-white dark:bg-[#1c1916]
+        shadow-sm
+        border-r border-[#e5e0d8] dark:border-[#2d2824]
+        z-50
         transition-transform duration-300 ease-in-out
         flex flex-col
         ${isMobile ? 'h-screen' : 'h-full'}
@@ -288,9 +288,9 @@ export default function AdminLayout({
                      className={`
                        w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left
                        transition-colors duration-200 min-h-[44px]
-                       ${isActive 
-                         ? 'bg-primary-100 dark:bg-primary-600/20 text-primary-600 dark:text-primary-300' 
-                         : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900'
+                       ${isActive
+                         ? 'bg-[#fdf1ec] dark:bg-[#c96442]/15 text-[#c96442] dark:text-[#e07a56]'
+                         : 'text-[#6b5a4e] dark:text-[#b5a99a] hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824]'
                        }
                      `}
                    >
@@ -308,13 +308,13 @@ export default function AdminLayout({
                 {/* 底部版权信息 */}
         <div className="px-4 py-2 pb-4 mt-auto flex-shrink-0">
           <div className="text-center">
-            <p className="text-xs text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-[#9c8678] dark:text-[#7a6b60]">
               Powered by{' '}
-              <a 
-                href="https://github.com/bqlpfy/flux-panel" 
-                target="_blank" 
+              <a
+                href="https://github.com/bqlpfy/flux-panel"
+                target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                className="text-[#c96442] dark:text-[#c96442]/80 hover:text-[#b5583a] transition-colors"
               >
                 flux-panel
               </a>
@@ -326,7 +326,7 @@ export default function AdminLayout({
       {/* 主内容区域 */}
       <div className={`flex flex-col flex-1 ${isMobile ? 'min-h-0' : 'h-full overflow-hidden'}`}>
                  {/* 顶部导航栏 */}
-         <header className="bg-white dark:bg-black shadow-md border-b border-gray-200 dark:border-gray-600 h-14 flex items-center justify-between px-4 lg:px-6 relative z-10">
+         <header className="bg-white dark:bg-[#1c1916] shadow-none border-b border-[#e5e0d8] dark:border-[#2d2824] h-14 flex items-center justify-between px-4 lg:px-6 relative z-10">
           <div className="flex items-center gap-4">
             {/* 移动端菜单按钮 */}
             {isMobile && (
@@ -385,7 +385,7 @@ export default function AdminLayout({
         </header>
 
         {/* 主内容 */}
-        <main className={`flex-1 bg-gray-100 dark:bg-black ${isMobile ? '' : 'overflow-y-auto'}`}>
+        <main className={`flex-1 bg-[#f3f0eb] dark:bg-[#1a1612] ${isMobile ? '' : 'overflow-y-auto'}`}>
           {children}
         </main>
       </div>
@@ -442,11 +442,11 @@ export default function AdminLayout({
                  </div>
               </ModalBody>
               <ModalFooter>
-                <Button color="default" variant="light" onPress={onClose}>
+                <Button variant="light" className="text-[#6b5a4e] dark:text-[#b5a99a]" onPress={onClose}>
                   取消
                 </Button>
-                <Button 
-                  color="primary" 
+                <Button
+                  className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                   onPress={handlePasswordSubmit}
                   isLoading={passwordLoading}
                 >
