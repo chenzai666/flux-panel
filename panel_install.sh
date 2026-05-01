@@ -7,13 +7,12 @@ export LC_ALL=C
 
 
 
-# 全局下载地址配置
-DOCKER_COMPOSEV4_URL="https://github.com/chenzai666/flux-panel/releases/download/2.0.12-beta/docker-compose-v4.yml"
-DOCKER_COMPOSEV6_URL="https://github.com/chenzai666/flux-panel/releases/download/2.0.12-beta/docker-compose-v6.yml"
+# 全局下载地址配置（latest release 自动指向最新版，发版后无需手动更新脚本）
+DOCKER_COMPOSEV4_URL="https://github.com/chenzai666/flux-panel/releases/latest/download/docker-compose-v4.yml"
+DOCKER_COMPOSEV6_URL="https://github.com/chenzai666/flux-panel/releases/latest/download/docker-compose-v6.yml"
 
 COUNTRY=$(curl -s https://ipinfo.io/country)
 if [ "$COUNTRY" = "CN" ]; then
-    # 拼接 URL
     DOCKER_COMPOSEV4_URL="https://ghfast.top/${DOCKER_COMPOSEV4_URL}"
     DOCKER_COMPOSEV6_URL="https://ghfast.top/${DOCKER_COMPOSEV6_URL}"
 fi

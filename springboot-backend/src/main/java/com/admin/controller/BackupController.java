@@ -234,7 +234,14 @@ public class BackupController extends BaseController {
                 forward.setUserName(coalesce(j.getString("userName"), j.getString("user_name")));
                 forward.setName(j.getString("name"));
                 forward.setTunnelId(coalesce(j.getInteger("tunnelId"), j.getInteger("tunnel_id")));
-                forward.setRemoteAddr(coalesce(j.getString("remoteAddr"), j.getString("remote_addr")));
+                // Stable stores target as remoteAddr (host only) + outPort (int) separately.
+                // Beta stores as remoteAddr "host:port". Merge if outPort present and remoteAddr has no port.
+                String remoteAddr = coalesce(j.getString("remoteAddr"), j.getString("remote_addr"));
+                Integer outPort = coalesce(j.getInteger("outPort"), j.getInteger("out_port"));
+                if (remoteAddr != null && outPort != null && !remoteAddr.contains(":")) {
+                    remoteAddr = remoteAddr + ":" + outPort;
+                }
+                forward.setRemoteAddr(remoteAddr);
                 forward.setStrategy(j.getString("strategy"));
                 forward.setInFlow(coalesce(j.getLong("inFlow"), j.getLong("in_flow")));
                 forward.setOutFlow(coalesce(j.getLong("outFlow"), j.getLong("out_flow")));
