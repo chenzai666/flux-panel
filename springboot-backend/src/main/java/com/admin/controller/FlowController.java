@@ -151,8 +151,15 @@ public class FlowController extends BaseController {
         // 2. 尝试解密数据
         String decryptedData = decryptIfNeeded(rawData, secret);
 
-        // 3. 解析为FlowDto列表
-        JSONArray flowDataList = JSONObject.parseArray(decryptedData);
+        // 3. 解析为FlowDto列表（gost可能上报单个对象或数组）
+        JSONArray flowDataList;
+        String trimmed = decryptedData.trim();
+        if (trimmed.startsWith("[")) {
+            flowDataList = JSONObject.parseArray(decryptedData);
+        } else {
+            flowDataList = new JSONArray();
+            flowDataList.add(JSONObject.parseObject(decryptedData));
+        }
         log.info("节点上报流量数据{}", flowDataList);
         for (int i = 0; i < flowDataList.size(); i++) {
             String jsonObject = flowDataList.getJSONObject(i).toJSONString();
