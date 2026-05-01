@@ -58,11 +58,14 @@ public class BackupController extends BaseController {
             String version = backupData.getString("version");
             boolean isBeta = "beta".equals(version);
 
-            // Detect stable v1.x format: tunnels contain inNodeId / in_node_id
-            JSONArray tunnelsArr = backupData.getJSONArray("tunnels");
-            boolean isStable = !isBeta && tunnelsArr != null && !tunnelsArr.isEmpty() &&
-                    (tunnelsArr.getJSONObject(0).containsKey("inNodeId") ||
-                     tunnelsArr.getJSONObject(0).containsKey("in_node_id"));
+            // Stable v1.x uses singular keys ("node","tunnel","forward"…) and version like "1.x.x"
+            // Beta uses plural keys ("nodes","tunnels","forwards"…) and version="beta"
+            boolean isStable = !isBeta && (
+                backupData.containsKey("node") ||
+                backupData.containsKey("tunnel") ||
+                backupData.containsKey("forward") ||
+                (version != null && version.startsWith("1."))
+            );
 
             if (!isBeta && !isStable) {
                 return R.err("无法识别备份格式，请确认备份文件来自 flux-panel");
@@ -146,7 +149,8 @@ public class BackupController extends BaseController {
         long now = System.currentTimeMillis();
 
         // Import nodes — convert portSta/portEnd integer range to port TEXT
-        JSONArray nodesArr = data.getJSONArray("nodes");
+        // Stable uses "node" (singular), beta uses "nodes"
+        JSONArray nodesArr = coalesce(data.getJSONArray("nodes"), data.getJSONArray("node"));
         if (nodesArr != null) {
             for (int i = 0; i < nodesArr.size(); i++) {
                 JSONObject j = nodesArr.getJSONObject(i);
@@ -175,8 +179,9 @@ public class BackupController extends BaseController {
         }
 
         // Import tunnels — drop stable-only fields, create chain_tunnel from inNodeId/outNodeId
+        // Stable uses "tunnel" (singular), beta uses "tunnels"
         Map<Long, Long> tunnelEntryNodeMap = new HashMap<>();
-        JSONArray tunnelsArr = data.getJSONArray("tunnels");
+        JSONArray tunnelsArr = coalesce(data.getJSONArray("tunnels"), data.getJSONArray("tunnel"));
         if (tunnelsArr != null) {
             for (int i = 0; i < tunnelsArr.size(); i++) {
                 JSONObject j = tunnelsArr.getJSONObject(i);
@@ -218,7 +223,8 @@ public class BackupController extends BaseController {
         }
 
         // Import forwards — create forward_port from inPort linked to entry node
-        JSONArray forwardsArr = data.getJSONArray("forwards");
+        // Stable uses "forward" (singular), beta uses "forwards"
+        JSONArray forwardsArr = coalesce(data.getJSONArray("forwards"), data.getJSONArray("forward"));
         if (forwardsArr != null) {
             for (int i = 0; i < forwardsArr.size(); i++) {
                 JSONObject j = forwardsArr.getJSONObject(i);
@@ -251,7 +257,8 @@ public class BackupController extends BaseController {
         }
 
         // Import users (skip admin)
-        JSONArray usersArr = data.getJSONArray("users");
+        // Stable uses "user" (singular), beta uses "users"
+        JSONArray usersArr = coalesce(data.getJSONArray("users"), data.getJSONArray("user"));
         if (usersArr != null) {
             for (int i = 0; i < usersArr.size(); i++) {
                 JSONObject j = usersArr.getJSONObject(i);
@@ -261,12 +268,14 @@ public class BackupController extends BaseController {
             }
         }
 
-        JSONArray userTunnelsArr = data.getJSONArray("userTunnels");
+        // Stable uses "user_tunnel", beta uses "userTunnels"
+        JSONArray userTunnelsArr = coalesce(data.getJSONArray("userTunnels"), data.getJSONArray("user_tunnel"));
         if (userTunnelsArr != null && !userTunnelsArr.isEmpty()) {
             userTunnelService.saveBatch(userTunnelsArr.toJavaList(UserTunnel.class));
         }
 
-        JSONArray speedLimitsArr = data.getJSONArray("speedLimits");
+        // Stable uses "speed_limit", beta uses "speedLimits"
+        JSONArray speedLimitsArr = coalesce(data.getJSONArray("speedLimits"), data.getJSONArray("speed_limit"));
         if (speedLimitsArr != null && !speedLimitsArr.isEmpty()) {
             speedLimitService.saveBatch(speedLimitsArr.toJavaList(SpeedLimit.class));
         }
