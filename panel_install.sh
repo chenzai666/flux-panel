@@ -20,13 +20,23 @@ fi
 
 
 
-# 根据IPv6支持情况选择docker-compose URL
+# 询问用户是否需要 IPv6，默认 v4
 get_docker_compose_url() {
-  if check_ipv6_support > /dev/null 2>&1; then
-    echo "$DOCKER_COMPOSEV6_URL"
-  else
-    echo "$DOCKER_COMPOSEV4_URL"
-  fi
+  echo ""
+  echo "请选择网络模式："
+  echo "  1) IPv4（默认，推荐大多数用户）"
+  echo "  2) IPv4 + IPv6 双栈"
+  read -rp "请输入选项 [1/2，直接回车选1]: " NET_CHOICE
+  case "$NET_CHOICE" in
+    2)
+      echo "✅ 已选择 IPv4 + IPv6 双栈模式"
+      echo "$DOCKER_COMPOSEV6_URL"
+      ;;
+    *)
+      echo "✅ 已选择 IPv4 模式"
+      echo "$DOCKER_COMPOSEV4_URL"
+      ;;
+  esac
 }
 
 # 检查 docker-compose 或 docker compose 命令
@@ -195,12 +205,6 @@ install_panel() {
   curl -L -o docker-compose.yml "$DOCKER_COMPOSE_URL"
   echo "✅ 文件准备完成"
 
-  # 自动检测并配置 IPv6 支持
-  if check_ipv6_support; then
-    echo "🚀 系统支持 IPv6，自动启用 IPv6 配置..."
-    configure_docker_ipv6
-  fi
-
   cat > .env <<EOF
 JWT_SECRET=$JWT_SECRET
 FRONTEND_PORT=$FRONTEND_PORT
@@ -233,12 +237,6 @@ update_panel() {
   echo "📡 选择配置文件：$(basename "$DOCKER_COMPOSE_URL")"
   curl -L -o docker-compose.yml "$DOCKER_COMPOSE_URL"
   echo "✅ 下载完成"
-
-  # 自动检测并配置 IPv6 支持
-  if check_ipv6_support; then
-    echo "🚀 系统支持 IPv6，自动启用 IPv6 配置..."
-    configure_docker_ipv6
-  fi
 
   # 先发送 SIGTERM 信号，让应用优雅关闭
   docker stop -t 30 springboot-backend 2>/dev/null || true
