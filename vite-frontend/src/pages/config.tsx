@@ -282,7 +282,7 @@ export default function ConfigPage() {
               wrapper: isChanged ? "border-warning-300" : ""
             }}
           >
-            <span className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="text-sm text-[#6b5a4e] dark:text-[#b5a99a]">
               {configs[item.key] === 'true' ? '已启用' : '已禁用'}
             </span>
           </Switch>
@@ -341,7 +341,7 @@ export default function ConfigPage() {
           <SettingsIcon className="w-8 h-8 text-primary" />
           <div>
             <h1 className="text-2xl font-bold">网站配置</h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-[#6b5a4e] dark:text-[#9c8678]">
               管理网站的基本信息和显示设置
             </p>
           </div>
@@ -352,14 +352,14 @@ export default function ConfigPage() {
             <div className="flex justify-between items-center w-full">
               <div>
                 <h2 className="text-xl font-semibold">基本设置</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[#6b5a4e] dark:text-[#9c8678]">
                   配置网站的基本信息，这些设置会影响网站的显示效果
                 </p>
               </div>
               <div className="flex gap-2">
 
                 <Button
-                  color="primary"
+                  className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg disabled:opacity-50"
                   startContent={<SaveIcon className="w-4 h-4" />}
                   onClick={handleSave}
                   isLoading={saving}
@@ -387,11 +387,11 @@ export default function ConfigPage() {
               return (
                 <div key={item.key} className="space-y-3">
                   <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="text-sm font-medium text-[#4a3c33] dark:text-[#d4c8bc]">
                       {item.label}
                     </label>
                     {item.description && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-[#9c8678] dark:text-[#7a6b60]">
                         {item.description}
                       </p>
                     )}

@@ -3,6 +3,7 @@ package com.admin.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -13,13 +14,12 @@ import java.sql.Connection;
 import java.sql.Statement;
 
 /**
- * SQLite 数据库配置
- * 启用 WAL (Write-Ahead Logging) 模式以提高并发性能
- * 添加定期 checkpoint 和优雅关闭处理
+ * SQLite WAL mode configuration — only active when DB_TYPE=sqlite (default).
  */
 @Slf4j
 @Component
 @EnableScheduling
+@ConditionalOnProperty(name = "spring.datasource.driver-class-name", havingValue = "org.sqlite.JDBC", matchIfMissing = true)
 public class SQLiteConfig implements ApplicationRunner {
 
     private final DataSource dataSource;

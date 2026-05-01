@@ -1287,7 +1287,7 @@ export default function ForwardPage() {
             {/* 地址信息 */}
             <div className="space-y-1">
               <div 
-                className={`cursor-pointer px-2 py-1 bg-default-50 dark:bg-default-100/50 rounded border border-default-200 dark:border-default-300 transition-colors duration-200 ${
+                className={`cursor-pointer px-2 py-1 bg-[#faf8f5] dark:bg-[#2d2824]/40 rounded border border-[#e5e0d8] dark:border-[#3d3834] transition-colors duration-200 ${
                   hasMultipleAddresses(forward.inIp) ? 'hover:bg-default-100 dark:hover:bg-default-200/50' : ''
                 }`}
                 onClick={() => showAddressModal(forward.inIp, forward.inPort, '入口端口')}
@@ -1309,7 +1309,7 @@ export default function ForwardPage() {
               </div>
               
               <div 
-                className={`cursor-pointer px-2 py-1 bg-default-50 dark:bg-default-100/50 rounded border border-default-200 dark:border-default-300 transition-colors duration-200 ${
+                className={`cursor-pointer px-2 py-1 bg-[#faf8f5] dark:bg-[#2d2824]/40 rounded border border-[#e5e0d8] dark:border-[#3d3834] transition-colors duration-200 ${
                   hasMultipleAddresses(forward.remoteAddr) ? 'hover:bg-default-100 dark:hover:bg-default-200/50' : ''
                 }`}
                 onClick={() => showAddressModal(forward.remoteAddr, null, '目标地址')}
@@ -1337,7 +1337,7 @@ export default function ForwardPage() {
                 {strategyDisplay.text}
               </Chip>
               <div className="flex items-center gap-1">
-                <Chip variant="flat" size="sm" className="text-xs" color="primary">
+                <Chip variant="flat" size="sm" className="text-xs bg-[#c96442]/10 text-[#c96442] border-[#c96442]/20">
                   ↑{formatFlow(forward.inFlow || 0)}
                 </Chip>
                
@@ -1352,9 +1352,8 @@ export default function ForwardPage() {
             <Button
               size="sm"
               variant="flat"
-              color="primary"
+              className="flex-1 min-h-8 text-[#c96442] bg-[#c96442]/10 hover:bg-[#c96442]/20"
               onPress={() => handleEdit(forward)}
-              className="flex-1 min-h-8"
               startContent={
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
@@ -1428,7 +1427,7 @@ export default function ForwardPage() {
                 <Button size="sm" variant="flat" color="danger" onPress={() => setBatchDeleteModalOpen(true)} isDisabled={selectedIds.length === 0}>
                   删除所选
                 </Button>
-                <Button size="sm" variant="flat" color="default" onPress={exitBatchMode}>
+                <Button size="sm" variant="flat" className="text-[#6b5a4e] dark:text-[#b5a99a]" onPress={exitBatchMode}>
                   取消
                 </Button>
               </>
@@ -1438,7 +1437,7 @@ export default function ForwardPage() {
                 <Button
                   size="sm"
                   variant="flat"
-                  color="default"
+                  className="text-[#6b5a4e] dark:text-[#b5a99a]"
                   onPress={handleViewModeChange}
                   isIconOnly
                   className="text-sm"
@@ -1465,7 +1464,7 @@ export default function ForwardPage() {
                 <Button size="sm" variant="flat" color="danger" onPress={enterBatchMode}>
                   批量
                 </Button>
-                <Button size="sm" variant="flat" color="primary" onPress={handleAdd}>
+                <Button size="sm" className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg" onPress={handleAdd}>
                   新增
                 </Button>
               </>
@@ -1497,7 +1496,7 @@ export default function ForwardPage() {
                           </p>
                         </div>
                       </div>
-                      <Chip color="primary" variant="flat" size="sm" className="text-xs flex-shrink-0 ml-2">
+                      <Chip variant="flat" size="sm" className="text-xs flex-shrink-0 ml-2 bg-[#c96442]/10 text-[#c96442] border-[#c96442]/20">
                         用户
                       </Chip>
                     </div>
@@ -1542,7 +1541,7 @@ export default function ForwardPage() {
             </div>
           ) : (
             /* 空状态 */
-            <Card className="shadow-sm border border-gray-200 dark:border-gray-700">
+            <Card className="shadow-none border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b]">
               <CardBody className="text-center py-16">
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center">
@@ -1582,7 +1581,7 @@ export default function ForwardPage() {
             </DndContext>
           ) : (
             /* 空状态 */
-            <Card className="shadow-sm border border-gray-200 dark:border-gray-700">
+            <Card className="shadow-none border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b]">
               <CardBody className="text-center py-16">
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center">
@@ -1719,8 +1718,8 @@ export default function ForwardPage() {
                   <Button variant="light" onPress={onClose}>
                     取消
                   </Button>
-                  <Button 
-                    color="primary" 
+                  <Button
+                    className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                     onPress={handleSubmit}
                     isLoading={submitLoading}
                   >
@@ -1816,7 +1815,7 @@ export default function ForwardPage() {
               
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {addressList.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center p-3 border border-default-200 dark:border-default-100 rounded-lg">
+                  <div key={item.id} className="flex justify-between items-center p-3 border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg">
                     <code className="text-sm flex-1 mr-3 text-foreground">{item.address}</code>
                     <Button
                       size="sm"
@@ -1880,9 +1879,9 @@ export default function ForwardPage() {
                 {/* 导出按钮和数据 */}
                 {exportData && (
                   <div className="flex justify-between items-center">
-                    <Button 
-                      color="primary" 
-                      size="sm" 
+                    <Button
+                      size="sm"
+                      className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg"
                       onPress={executeExport}
                       isLoading={exportLoading}
                       isDisabled={!selectedTunnelForExport}
@@ -1894,9 +1893,10 @@ export default function ForwardPage() {
                     >
                       重新生成
                     </Button>
-                    <Button 
-                      color="secondary" 
-                      size="sm" 
+                    <Button
+                      variant="flat"
+                      size="sm"
+                      className="text-[#6b5a4e] dark:text-[#b5a99a]"
                       onPress={copyExportData}
                       startContent={
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -1913,9 +1913,9 @@ export default function ForwardPage() {
                 {/* 初始导出按钮 */}
                 {!exportData && (
                   <div className="text-right">
-                    <Button 
-                      color="primary" 
-                      size="sm" 
+                    <Button
+                      size="sm"
+                      className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg"
                       onPress={executeExport}
                       isLoading={exportLoading}
                       isDisabled={!selectedTunnelForExport}
@@ -2133,11 +2133,10 @@ export default function ForwardPage() {
                   {currentDiagnosisForward && (
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-small text-default-500 truncate flex-1 min-w-0">{currentDiagnosisForward.name}</span>
-                      <Chip 
-                        color="primary"
-                        variant="flat" 
+                      <Chip
+                        variant="flat"
                         size="sm"
-                        className="flex-shrink-0"
+                        className="flex-shrink-0 bg-[#c96442]/10 text-[#c96442] border-[#c96442]/20"
                       >
                         转发服务
                       </Chip>
@@ -2156,7 +2155,7 @@ export default function ForwardPage() {
                     <div className="space-y-4">
                       {/* 统计摘要 */}
                       <div className="grid grid-cols-3 gap-3">
-                        <div className="text-center p-3 bg-default-100 dark:bg-gray-800 rounded-lg border border-divider">
+                        <div className="text-center p-3 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded-lg border border-[#e5e0d8] dark:border-[#3d3834]">
                           <div className="text-2xl font-bold text-foreground">{diagnosisResult.results.length}</div>
                           <div className="text-xs text-default-500 mt-1">总测试数</div>
                         </div>
@@ -2198,12 +2197,12 @@ export default function ForwardPage() {
                             if (results.length === 0) return null;
                             
                             return (
-                              <div key={title} className="border border-divider rounded-lg overflow-hidden bg-white dark:bg-gray-800">
+                              <div key={title} className="border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg overflow-hidden bg-white dark:bg-[#231e1b]">
                                 <div className="bg-primary/10 dark:bg-primary/20 px-3 py-2 border-b border-divider">
                                   <h3 className="text-sm font-semibold text-primary">{title}</h3>
                                 </div>
                                 <table className="w-full text-sm">
-                                  <thead className="bg-default-100 dark:bg-gray-700">
+                                  <thead className="bg-[#faf8f5] dark:bg-[#2d2824]/80">
                                     <tr>
                                       <th className="px-3 py-2 text-left font-semibold text-xs">路径</th>
                                       <th className="px-3 py-2 text-center font-semibold text-xs w-20">状态</th>
@@ -2212,13 +2211,13 @@ export default function ForwardPage() {
                                       <th className="px-3 py-2 text-center font-semibold text-xs w-20">质量</th>
                                     </tr>
                                   </thead>
-                                  <tbody className="divide-y divide-divider bg-white dark:bg-gray-800">
+                                  <tbody className="divide-y divide-[#e5e0d8] dark:divide-[#2d2824] bg-white dark:bg-[#231e1b]">
                                     {results.map((result, index) => {
                               const quality = getQualityDisplay(result.averageTime, result.packetLoss);
                               
                               return (
-                                <tr key={index} className={`hover:bg-default-50 dark:hover:bg-gray-700/50 ${
-                                  result.success ? 'bg-white dark:bg-gray-800' : 'bg-danger-50 dark:bg-danger-900/30'
+                                <tr key={index} className={`hover:bg-[#faf8f5] dark:hover:bg-[#2d2824]/30 ${
+                                  result.success ? 'bg-white dark:bg-[#231e1b]' : 'bg-danger-50 dark:bg-danger-900/30'
                                 }`}>
                                   <td className="px-3 py-2">
                                     <div className="flex items-center gap-2">
@@ -2341,8 +2340,8 @@ export default function ForwardPage() {
                                   
                                   return (
                                     <div key={index} className={`border rounded-lg p-3 ${
-                                      result.success 
-                                        ? 'border-divider bg-white dark:bg-gray-800' 
+                                      result.success
+                                        ? 'border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b]'
                                         : 'border-danger-200 dark:border-danger-300/30 bg-danger-50 dark:bg-danger-900/30'
                                     }`}>
                                       <div className="flex items-start gap-2 mb-2">
@@ -2468,8 +2467,8 @@ export default function ForwardPage() {
                     关闭
                   </Button>
                   {currentDiagnosisForward && (
-                    <Button 
-                      color="primary" 
+                    <Button
+                      className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                       onPress={() => handleDiagnose(currentDiagnosisForward)}
                       isLoading={diagnosisLoading}
                     >

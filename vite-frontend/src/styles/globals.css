@@ -1,10 +1,157 @@
 @import "tailwindcss";
 
+/* =============================================
+   Claude 精确配色 CSS 变量体系
+   与 claude.ai 保持一致 — 白色主面板、细边框、干净克制
+   ============================================= */
+:root {
+  /* 背景层级：主面板白色，次级用极浅暖灰，三级用浅暖灰 */
+  --color-background-primary:   #ffffff;
+  --color-background-secondary: #f9f8f6;
+  --color-background-tertiary:  #f3f0eb;
+
+  /* 边框：0.5px 细线，三个层级 */
+  --color-border-primary:   #d0cac2;
+  --color-border-secondary: #e0dbd3;
+  --color-border-tertiary:  #ebe7e1;
+
+  /* 文字 */
+  --color-text-primary:   #1a1a1a;
+  --color-text-secondary: #6b6560;
+  --color-text-tertiary:  #9b9590;
+
+  /* 字体 */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', ui-monospace, monospace;
+
+  /* 状态色 — 与参考 HTML 精确对齐 */
+  /* 绿色（运行中/在线） */
+  --color-success:       #639922;
+  --color-success-bg:    #EAF3DE;
+  --color-success-text:  #27500A;
+  --color-success-border:#C0DD97;
+
+  /* 琥珀色（流量告警/警告） */
+  --color-warning:       #BA7517;
+  --color-warning-bg:    #FAEEDA;
+  --color-warning-text:  #633806;
+  --color-warning-border:#FAC775;
+
+  /* 红色（已停止/错误） */
+  --color-danger:        #E24B4A;
+  --color-danger-bg:     #FCEBEB;
+  --color-danger-text:   #791F1F;
+  --color-danger-border: #F7C1C1;
+
+  /* 蓝色（信息/TCP） */
+  --color-info:          #378ADD;
+  --color-info-bg:       #E6F1FB;
+  --color-info-text:     #0C447C;
+  --color-info-border:   #B5D4F4;
+
+  /* 进度条颜色 */
+  --color-progress-low:    #639922;   /* < 70% 绿色 */
+  --color-progress-medium: #BA7517;   /* 70–89% 琥珀 */
+  --color-progress-high:   #E24B4A;   /* ≥ 90% 红色 */
+
+  /* 主题强调色（Claude 橙褐） */
+  --color-accent:       #c96442;
+  --color-accent-hover: #b5583a;
+  --color-accent-light: #fdf0eb;
+}
+
+/* 暗色主题 */
+.dark {
+  --color-background-primary:   #231e1b;
+  --color-background-secondary: #2d2824;
+  --color-background-tertiary:  #1a1614;
+
+  --color-border-primary:   #4d4844;
+  --color-border-secondary: #3d3834;
+  --color-border-tertiary:  #2d2824;
+
+  --color-text-primary:   #e8e2da;
+  --color-text-secondary: #8a8480;
+  --color-text-tertiary:  #5d5854;
+
+  --color-success:       #639922;
+  --color-success-bg:    #1a2e0a;
+  --color-success-text:  #96cc5a;
+  --color-success-border:#2d5214;
+
+  --color-warning:       #BA7517;
+  --color-warning-bg:    #2d1e08;
+  --color-warning-text:  #d4956a;
+  --color-warning-border:#5a3810;
+
+  --color-danger:        #E24B4A;
+  --color-danger-bg:     #2d1010;
+  --color-danger-text:   #f07070;
+  --color-danger-border: #5a1e1e;
+
+  --color-info:          #378ADD;
+  --color-info-bg:       #0d1e35;
+  --color-info-text:     #70aee8;
+  --color-info-border:   #1a3d6a;
+
+  --color-accent:       #d4856a;
+  --color-accent-hover: #c87860;
+  --color-accent-light: #2d2420;
+}
+
+/* =============================================
+   CSS 变量驱动的语义化工具类
+   ============================================= */
+
+/* 状态徽章 — 精确对齐参考 HTML */
+.badge-status-success {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 0.5px solid var(--color-success-border);
+}
+.badge-status-warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border: 0.5px solid var(--color-warning-border);
+}
+.badge-status-danger {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  border: 0.5px solid var(--color-danger-border);
+}
+.badge-status-info {
+  background: var(--color-info-bg);
+  color: var(--color-info-text);
+  border: 0.5px solid var(--color-info-border);
+}
+
+/* 进度条（配额条）颜色 — 动态由 JS 决定 className */
+.progress-fill-low    { background: var(--color-progress-low); }
+.progress-fill-medium { background: var(--color-progress-medium); }
+.progress-fill-high   { background: var(--color-progress-high); }
+
+/* 节点离线透明度 */
+.node-offline-dim { opacity: 0.5; }
+
+/* 等宽字体工具类 */
+.font-mono-addr {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
 
 /* 移动端视口高度优化 */
 html, body {
   height: 100%;
   overflow-x: hidden;
+}
+
+/* Claude 风格全局字体 */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* 现代浏览器使用 100dvh，避免地址栏收起/展开导致的布局跳动 */
@@ -54,6 +201,50 @@ html, body {
   padding-bottom: var(--safe-area-bottom);
 }
 
+/* Claude 风格滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c9c3bb;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a29e;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4d4844;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #5d5854;
+}
+
+/* Claude 风格 - 淡入动画 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Claude 风格 - 柔和悬停效果 */
+.claude-hover {
+  transition: all 0.2s ease;
+}
+.claude-hover:hover {
+  background: var(--color-background-secondary);
+}
 
 /* 验证码弹层动画 */
 .captcha-modal-enter {
@@ -83,6 +274,330 @@ html, body {
   to {
     opacity: 1;
   }
+}
+
+/* Claude 风格 - HeroUI 组件覆盖 */
+/* 模态框圆角 */
+[data-slot="base"].rounded-xl {
+  border-radius: 12px !important;
+}
+
+/* 卡片圆角 */
+.claude-card {
+  border-radius: 12px;
+  border: 1px solid var(--color-border-secondary);
+  background: var(--color-background-primary);
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+.dark .claude-card {
+  border-color: var(--color-border-secondary);
+  background: var(--color-background-primary);
+  box-shadow: none;
+}
+
+.claude-card:hover {
+  box-shadow: none;
+}
+
+/* Claude 风格 - 按钮覆盖 */
+.claude-btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.claude-btn-primary {
+  background: var(--color-text-primary);
+  color: var(--color-background-primary);
+  border: none;
+}
+.claude-btn-primary:hover {
+  opacity: 0.85;
+}
+
+/* Claude 风格 - Input 覆盖 */
+.claude-input {
+  border-radius: 8px;
+  border: 1.5px solid var(--color-border-secondary);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.claude-input:focus {
+  border-color: var(--color-border-primary);
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+}
+
+.dark .claude-input {
+  border-color: var(--color-border-secondary);
+}
+.dark .claude-input:focus {
+  border-color: var(--color-border-primary);
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.15);
+}
+
+/* =============================================
+   背景/边框/文字 全局工具类 — 用 CSS 变量驱动
+   避免 Tailwind 任意值在 HeroUI 组件上失效
+   ============================================= */
+
+/* 背景层级 */
+.bg-primary   { background: var(--color-background-primary); }
+.bg-secondary { background: var(--color-background-secondary); }
+.bg-tertiary  { background: var(--color-background-tertiary); }
+
+/* 文字层级 */
+.text-body-primary   { color: var(--color-text-primary); }
+.text-body-secondary { color: var(--color-text-secondary); }
+.text-body-tertiary  { color: var(--color-text-tertiary); }
+
+/* 边框 */
+.border-var-primary   { border-color: var(--color-border-primary); }
+.border-var-secondary { border-color: var(--color-border-secondary); }
+.border-var-tertiary  { border-color: var(--color-border-tertiary); }
+
+/* 语义色文字 */
+.text-success { color: var(--color-success-text); }
+.text-warning { color: var(--color-warning-text); }
+.text-danger  { color: var(--color-danger-text); }
+.text-info    { color: var(--color-info-text); }
+
+/* 语义色图标（徽章图标大小通配） */
+.icon-success { color: var(--color-success); }
+.icon-warning { color: var(--color-warning); }
+.icon-danger  { color: var(--color-danger); }
+.icon-info    { color: var(--color-info); }
+.icon-accent  { color: var(--color-accent); }
+
+/* 统计卡片图标背景 — 精确对应 Claude 调色板 */
+.icon-bg-info    { background: var(--color-info-bg); }
+.icon-bg-success { background: var(--color-success-bg); }
+.icon-bg-warning { background: var(--color-warning-bg); }
+.icon-bg-danger  { background: var(--color-danger-bg); }
+
+/* ===== H5 移动端专用样式 ===== */
+
+/* H5 页面切换动画 */
+.h5-page-transition {
+  animation: h5PageIn 0.25s ease-out;
+}
+
+@keyframes h5PageIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* H5 触摸反馈 - 按压缩小效果 */
+@media (max-width: 768px) {
+  .h5-press {
+    transition: transform 0.1s ease, opacity 0.1s ease;
+  }
+  .h5-press:active {
+    transform: scale(0.97);
+    opacity: 0.85;
+  }
+
+  /* H5 卡片触摸反馈 */
+  .h5-card-press {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .h5-card-press:active {
+    transform: scale(0.98);
+    box-shadow: none;
+  }
+
+  /* H5 列表项触摸高亮 */
+  .h5-list-item {
+    transition: background-color 0.1s ease;
+  }
+  .h5-list-item:active {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+  .dark .h5-list-item:active {
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+
+  /* H5 底部安全区域色块 - 用于给固定元素底部着色 */
+  .h5-safe-area-bg {
+    background-color: #ffffff;
+  }
+  .dark .h5-safe-area-bg {
+    background-color: #231e1b;
+  }
+
+  /* H5 下拉刷新指示器 */
+  .h5-pull-indicator {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  /* H5 滚动回弹优化 */
+  .h5-scroll-container {
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* H5 输入框聚焦时避免缩放 */
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* H5 去除点击高亮 */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* H5 优化滚动条 - 移动端隐藏 */
+  .h5-scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+  .h5-scroll-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* H5 毛玻璃效果兼容 */
+@supports not (backdrop-filter: blur(20px)) {
+  .h5-glass-fallback {
+    background-color: rgba(255, 255, 255, 0.96) !important;
+  }
+  .dark .h5-glass-fallback {
+    background-color: rgba(35, 30, 27, 0.96) !important;
+  }
+}
+
+/* H5 活跃态 Tab 动画 */
+.h5-tab-indicator {
+  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* H5 渐入渐出 */
+.h5-fade-enter {
+  animation: h5FadeIn 0.2s ease-out forwards;
+}
+
+.h5-fade-exit {
+  animation: h5FadeOut 0.15s ease-in forwards;
+}
+
+@keyframes h5FadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes h5FadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* H5 从右侧滑入（子页面） */
+.h5-slide-in {
+  animation: h5SlideIn 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes h5SlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* H5 骨架屏闪烁动画 */
+.h5-skeleton {
+  background: linear-gradient(90deg, #f0ece5 25%, #e8e2da 50%, #f0ece5 75%);
+  background-size: 200% 100%;
+  animation: h5Skeleton 1.5s ease-in-out infinite;
+}
+
+.dark .h5-skeleton {
+  background: linear-gradient(90deg, #2d2824 25%, #3d3834 50%, #2d2824 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes h5Skeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* =============================================
+   侧边栏 — 永久深色专用样式
+   ============================================= */
+
+/* 侧边栏导航 active indicator 动画 */
+.sidebar-nav-active {
+  position: relative;
+}
+.sidebar-nav-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  background: #c96442;
+  border-radius: 0 2px 2px 0;
+}
+
+/* =============================================
+   统计卡片 — hover 微提升
+   ============================================= */
+.stat-card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.stat-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+}
+
+/* =============================================
+   表格行 hover
+   ============================================= */
+.claude-table-row {
+  transition: background-color 0.1s ease;
+}
+.claude-table-row:hover {
+  background: var(--color-background-secondary);
+}
+
+/* =============================================
+   登录页输入框原生样式补充
+   ============================================= */
+.login-input {
+  font-family: var(--font-sans);
+  -webkit-appearance: none;
+}
+.login-input:focus {
+  outline: none;
+}
+
+/* =============================================
+   页面过渡动画
+   ============================================= */
+.page-enter {
+  animation: pageEnter 0.2s ease-out;
+}
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @config "../../tailwind.config.js"

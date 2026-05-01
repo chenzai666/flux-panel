@@ -164,7 +164,7 @@ export default function ProfilePage() {
 
       <div className="space-y-6 flex-1">
         {/* 用户信息卡片 */}
-        <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
+        <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none hover:shadow-sm transition-shadow">
           <CardBody className="p-4">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
@@ -192,7 +192,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* 功能网格 */}
-        <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
+        <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none hover:shadow-sm transition-shadow">
           <CardBody className="p-4">
             <div className="grid grid-cols-3 gap-3">
               {/* 管理员功能 */}
@@ -200,7 +200,7 @@ export default function ProfilePage() {
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className="flex flex-col items-center p-3 rounded-2xl bg-gray-50 dark:bg-default-100 hover:bg-gray-100 dark:hover:bg-default-200 transition-colors duration-200"
+                  className="flex flex-col items-center p-3 rounded-2xl bg-[#faf8f5] dark:bg-[#2d2824]/50 hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors duration-200"
                 >
                   <div className={`w-10 h-10 ${item.color} rounded-full flex items-center justify-center mb-2`}>
                     {item.icon}
@@ -212,7 +212,7 @@ export default function ProfilePage() {
               {/* 修改密码 */}
               <button
                 onClick={onOpen}
-                className="flex flex-col items-center p-3 rounded-2xl bg-gray-50 dark:bg-default-100 hover:bg-gray-100 dark:hover:bg-default-200 transition-colors duration-200"
+                className="flex flex-col items-center p-3 rounded-2xl bg-[#faf8f5] dark:bg-[#2d2824]/50 hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors duration-200"
               >
                 <div className="w-10 h-10 bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mb-2">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -225,7 +225,7 @@ export default function ProfilePage() {
               {/* 退出登录 */}
               <button
                 onClick={handleLogout}
-                className="flex flex-col items-center p-3 rounded-2xl bg-gray-50 dark:bg-default-100 hover:bg-gray-100 dark:hover:bg-default-200 transition-colors duration-200"
+                className="flex flex-col items-center p-3 rounded-2xl bg-[#faf8f5] dark:bg-[#2d2824]/50 hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors duration-200"
               >
                 <div className="w-10 h-10 bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mb-2">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -239,18 +239,18 @@ export default function ProfilePage() {
         </Card>
 
         <div className="fixed inset-x-0 bottom-20 text-center py-4">
-               <p className="text-xs text-gray-400 dark:text-gray-500">
+               <p className="text-xs text-[#9c8678] dark:text-[#7a6b60]">
                  Powered by{' '}
-                 <a 
-                   href="https://github.com/bqlpfy/flux-panel" 
-                   target="_blank" 
+                 <a
+                   href="https://github.com/bqlpfy/flux-panel"
+                   target="_blank"
                    rel="noopener noreferrer"
-                   className="text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                   className="text-[#c96442] dark:text-[#c96442]/80 hover:text-[#b5583a] transition-colors"
                  >
                    flux-panel
                  </a>
                </p>
-               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+               <p className="text-xs text-[#9c8678] dark:text-[#7a6b60] mt-1">
                  v{ isWebViewFunc() ? siteConfig.app_version : siteConfig.version}
                </p>
              </div>
@@ -313,11 +313,11 @@ export default function ProfilePage() {
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button color="default" variant="light" onPress={onClose}>
+                <Button variant="light" className="text-[#6b5a4e] dark:text-[#b5a99a]" onPress={onClose}>
                   取消
                 </Button>
-                <Button 
-                  color="primary" 
+                <Button
+                  className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                   onPress={handlePasswordSubmit}
                   isLoading={passwordLoading}
                 >

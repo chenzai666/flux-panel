@@ -263,8 +263,8 @@ export default function DashboardPage() {
 
     if (isNaN(expDate.getTime())) {
       return { 
-        color: 'text-gray-600 dark:text-gray-400', 
-        bg: 'bg-gray-50 dark:bg-black/10 border-gray-200 dark:border-gray-500/20',
+        color: 'text-[#9c8678] dark:text-[#7a6b60]',
+        bg: 'bg-[#faf8f5] dark:bg-[#2d2824]/30 border-[#e5e0d8] dark:border-[#3d3834]',
         text: '无效' 
       };
     }
@@ -344,7 +344,7 @@ export default function DashboardPage() {
     
     return (
       <div className="w-full">
-        <div className={`w-full bg-gray-200 dark:bg-gray-800 rounded-full ${height}`}>
+        <div className={`w-full bg-[#e5e0d8] dark:bg-[#2d2824] rounded-full ${height}`}>
           <div 
             className={`${height} rounded-full transition-all duration-300 ${getUsageColor(percentage)}`}
             style={{ width: `${Math.min(percentage, 100)}%` }}
@@ -606,7 +606,7 @@ export default function DashboardPage() {
           <div className="px-3 lg:px-6 flex-grow pt-2 lg:pt-4">
             <div className="flex items-center justify-center h-64">
               <div className="flex items-center gap-3">
-                <div className="animate-spin h-5 w-5 border-2 border-gray-200 dark:border-gray-700 border-t-gray-600 dark:border-t-gray-300 rounded-full"></div>
+                <div className="animate-spin h-5 w-5 border-2 border-[#e5e0d8] dark:border-[#2d2824] border-t-[#c96442] dark:border-t-[#c96442] rounded-full"></div>
                 <span className="text-default-600">正在加载数据...</span>
               </div>
             </div>
@@ -621,7 +621,7 @@ export default function DashboardPage() {
 
                           {/* 响应式统计卡片 */}
          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
-           <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
+           <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none hover:shadow-sm transition-shadow">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
@@ -637,7 +637,7 @@ export default function DashboardPage() {
              </CardBody>
            </Card>
 
-           <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
+           <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none hover:shadow-sm transition-shadow">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
@@ -669,7 +669,7 @@ export default function DashboardPage() {
              </CardBody>
            </Card>
 
-           <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
+           <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none hover:shadow-sm transition-shadow">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
@@ -685,7 +685,7 @@ export default function DashboardPage() {
              </CardBody>
            </Card>
 
-           <Card className="border border-gray-200 dark:border-default-200 shadow-md hover:shadow-lg transition-shadow">
+           <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none hover:shadow-sm transition-shadow">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
@@ -709,7 +709,7 @@ export default function DashboardPage() {
          </div>
 
          {/* 24小时流量统计图表 */}
-         <Card className="mb-6 lg:mb-8 border border-gray-200 dark:border-default-200 shadow-md">
+         <Card className="mb-6 lg:mb-8 border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none">
            <CardHeader className="pb-3">
              <div className="flex items-center gap-2">
                <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
@@ -757,7 +757,7 @@ export default function DashboardPage() {
                            content={({ active, payload, label }) => {
                              if (active && payload && payload.length) {
                                return (
-                                 <div className="bg-white dark:bg-default-100 border border-default-200 rounded-lg shadow-lg p-3">
+                                 <div className="bg-white dark:bg-[#231e1b] border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg shadow-lg p-3">
                                    <p className="font-medium text-foreground">{`时间: ${label}`}</p>
                                    <p className="text-primary">
                                      {`流量: ${formatFlow(payload[0]?.value as number || 0)}`}
@@ -786,7 +786,7 @@ export default function DashboardPage() {
 
                  {/* 隧道权限 - 管理员不显示 */}
          {!isAdmin && (
-          <Card className="mb-6 lg:mb-8 border border-gray-200 dark:border-default-200 shadow-md">
+          <Card className="mb-6 lg:mb-8 border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none">
            <CardHeader className="pb-3">
              <div className="flex items-center gap-2">
                <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
@@ -811,7 +811,7 @@ export default function DashboardPage() {
                  {userTunnels.map((tunnel) => {
                    const tunnelExpStatus = getExpStatus(tunnel.expTime);
                    return (
-                     <div key={tunnel.id} className="border border-gray-200 dark:border-default-100 rounded-lg p-3 lg:p-4 hover:shadow-md transition-shadow">
+                     <div key={tunnel.id} className="border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg p-3 lg:p-4 hover:bg-[#faf8f5] dark:hover:bg-[#2d2824]/20 transition-colors">
                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-3">
                          <div>
                            <h3 className="font-semibold text-foreground">{tunnel.tunnelName} ID: {tunnel.id}</h3>
@@ -865,10 +865,10 @@ export default function DashboardPage() {
          )}
 
                  {/* 转发配置 */}
-         <Card className="border border-gray-200 dark:border-default-200 shadow-md">
+         <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none">
            <CardHeader className="pb-3">
              <div className="flex items-center gap-2">
-               <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+               <svg className="w-5 h-5 text-[#c96442]" fill="currentColor" viewBox="0 0 20 20">
                  <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                </svg>
                <h2 className="text-lg lg:text-xl font-semibold text-foreground">转发配置</h2>
@@ -888,7 +888,7 @@ export default function DashboardPage() {
             ) : (
                              <div className="space-y-4">
                  {groupedForwards().map((group) => (
-                   <div key={group.tunnelName} className="border border-gray-200 dark:border-default-100 rounded-lg p-3 lg:p-4">
+                   <div key={group.tunnelName} className="border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg p-3 lg:p-4">
                      <div className="flex items-center justify-between mb-3">
                        <h3 className="font-semibold text-foreground">{group.tunnelName}</h3>
                        <span className="px-2 py-1 bg-primary-100 dark:bg-primary-500/20 text-primary-700 dark:text-primary-300 rounded-md text-sm">
@@ -898,7 +898,7 @@ export default function DashboardPage() {
                      
                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                        {group.forwards.map((forward) => (
-                         <div key={forward.id} className="bg-white dark:bg-default-100/50 border border-gray-200 dark:border-default-200 rounded-lg p-3 hover:shadow-md transition-shadow">
+                         <div key={forward.id} className="bg-[#faf8f5] dark:bg-[#2d2824]/30 border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg p-3 hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824]/50 transition-colors">
                           <div className="space-y-3">
                             <div>
                               <h4 className="font-medium text-foreground text-sm mb-2 truncate">{forward.name}</h4>
@@ -921,7 +921,7 @@ export default function DashboardPage() {
                               </div>
                             </div>
                             
-                            <div className="pt-2 border-t border-gray-200 dark:border-default-200">
+                            <div className="pt-2 border-t border-[#e5e0d8] dark:border-[#2d2824]">
                               <div className="grid grid-cols-3 gap-1 text-xs">
                                 <div className="text-center">
                                   <div className="text-default-500 mb-1">上传</div>
@@ -964,7 +964,7 @@ export default function DashboardPage() {
               
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {addressList.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center p-3 border border-default-200 dark:border-default-100 rounded-lg">
+                  <div key={item.id} className="flex justify-between items-center p-3 border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg">
                     <code className="text-sm flex-1 mr-3 text-foreground">{item.address}</code>
                     <Button
                       size="sm"

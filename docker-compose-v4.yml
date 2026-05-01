@@ -1,10 +1,18 @@
 services:
   backend:
-    image: bats666/springboot-backend:2.0.7-beta
+    image: bats666/springboot-backend:2.0.8-beta
     container_name: springboot-backend
     restart: unless-stopped
     environment:
+      # --- SQLite 模式（默认）---
       DB_PATH: /app/data/gost.db
+      # --- MySQL 模式（取消注释以下变量并注释上面的 DB_PATH）---
+      # DB_TYPE: mysql
+      # DB_DRIVER: com.mysql.cj.jdbc.Driver
+      # DB_URL: jdbc:mysql://127.0.0.1:3306/gost?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+      # DB_USERNAME: root
+      # DB_PASSWORD: your_password
+      # DB_INIT_MODE: always   # 首次启动后可改为 never
       JWT_SECRET: ${JWT_SECRET}
       LOG_DIR: /app/logs
       JAVA_OPTS: "-Xms256m -Xmx512m -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai"
@@ -25,7 +33,7 @@ services:
       start_period: 60s
 
   frontend:
-    image: bats666/vite-frontend:2.0.7-beta
+    image: bats666/vite-frontend:2.0.8-beta
     container_name: vite-frontend
     restart: unless-stopped
     ports:

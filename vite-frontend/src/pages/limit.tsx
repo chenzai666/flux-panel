@@ -230,10 +230,8 @@ export default function LimitPage() {
 
         <Button
               size="sm"
-              variant="flat"
-              color="primary"
+              className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg"
               onPress={handleAdd}
-             
             >
               新增
             </Button>
@@ -243,7 +241,7 @@ export default function LimitPage() {
         {rules.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
             {rules.map((rule) => (
-              <Card key={rule.id} className="shadow-sm border border-gray-200 dark:border-gray-700">
+              <Card key={rule.id} className="shadow-none border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b]">
                 <CardHeader className="pb-3">
                   <div className="flex justify-between items-start w-full">
                     <div>
@@ -262,14 +260,14 @@ export default function LimitPage() {
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-small text-default-600">速度限制</span>
-                      <Chip color="secondary" variant="flat" size="sm">
+                      <Chip variant="flat" size="sm" className="bg-[#faf8f5] dark:bg-[#2d2824]/50 text-[#6b5a4e] dark:text-[#b5a99a] border-[#e5e0d8] dark:border-[#3d3834]">
                         {rule.speed} Mbps
                       </Chip>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-small text-default-600">绑定隧道</span>
                       {rule.tunnelName ? (
-                        <Chip color="primary" variant="flat" size="sm">
+                        <Chip variant="flat" size="sm" className="bg-[#c96442]/10 text-[#c96442] border-[#c96442]/20">
                           {rule.tunnelName}
                         </Chip>
                       ) : (
@@ -281,10 +279,8 @@ export default function LimitPage() {
                   <div className="flex gap-2 mt-4">
                     <Button
                       size="sm"
-                      variant="flat"
-                      color="primary"
+                      className="flex-1 text-[#c96442] bg-[#c96442]/10 hover:bg-[#c96442]/20 rounded-lg"
                       onPress={() => handleEdit(rule)}
-                      className="flex-1"
                       startContent={
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
@@ -419,8 +415,8 @@ export default function LimitPage() {
                   <Button variant="light" onPress={onClose}>
                     取消
                   </Button>
-                  <Button 
-                    color="primary" 
+                  <Button
+                    className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                     onPress={handleSubmit}
                     isLoading={submitLoading}
                   >

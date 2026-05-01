@@ -288,12 +288,11 @@ export default function IndexPage() {
 
                 
                 <Button
-                  color="primary"
                   size="lg"
                   onClick={handleLogin}
                   isLoading={loading}
                   disabled={loading}
-                  className="mt-2"
+                  className="mt-2 bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                 >
                   {loading ? (showCaptcha ? "验证中..." : "登录中...") : "登录"}
                 </Button>
@@ -306,18 +305,18 @@ export default function IndexPage() {
       {/* 版权信息 - 固定在底部，不占据布局空间 */}
       
                <div className="fixed inset-x-0 bottom-4 text-center py-4">
-               <p className="text-xs text-gray-400 dark:text-gray-500">
+               <p className="text-xs text-[#9c8678] dark:text-[#7a6b60]">
                  Powered by{' '}
-                 <a 
-                   href="https://github.com/bqlpfy/flux-panel" 
-                   target="_blank" 
+                 <a
+                   href="https://github.com/bqlpfy/flux-panel"
+                   target="_blank"
                    rel="noopener noreferrer"
-                   className="text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                   className="text-[#c96442] dark:text-[#c96442]/80 hover:text-[#b5583a] transition-colors"
                  >
                    flux-panel
                  </a>
                </p>
-               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+               <p className="text-xs text-[#9c8678] dark:text-[#7a6b60] mt-1">
                  v{ isWebView ? siteConfig.app_version : siteConfig.version}
                </p>
              </div>

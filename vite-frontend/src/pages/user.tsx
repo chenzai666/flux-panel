@@ -551,20 +551,16 @@ export default function UserPage() {
             />
             <Button
               onClick={handleSearch}
-              variant="solid"
-              color="primary"
               isIconOnly
-              className="min-h-10 w-10"
+              className="min-h-10 w-10 bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg"
             >
               <SearchIcon className="w-4 h-4" />
             </Button>
           </div>
           
           <Button
-              variant="flat"
-              color="primary"
+              className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg"
               onPress={handleAdd}
-             
             >
               新增
             </Button>
@@ -580,7 +576,7 @@ export default function UserPage() {
           </div>
         </div>
       ) : users.length === 0 ? (
-        <Card className="shadow-sm border border-gray-200 dark:border-gray-700">
+        <Card className="shadow-none border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b]">
           <CardBody className="text-center py-16">
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center">
@@ -685,10 +681,8 @@ export default function UserPage() {
                     <div className="flex gap-1.5">
                       <Button
                         size="sm"
-                        variant="flat"
-                        color="primary"
+                        className="flex-1 min-h-8 text-[#c96442] bg-[#c96442]/10 hover:bg-[#c96442]/20"
                         onPress={() => handleEdit(user)}
-                        className="flex-1 min-h-8"
                         startContent={<EditIcon className="w-3 h-3" />}
                       >
                         编辑
@@ -845,7 +839,7 @@ export default function UserPage() {
               取消
             </Button>
             <Button
-              color="primary"
+              className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
               onPress={handleSubmitUser}
               isLoading={userFormLoading}
             >
@@ -974,7 +968,7 @@ export default function UserPage() {
                   </div>
                   
                   <Button
-                    color="primary"
+                    className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                     onPress={handleAssignTunnel}
                     isLoading={assignLoading}
                   >
@@ -990,7 +984,7 @@ export default function UserPage() {
                   aria-label="用户隧道权限列表"
                   classNames={{
                     wrapper: "shadow-none",
-                    th: "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium"
+                    th: "bg-[#faf8f5] dark:bg-[#2d2824]/50 text-[#6b5a4e] dark:text-[#b5a99a] font-medium"
                   }}
                 >
                   <TableHeader>
@@ -1015,11 +1009,11 @@ export default function UserPage() {
                         <TableCell>
                           <div className="flex flex-col gap-1">
                             <div className="flex justify-between text-small">
-                              <span className="text-gray-600">限制:</span>
+                              <span className="text-[#9c8678]">限制:</span>
                               <span className="font-medium">{formatFlow(userTunnel.flow, 'gb')}</span>
                             </div>
                             <div className="flex justify-between text-small">
-                              <span className="text-gray-600">已用:</span>
+                              <span className="text-[#9c8678]">已用:</span>
                               <span className="font-medium text-danger">
                                 {formatFlow(calculateTunnelUsedFlow(userTunnel))}
                               </span>
@@ -1051,8 +1045,7 @@ export default function UserPage() {
                           <div className="flex items-center gap-2">
                             <Button
                               size="sm"
-                              variant="flat"
-                              color="primary"
+                              className="text-[#c96442] bg-[#c96442]/10 hover:bg-[#c96442]/20 rounded-lg"
                               isIconOnly
                               onClick={() => handleEditTunnel(userTunnel)}
                             >
@@ -1210,7 +1203,7 @@ export default function UserPage() {
               取消
             </Button>
             <Button
-              color="primary"
+              className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
               onPress={handleUpdateTunnel}
               isLoading={editTunnelLoading}
             >

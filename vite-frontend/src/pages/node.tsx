@@ -616,10 +616,8 @@ export default function NodePage() {
 
         <Button
               size="sm"
-              variant="flat"
-              color="primary"
+              className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg"
               onPress={handleAdd}
-             
             >
               新增
             </Button>
@@ -635,7 +633,7 @@ export default function NodePage() {
             </div>
           </div>
         ) : nodeList.length === 0 ? (
-          <Card className="shadow-sm border border-gray-200 dark:border-gray-700">
+          <Card className="shadow-none border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b]">
             <CardBody className="text-center py-16">
               <div className="flex flex-col items-center gap-4">
                 <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center">
@@ -805,10 +803,8 @@ export default function NodePage() {
                       </Button>
                       <Button
                         size="sm"
-                        variant="flat"
-                        color="primary"
+                        className="flex-1 min-h-8 text-[#c96442] bg-[#c96442]/10 hover:bg-[#c96442]/20"
                         onPress={() => handleEdit(node)}
-                        className="flex-1 min-h-8"
                       >
                         编辑
                       </Button>
@@ -938,9 +934,9 @@ export default function NodePage() {
                             className="mb-2"
                           />
                         )}
-                        <div className={`grid grid-cols-1 sm:grid-cols-3 gap-3 bg-default-50 dark:bg-default-100 p-3 rounded-md border border-default-200 dark:border-default-100/30 ${protocolDisabled ? 'opacity-70' : ''}`}>
+                        <div className={`grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[#faf8f5] dark:bg-[#2d2824]/50 p-3 rounded-md border border-[#e5e0d8] dark:border-[#3d3834] ${protocolDisabled ? 'opacity-70' : ''}`}>
                           {/* HTTP tile */}
-                          <div className="px-3 py-3 rounded-lg bg-white dark:bg-default-50 border border-default-200 dark:border-default-100/30 hover:border-primary-200 transition-colors">
+                          <div className="px-3 py-3 rounded-lg bg-white dark:bg-[#231e1b] border border-[#e5e0d8] dark:border-[#3d3834] hover:border-[#c96442]/30 transition-colors">
                             <div className="flex items-center gap-2 mb-2">
                               <svg className="w-4 h-4 text-default-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
                               <div className="text-sm font-medium text-default-700">HTTP</div>
@@ -958,7 +954,7 @@ export default function NodePage() {
                           </div>
 
                           {/* TLS tile */}
-                          <div className="px-3 py-3 rounded-lg bg-white dark:bg-default-50 border border-default-200 dark:border-default-100/30 hover:border-primary-200 transition-colors">
+                          <div className="px-3 py-3 rounded-lg bg-white dark:bg-[#231e1b] border border-[#e5e0d8] dark:border-[#3d3834] hover:border-[#c96442]/30 transition-colors">
                             <div className="flex items-center gap-2 mb-2">
                               <svg className="w-4 h-4 text-default-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 10V7a6 6 0 1 1 12 0v3"/><rect x="4" y="10" width="16" height="10" rx="2"/></svg>
                               <div className="text-sm font-medium text-default-700">TLS</div>
@@ -976,7 +972,7 @@ export default function NodePage() {
                           </div>
 
                           {/* SOCKS tile */}
-                          <div className="px-3 py-3 rounded-lg bg-white dark:bg-default-50 border border-default-200 dark:border-default-100/30 hover:border-primary-200 transition-colors">
+                          <div className="px-3 py-3 rounded-lg bg-white dark:bg-[#231e1b] border border-[#e5e0d8] dark:border-[#3d3834] hover:border-[#c96442]/30 transition-colors">
                             <div className="flex items-center gap-2 mb-2">
                               <svg className="w-4 h-4 text-default-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                               <div className="text-sm font-medium text-default-700">SOCKS</div>
@@ -1021,7 +1017,7 @@ export default function NodePage() {
                 取消
               </Button>
               <Button
-                color="primary"
+                className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                 onPress={handleSubmit}
                 isLoading={submitLoading}
               >
@@ -1097,9 +1093,7 @@ export default function NodePage() {
                   />
                   <Button
                     size="sm"
-                    color="primary"
-                    variant="flat"
-                    className="absolute top-2 right-2"
+                    className="absolute top-2 right-2 bg-[#c96442]/10 text-[#c96442] hover:bg-[#c96442]/20 rounded-lg"
                     onPress={handleManualCopy}
                   >
                     复制
