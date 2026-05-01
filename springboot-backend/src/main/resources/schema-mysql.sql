@@ -133,3 +133,16 @@ CREATE TABLE IF NOT EXISTS `vite_config` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- -------------------------------------------------------
+-- Migrations for upgrades from stable v1.x
+-- These ALTER TABLE statements fail silently on fresh installs
+-- (column already exists) and succeed when upgrading from stable.
+-- Requires continue-on-error: true in application.yml
+-- -------------------------------------------------------
+ALTER TABLE `node` ADD COLUMN `port` TEXT NOT NULL DEFAULT '' AFTER `server_ip`;
+ALTER TABLE `node` ADD COLUMN `interface_name` VARCHAR(200) AFTER `port`;
+ALTER TABLE `node` ADD COLUMN `tcp_listen_addr` VARCHAR(100) NOT NULL DEFAULT '[::]' AFTER `status`;
+ALTER TABLE `node` ADD COLUMN `udp_listen_addr` VARCHAR(100) NOT NULL DEFAULT '[::]' AFTER `tcp_listen_addr`;
+ALTER TABLE `tunnel` ADD COLUMN `in_ip` TEXT AFTER `status`;
+ALTER TABLE `forward` ADD COLUMN `inx` INT NOT NULL DEFAULT 0;

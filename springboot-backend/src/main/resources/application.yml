@@ -17,7 +17,7 @@ spring:
       mode: ${DB_INIT_MODE:always}
       schema-locations: classpath:schema-${DB_TYPE:mysql}.sql
       data-locations: classpath:data-${DB_TYPE:mysql}.sql
-      continue-on-error: false
+      continue-on-error: true
   servlet:
     multipart:
       max-file-size: 50MB
