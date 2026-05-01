@@ -52,8 +52,8 @@ export default function AdminLayout({
       path: '/dashboard',
       label: '仪表板',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+        <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
         </svg>
       )
     },
@@ -61,8 +61,8 @@ export default function AdminLayout({
       path: '/forward',
       label: '转发管理',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+        <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
         </svg>
       )
     },
@@ -70,8 +70,8 @@ export default function AdminLayout({
       path: '/tunnel',
       label: '隧道管理',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
+        <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
         </svg>
       ),
       adminOnly: true
@@ -80,8 +80,8 @@ export default function AdminLayout({
       path: '/node',
       label: '节点监控',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+        <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
         </svg>
       ),
       adminOnly: true
@@ -90,8 +90,8 @@ export default function AdminLayout({
       path: '/limit',
       label: '限速管理',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+        <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
       adminOnly: true
@@ -100,8 +100,8 @@ export default function AdminLayout({
       path: '/user',
       label: '用户管理',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+        <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
         </svg>
       ),
       adminOnly: true
@@ -110,8 +110,9 @@ export default function AdminLayout({
       path: '/config',
       label: '网站配置',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+        <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       ),
       adminOnly: true
@@ -242,155 +243,161 @@ export default function AdminLayout({
   );
 
   return (
-          <div className={`flex ${isMobile ? 'min-h-screen' : 'h-screen'} bg-[#f3f0eb] dark:bg-[#1a1612]`}>
+    <div className={`flex ${isMobile ? 'min-h-screen' : 'h-screen'} bg-[#f3f0eb] dark:bg-[#1a1614]`}>
       {/* 移动端遮罩层 */}
       {isMobile && mobileMenuVisible && (
         <div
-          className="fixed inset-0 backdrop-blur-sm bg-white/50 dark:bg-black/30 z-40"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
           onClick={hideMobileMenu}
         />
       )}
 
-      {/* 左侧菜单栏 */}
+      {/* 侧边栏 — 浅色，对齐参考设计 */}
       <aside className={`
         ${isMobile ? 'fixed' : 'relative'}
         ${isMobile && !mobileMenuVisible ? '-translate-x-full' : 'translate-x-0'}
-        ${isMobile ? 'w-64' : 'w-72'}
-        bg-white dark:bg-[#1c1916]
-        shadow-sm
-        border-r border-[#e5e0d8] dark:border-[#2d2824]
+        ${isMobile ? 'w-[260px]' : 'w-[220px]'}
+        bg-white dark:bg-[#231e1b]
+        border-r border-[#ebe7e1] dark:border-[#2d2824]
         z-50
         transition-transform duration-300 ease-in-out
         flex flex-col
         ${isMobile ? 'h-screen' : 'h-full'}
         ${isMobile ? 'top-0 left-0' : ''}
       `}>
-                 {/* Logo 区域 */}
-         <div className="px-3 py-3 h-14 flex items-center">
-           <div className="flex items-center gap-2 w-full">
-             <Logo size={24} />
-             <div className="flex-1 min-w-0">
-               <h1 className="text-sm font-bold text-foreground overflow-hidden whitespace-nowrap">{siteConfig.name}</h1>
-               <p className="text-xs text-default-500">v{siteConfig.version}</p>
-             </div>
-           </div>
-         </div>
+        {/* Logo */}
+        <div className="px-4 py-5 border-b border-[#ebe7e1] dark:border-[#2d2824] flex items-center gap-2.5">
+          <div className="w-[28px] h-[28px] rounded-lg bg-[#1a1a1a] dark:bg-[#e8e2da] flex items-center justify-center flex-shrink-0">
+            <Logo size={14} className="text-white dark:text-[#1a1a1a]" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[15px] font-medium text-[#1a1a1a] dark:text-[#e8e2da] leading-tight truncate tracking-[-0.01em]">{siteConfig.name}</div>
+            <div className="text-[11px] text-[#9b9590] dark:text-[#5d5854] leading-tight mt-[1px]">v{siteConfig.version}</div>
+          </div>
+        </div>
 
-                 {/* 菜单导航 */}
-         <nav className="flex-1 px-4 py-6 overflow-y-auto">
-           <ul className="space-y-1">
-            {filteredMenuItems.map((item) => {
+        {/* 导航 */}
+        <nav className="flex-1 overflow-y-auto">
+          {/* 概览 */}
+          <div className="px-2.5 pt-4 pb-2">
+            <div className="px-2 pb-[6px] text-[11px] font-medium text-[#9b9590] dark:text-[#5d5854] uppercase tracking-[0.04em]">概览</div>
+            {filteredMenuItems.filter(item => item.path === '/dashboard').map(item => {
               const isActive = location.pathname === item.path;
               return (
-                <li key={item.path}>
-                                     <button
-                     onClick={() => handleMenuClick(item.path)}
-                     className={`
-                       w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left
-                       transition-colors duration-200 min-h-[44px]
-                       ${isActive
-                         ? 'bg-[#fdf1ec] dark:bg-[#c96442]/15 text-[#c96442] dark:text-[#e07a56]'
-                         : 'text-[#6b5a4e] dark:text-[#b5a99a] hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824]'
-                       }
-                     `}
-                   >
-                     <div className="flex-shrink-0">
-                       {item.icon}
-                     </div>
-                     <span className="font-medium text-sm">{item.label}</span>
-                   </button>
-                </li>
+                <button
+                  key={item.path}
+                  onClick={() => handleMenuClick(item.path)}
+                  className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-left transition-all duration-100 mb-[1px]
+                    ${isActive
+                      ? 'bg-[#f3f0eb] dark:bg-[#2d2824] text-[#1a1a1a] dark:text-[#e8e2da] font-medium'
+                      : 'text-[#6b6560] dark:text-[#8a8480] hover:bg-[#f9f8f6] dark:hover:bg-[#2d2824]/60 hover:text-[#1a1a1a] dark:hover:text-[#e8e2da]'
+                    }`}
+                >
+                  <div className="w-4 h-4 flex-shrink-0 opacity-70">{item.icon}</div>
+                  <span className="text-[13.5px]">{item.label}</span>
+                </button>
               );
             })}
-          </ul>
+          </div>
+
+          {/* 管理 */}
+          {filteredMenuItems.filter(item => item.path !== '/dashboard').length > 0 && (
+            <div className="px-2.5 pt-3 pb-2">
+              <div className="px-2 pb-[6px] text-[11px] font-medium text-[#9b9590] dark:text-[#5d5854] uppercase tracking-[0.04em]">管理</div>
+              {filteredMenuItems.filter(item => item.path !== '/dashboard').map(item => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => handleMenuClick(item.path)}
+                    className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-left transition-all duration-100 mb-[1px]
+                      ${isActive
+                        ? 'bg-[#f3f0eb] dark:bg-[#2d2824] text-[#1a1a1a] dark:text-[#e8e2da] font-medium'
+                        : 'text-[#6b6560] dark:text-[#8a8480] hover:bg-[#f9f8f6] dark:hover:bg-[#2d2824]/60 hover:text-[#1a1a1a] dark:hover:text-[#e8e2da]'
+                      }`}
+                  >
+                    <div className="w-4 h-4 flex-shrink-0 opacity-70">{item.icon}</div>
+                    <span className="text-[13.5px]">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </nav>
 
-                {/* 底部版权信息 */}
-        <div className="px-4 py-2 pb-4 mt-auto flex-shrink-0">
-          <div className="text-center">
-            <p className="text-xs text-[#9c8678] dark:text-[#7a6b60]">
-              Powered by{' '}
-              <a
-                href="https://github.com/bqlpfy/flux-panel"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#c96442] dark:text-[#c96442]/80 hover:text-[#b5583a] transition-colors"
+        {/* 用户 footer — 点击弹出菜单 */}
+        <div className="border-t border-[#ebe7e1] dark:border-[#2d2824] p-2.5">
+          <Dropdown placement="top-start">
+            <DropdownTrigger>
+              <button className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors text-left">
+                <div className="w-[28px] h-[28px] rounded-lg bg-[#f3f0eb] dark:bg-[#2d2824] border border-[#e5e0d8] dark:border-[#3d3834] flex items-center justify-center text-[12px] font-medium text-[#1a1a1a] dark:text-[#e8e2da] flex-shrink-0">
+                  {username.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13px] font-medium text-[#1a1a1a] dark:text-[#e8e2da] leading-tight truncate">{username}</div>
+                  <div className="text-[11px] text-[#9b9590] dark:text-[#5d5854] leading-tight">{isAdmin ? '超级管理员' : '普通用户'}</div>
+                </div>
+                <svg className="w-3.5 h-3.5 text-[#9b9590] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                </svg>
+              </button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="用户菜单" className="min-w-[180px]">
+              <DropdownItem
+                key="change-password"
+                startContent={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                  </svg>
+                }
+                onPress={onOpen}
               >
-                flux-panel
-              </a>
-            </p>
-          </div>
+                修改密码
+              </DropdownItem>
+              <DropdownItem
+                key="logout"
+                startContent={
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                  </svg>
+                }
+                className="text-[#c53030]"
+                color="danger"
+                onPress={handleLogout}
+              >
+                退出登录
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       </aside>
 
       {/* 主内容区域 */}
       <div className={`flex flex-col flex-1 ${isMobile ? 'min-h-0' : 'h-full overflow-hidden'}`}>
-                 {/* 顶部导航栏 */}
-         <header className="bg-white dark:bg-[#1c1916] shadow-none border-b border-[#e5e0d8] dark:border-[#2d2824] h-14 flex items-center justify-between px-4 lg:px-6 relative z-10">
-          <div className="flex items-center gap-4">
-            {/* 移动端菜单按钮 */}
-            {isMobile && (
-              <Button
-                isIconOnly
-                variant="light"
-                onPress={toggleMobileMenu}
-                className="lg:hidden"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </Button>
-            )}
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* 用户菜单 */}
-             <Dropdown placement="bottom-end">
-               <DropdownTrigger>
-                 <Button variant="light" className="text-sm font-medium text-foreground">
-                   {username}
-                   <svg className="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
-                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                   </svg>
-                 </Button>
-               </DropdownTrigger>
-              <DropdownMenu aria-label="用户菜单">
-                <DropdownItem
-                  key="change-password"
-                  startContent={
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clipRule="evenodd" />
-                    </svg>
-                  }
-                  onPress={onOpen}
-                >
-                  修改密码
-                </DropdownItem>
-                <DropdownItem
-                  key="logout"
-                  startContent={
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
-                    </svg>
-                  }
-                  className="text-danger"
-                  color="danger"
-                  onPress={handleLogout}
-                >
-                  退出登录
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
+        {/* 顶部导航栏 */}
+        <header className="bg-white dark:bg-[#231e1b] border-b border-[#ebe7e1] dark:border-[#2d2824] h-[54px] flex items-center px-6 gap-3 flex-shrink-0 relative z-10">
+          {isMobile && (
+            <button
+              onClick={toggleMobileMenu}
+              className="p-1.5 rounded-lg text-[#6b6560] dark:text-[#8a8480] hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </button>
+          )}
+          <h2 className="text-[15px] font-medium text-[#1a1a1a] dark:text-[#e8e2da]">
+            {filteredMenuItems.find(item => item.path === location.pathname)?.label || ''}
+          </h2>
         </header>
 
         {/* 主内容 */}
-        <main className={`flex-1 bg-[#f3f0eb] dark:bg-[#1a1612] ${isMobile ? '' : 'overflow-y-auto'}`}>
+        <main className={`flex-1 bg-[#f3f0eb] dark:bg-[#1a1614] ${isMobile ? '' : 'overflow-y-auto'}`}>
           {children}
         </main>
       </div>
 
-      {/* 修改密码弹窗 */}
+      {/* 修改密码弹窗 - Claude 风格 */}
       <Modal 
         isOpen={isOpen} 
         onOpenChange={() => {
@@ -402,51 +409,53 @@ export default function AdminLayout({
         backdrop="blur"
         placement="center"
       >
-                 <ModalContent>
-           {(onClose: () => void) => (
+        <ModalContent>
+          {(onClose: () => void) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">修改密码</ModalHeader>
-              <ModalBody>
-                                 <div className="space-y-4">
-                   <Input
-                     label="新用户名"
-                     placeholder="请输入新用户名（至少3位）"
-                     value={passwordForm.newUsername}
-                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordForm(prev => ({ ...prev, newUsername: e.target.value }))}
-                     variant="bordered"
-                   />
-                   <Input
-                     label="当前密码"
-                     type="password"
-                     placeholder="请输入当前密码"
-                     value={passwordForm.currentPassword}
-                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
-                     variant="bordered"
-                   />
-                   <Input
-                     label="新密码"
-                     type="password"
-                     placeholder="请输入新密码（至少6位）"
-                     value={passwordForm.newPassword}
-                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
-                     variant="bordered"
-                   />
-                   <Input
-                     label="确认密码"
-                     type="password"
-                     placeholder="请再次输入新密码"
-                     value={passwordForm.confirmPassword}
-                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                     variant="bordered"
-                   />
-                 </div>
+              <ModalHeader className="flex flex-col gap-1 border-b border-var-secondary pb-4">
+                <h2 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">修改密码</h2>
+              </ModalHeader>
+              <ModalBody className="py-5">
+                <div className="space-y-4">
+                  <Input
+                    label="新用户名"
+                    placeholder="请输入新用户名（至少3位）"
+                    value={passwordForm.newUsername}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordForm(prev => ({ ...prev, newUsername: e.target.value }))}
+                    variant="bordered"
+                  />
+                  <Input
+                    label="当前密码"
+                    type="password"
+                    placeholder="请输入当前密码"
+                    value={passwordForm.currentPassword}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
+                    variant="bordered"
+                  />
+                  <Input
+                    label="新密码"
+                    type="password"
+                    placeholder="请输入新密码（至少6位）"
+                    value={passwordForm.newPassword}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
+                    variant="bordered"
+                  />
+                  <Input
+                    label="确认密码"
+                    type="password"
+                    placeholder="请再次输入新密码"
+                    value={passwordForm.confirmPassword}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    variant="bordered"
+                  />
+                </div>
               </ModalBody>
-              <ModalFooter>
-                <Button variant="light" className="text-[#6b5a4e] dark:text-[#b5a99a]" onPress={onClose}>
+              <ModalFooter className="border-t border-var-secondary pt-4">
+                <Button variant="light" onPress={onClose} className="text-[#6b6560]">
                   取消
                 </Button>
-                <Button
-                  className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
+                <Button 
+                  className="bg-[#c96442] text-white hover:bg-[#b5583a]"
                   onPress={handlePasswordSubmit}
                   isLoading={passwordLoading}
                 >
@@ -459,4 +468,4 @@ export default function AdminLayout({
       </Modal>
     </div>
   );
-} 
+}
