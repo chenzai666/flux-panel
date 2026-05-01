@@ -1,6 +1,6 @@
 services:
   backend:
-    image: bats666/springboot-backend:2.0.8-beta
+    image: bats666/springboot-backend:latest
     container_name: springboot-backend
     restart: unless-stopped
     environment:
@@ -33,7 +33,7 @@ services:
       start_period: 60s
 
   frontend:
-    image: bats666/vite-frontend:2.0.8-beta
+    image: bats666/vite-frontend:latest
     container_name: vite-frontend
     restart: unless-stopped
     ports:
