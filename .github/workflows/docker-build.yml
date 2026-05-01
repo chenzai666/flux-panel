@@ -2,7 +2,7 @@ name: Build and Push Images Based on Version
 
 # 在这里定义统一版本号
 env:
-  VERSION: "2.0.18-beta"
+  VERSION: "2.0.19-beta"
 
 on:
   push:
@@ -150,8 +150,8 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             --push \
-            -t bats666/vite-frontend:latest \
-            -t bats666/vite-frontend:${VERSION} \
+            -t chenzai666/vite-frontend:latest \
+            -t chenzai666/vite-frontend:${VERSION} \
             ./vite-frontend
 
   build-java:
@@ -194,8 +194,8 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             --push \
-            -t bats666/springboot-backend:latest \
-            -t bats666/springboot-backend:${VERSION} \
+            -t chenzai666/springboot-backend:latest \
+            -t chenzai666/springboot-backend:${VERSION} \
             ./springboot-backend
 
   create-release:
