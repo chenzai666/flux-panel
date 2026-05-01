@@ -22,21 +22,21 @@ fi
 
 
 
-# 询问用户是否需要 IPv6，默认 v4
-get_docker_compose_url() {
-  echo "" >&2
-  echo "请选择网络模式：" >&2
-  echo "  1) IPv4（默认，推荐大多数用户）" >&2
-  echo "  2) IPv4 + IPv6 双栈" >&2
-  read -rp "请输入选项 [1/2，直接回车选1]: " NET_CHOICE <&1
+# 询问用户是否需要 IPv6，直接设置全局变量 DOCKER_COMPOSE_URL
+select_docker_compose_url() {
+  echo ""
+  echo "请选择网络模式："
+  echo "  1) IPv4（默认，推荐大多数用户）"
+  echo "  2) IPv4 + IPv6 双栈"
+  read -rp "请输入选项 [1/2，直接回车选1]: " NET_CHOICE
   case "$NET_CHOICE" in
     2)
-      echo "✅ 已选择 IPv4 + IPv6 双栈模式" >&2
-      echo "$DOCKER_COMPOSEV6_URL"
+      echo "✅ 已选择 IPv4 + IPv6 双栈模式"
+      DOCKER_COMPOSE_URL="$DOCKER_COMPOSEV6_URL"
       ;;
     *)
-      echo "✅ 已选择 IPv4 模式" >&2
-      echo "$DOCKER_COMPOSEV4_URL"
+      echo "✅ 已选择 IPv4 模式"
+      DOCKER_COMPOSE_URL="$DOCKER_COMPOSEV4_URL"
       ;;
   esac
 }
@@ -204,7 +204,7 @@ install_panel() {
   get_config_params
 
   echo "🔽 下载必要文件..."
-  DOCKER_COMPOSE_URL=$(get_docker_compose_url)
+  select_docker_compose_url
   echo "📡 选择配置文件：$(basename "$DOCKER_COMPOSE_URL")"
   curl -L -o docker-compose.yml "$DOCKER_COMPOSE_URL"
 
@@ -245,7 +245,7 @@ update_panel() {
   check_docker
 
   echo "🔽 下载最新配置文件..."
-  DOCKER_COMPOSE_URL=$(get_docker_compose_url)
+  select_docker_compose_url
   echo "📡 选择配置文件：$(basename "$DOCKER_COMPOSE_URL")"
   curl -L -o docker-compose.yml "$DOCKER_COMPOSE_URL"
   echo "✅ 下载完成"
@@ -1051,7 +1051,7 @@ uninstall_panel() {
 
   if [[ ! -f "docker-compose.yml" ]]; then
     echo "⚠️ 未找到 docker-compose.yml 文件，正在下载以完成卸载..."
-    DOCKER_COMPOSE_URL=$(get_docker_compose_url)
+    select_docker_compose_url
     echo "📡 选择配置文件：$(basename "$DOCKER_COMPOSE_URL")"
     curl -L -o docker-compose.yml "$DOCKER_COMPOSE_URL"
     echo "✅ docker-compose.yml 下载完成"
