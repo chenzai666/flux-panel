@@ -89,6 +89,10 @@ export const updateConfigs = (configMap: Record<string, string>) => Network.post
 export const updateConfig = (name: string, value: string) => Network.post("/config/update-single", { name, value });
 
 
+// 备份导入导出接口
+export const exportBackup = () => Network.post("/backup/export");
+export const importBackup = (data: any) => Network.post("/backup/import", data);
+
 // 验证码相关接口
 export const checkCaptcha = () => Network.post("/captcha/check");
 export const generateCaptcha = () => Network.post(`/captcha/generate`);

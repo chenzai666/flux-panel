@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
@@ -8,7 +8,7 @@ import { Divider } from "@heroui/divider";
 import { Switch } from "@heroui/switch";
 import { Select, SelectItem } from "@heroui/select";
 import toast from 'react-hot-toast';
-import { updateConfigs } from '@/api';
+import { updateConfigs, exportBackup, importBackup } from '@/api';
 import { SettingsIcon } from '@/components/icons';
 
 import { isAdmin } from '@/utils/auth';
@@ -125,6 +125,9 @@ export default function ConfigPage() {
   const navigate = useNavigate();
   const initialConfigs = getInitialConfigs();
   const [configs, setConfigs] = useState<Record<string, string>>(initialConfigs);
+  const [backupLoading, setBackupLoading] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(Object.keys(initialConfigs).length === 0); // 如果有缓存数据，不显示loading
   const [saving, setSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -199,6 +202,53 @@ export default function ConfigPage() {
       k => originalConfigs[k] !== newConfigs[k]
     );
     setHasChanges(hasChangesNow);
+  };
+
+  // 导出备份
+  const handleExport = async () => {
+    setBackupLoading(true);
+    try {
+      const response = await exportBackup();
+      if (response.code !== 0) {
+        toast.error('导出失败: ' + response.msg);
+        return;
+      }
+      const blob = new Blob([JSON.stringify(response.data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `flux-panel-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('备份已下载');
+    } catch {
+      toast.error('导出失败，请重试');
+    } finally {
+      setBackupLoading(false);
+    }
+  };
+
+  // 导入备份
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+
+    setImportLoading(true);
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      const response = await importBackup(data);
+      if (response.code !== 0) {
+        toast.error('导入失败: ' + response.msg);
+        return;
+      }
+      toast.success(response.data || '导入成功，请刷新页面');
+    } catch (err: any) {
+      toast.error('文件解析失败: ' + (err?.message || '请确认文件格式正确'));
+    } finally {
+      setImportLoading(false);
+    }
   };
 
   // 保存配置
@@ -423,6 +473,79 @@ export default function ConfigPage() {
             </CardBody>
           </Card>
         )}
+
+        {/* 备份管理 */}
+        <Card className="mt-6 shadow-none border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b]">
+          <CardHeader className="pb-2">
+            <div>
+              <h2 className="text-xl font-semibold">备份管理</h2>
+              <p className="text-sm text-[#6b5a4e] dark:text-[#9c8678] mt-1">
+                导出当前所有数据备份，或从备份文件恢复。支持导入稳定版 v1.x 备份进行迁移。
+              </p>
+            </div>
+          </CardHeader>
+          <Divider />
+          <CardBody className="pt-5 space-y-5">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 p-4 rounded-xl border border-[#e5e0d8] dark:border-[#2d2824] bg-[#faf8f5] dark:bg-[#2d2824]/30">
+                <h3 className="font-medium text-[#4a3c33] dark:text-[#d4c8bc] mb-1">导出备份</h3>
+                <p className="text-xs text-[#9c8678] dark:text-[#7a6b60] mb-3">
+                  将节点、隧道、转发、用户等所有数据导出为 JSON 文件
+                </p>
+                <Button
+                  size="sm"
+                  className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg font-medium"
+                  isLoading={backupLoading}
+                  onPress={handleExport}
+                  startContent={!backupLoading && (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  )}
+                >
+                  {backupLoading ? '导出中...' : '导出备份'}
+                </Button>
+              </div>
+
+              <div className="flex-1 p-4 rounded-xl border border-[#e5e0d8] dark:border-[#2d2824] bg-[#faf8f5] dark:bg-[#2d2824]/30">
+                <h3 className="font-medium text-[#4a3c33] dark:text-[#d4c8bc] mb-1">导入备份 / 迁移向导</h3>
+                <p className="text-xs text-[#9c8678] dark:text-[#7a6b60] mb-3">
+                  从 JSON 文件恢复数据，支持 beta 格式和稳定版 v1.x 自动迁移。<span className="text-[#c96442]">导入会清除现有数据，请谨慎操作。</span>
+                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".json"
+                  className="hidden"
+                  onChange={handleImportFile}
+                />
+                <Button
+                  size="sm"
+                  variant="flat"
+                  className="text-[#c96442] bg-[#c96442]/10 hover:bg-[#c96442]/20 rounded-lg font-medium"
+                  isLoading={importLoading}
+                  onPress={() => fileInputRef.current?.click()}
+                  startContent={!importLoading && (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4-4m0 0l4 4m-4-4v12" />
+                    </svg>
+                  )}
+                >
+                  {importLoading ? '导入中...' : '选择文件导入'}
+                </Button>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-lg bg-[#faf8f5] dark:bg-[#2d2824]/50 border border-[#e5e0d8] dark:border-[#3d3834]">
+              <p className="text-xs text-[#9c8678] dark:text-[#7a6b60]">
+                <span className="font-medium text-[#6b5a4e] dark:text-[#b5a99a]">迁移说明：</span>
+                从稳定版 v1.x 导入时，系统将自动把每条隧道的入口/出口节点转换为 beta 格式的转发链，并从
+                <code className="mx-1 px-1 bg-[#e5e0d8] dark:bg-[#3d3834] rounded text-[#4a3c33] dark:text-[#d4c8bc]">in_port</code>
+                生成对应的端口记录。中间链路节点需在迁移完成后手动配置。管理员账号不会被导入覆盖。
+              </p>
+            </div>
+          </CardBody>
+        </Card>
       </div>
     
   );
