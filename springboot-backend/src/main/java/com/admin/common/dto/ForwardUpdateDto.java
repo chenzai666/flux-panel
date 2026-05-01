@@ -16,7 +16,10 @@ public class ForwardUpdateDto {
     
     @NotNull(message = "用户ID不能为空")
     private Integer userId;
-    
+
+    /** 目标隧道ID，不传或与当前相同时不切换 */
+    private Integer tunnelId;
+
     @NotBlank(message = "转发名称不能为空")
     private String name;
 
