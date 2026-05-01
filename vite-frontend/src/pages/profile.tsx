@@ -76,7 +76,7 @@ export default function ProfilePage() {
           <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
         </svg>
       ),
-      color: 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400',
+      color: 'bg-[#E6F1FB] dark:bg-[#0d1e35] text-[#0C447C] dark:text-[#70aee8]',
       description: '管理系统用户'
     },
     {
@@ -87,7 +87,7 @@ export default function ProfilePage() {
           <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
         </svg>
       ),
-      color: 'bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400',
+      color: 'bg-[#fdf0eb] dark:bg-[#2d2420] text-[#c96442] dark:text-[#d4856a]',
       description: '配置网站设置'
     }
   ];
@@ -176,9 +176,9 @@ export default function ProfilePage() {
                 <h3 className="text-base font-medium text-foreground">{username}</h3>
                 <div className="flex items-center space-x-2 mt-1">
                   <span className={`px-2 py-1 rounded-md text-xs font-medium ${
-                    isAdmin 
-                      ? 'bg-primary-100 dark:bg-primary-500/20 text-primary-700 dark:text-primary-300' 
-                      : 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300'
+                    isAdmin
+                      ? 'bg-[#fdf0eb] dark:bg-[#2d2420] text-[#c96442] dark:text-[#d4856a]'
+                      : 'bg-[#E6F1FB] dark:bg-[#0d1e35] text-[#0C447C] dark:text-[#70aee8]'
                   }`}>
                     {isAdmin ? '管理员' : '普通用户'}
                   </span>
@@ -214,7 +214,7 @@ export default function ProfilePage() {
                 onClick={onOpen}
                 className="flex flex-col items-center p-3 rounded-2xl bg-[#faf8f5] dark:bg-[#2d2824]/50 hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors duration-200"
               >
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mb-2">
+                <div className="w-10 h-10 bg-[#fdf0eb] dark:bg-[#2d2420] text-[#c96442] dark:text-[#d4856a] rounded-full flex items-center justify-center mb-2">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clipRule="evenodd" />
                   </svg>

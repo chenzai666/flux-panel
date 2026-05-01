@@ -324,9 +324,9 @@ export default function DashboardPage() {
   };
 
   const getUsageColor = (percentage: number) => {
-    if (percentage >= 90) return 'bg-red-500 dark:bg-red-600';
-    if (percentage >= 70) return 'bg-orange-500 dark:bg-orange-600';
-    return 'bg-blue-500 dark:bg-blue-600';
+    if (percentage >= 90) return 'bg-[#E24B4A]';
+    if (percentage >= 70) return 'bg-[#BA7517]';
+    return 'bg-[#639922]';
   };
 
   const renderProgressBar = (percentage: number, size: 'sm' | 'md' = 'md', isUnlimited: boolean = false) => {
@@ -335,8 +335,8 @@ export default function DashboardPage() {
     if (isUnlimited) {
       return (
         <div className="w-full">
-          <div className={`w-full bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-500/30 dark:to-purple-500/30 rounded-full ${height}`}>
-            <div className={`${height} bg-gradient-to-r from-blue-500 to-purple-500 rounded-full w-full opacity-60`}></div>
+          <div className={`w-full bg-gradient-to-r from-[#E6F1FB] to-[#EAF3DE] dark:from-[#378ADD]/20 dark:to-[#639922]/20 rounded-full ${height}`}>
+            <div className={`${height} bg-gradient-to-r from-[#378ADD] to-[#639922] rounded-full w-full opacity-60`}></div>
           </div>
         </div>
       );
@@ -626,9 +626,9 @@ export default function DashboardPage() {
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
                    <p className="text-xs lg:text-sm text-default-600 truncate">总流量</p>
-                   <div className="p-1.5 lg:p-2 bg-blue-100 dark:bg-blue-500/20 rounded-lg flex-shrink-0">
-                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                       <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                   <div className="p-1.5 lg:p-2 icon-bg-info rounded-lg flex-shrink-0">
+                     <svg className="w-4 h-4 lg:w-5 lg:h-5 icon-info" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M4 12h16M4 17h7" />
                      </svg>
                    </div>
                  </div>
@@ -674,9 +674,9 @@ export default function DashboardPage() {
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
                    <p className="text-xs lg:text-sm text-default-600 truncate">转发配额</p>
-                   <div className="p-1.5 lg:p-2 bg-purple-100 dark:bg-purple-500/20 rounded-lg flex-shrink-0">
-                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-purple-600 dark:text-purple-400" fill="currentColor" viewBox="0 0 20 20">
-                       <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                   <div className="p-1.5 lg:p-2 icon-bg-warning rounded-lg flex-shrink-0">
+                     <svg className="w-4 h-4 lg:w-5 lg:h-5 icon-warning" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h8M4 18h8" />
                      </svg>
                    </div>
                  </div>
@@ -816,7 +816,7 @@ export default function DashboardPage() {
                          <div>
                            <h3 className="font-semibold text-foreground">{tunnel.tunnelName} ID: {tunnel.id}</h3>
                            <div className="flex flex-wrap items-center gap-2 mt-1">
-                             <span className={`px-2 py-1 rounded-md text-xs font-medium ${tunnel.tunnelFlow === 1 ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300' : 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300'}`}>
+                             <span className={`px-2 py-1 rounded-md text-xs font-medium ${tunnel.tunnelFlow === 1 ? 'bg-[#E6F1FB] dark:bg-[#0d1e35] text-[#0C447C] dark:text-[#70aee8]' : 'bg-[#FAEEDA] dark:bg-[#2d1e08] text-[#633806] dark:text-[#d4956a]'}`}>
                                {tunnel.tunnelFlow === 1 ? '单向计费' : '双向计费'}
                              </span>
                              <span className={`px-2 py-1 rounded-md text-xs font-medium border ${tunnelExpStatus.bg} ${tunnelExpStatus.color}`}>
@@ -912,7 +912,7 @@ export default function DashboardPage() {
                                 </code>
                                 <div className="text-center text-default-400 text-xs">↓</div>
                                 <code 
-                                  className={`block px-2 py-1 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 rounded font-mono text-xs truncate ${hasMultipleRemoteAddresses(forward.remoteAddr) ? 'cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-500/30' : ''}`}
+                                  className={`block px-2 py-1 bg-[#E6F1FB] dark:bg-[#0d1e35] text-[#0C447C] dark:text-[#70aee8] rounded font-mono text-xs truncate ${hasMultipleRemoteAddresses(forward.remoteAddr) ? 'cursor-pointer hover:bg-[#B5D4F4]/50 dark:hover:bg-[#1a3d6a]/50' : ''}`}
                                   onClick={() => hasMultipleRemoteAddresses(forward.remoteAddr) && showRemoteAddressModal(forward.remoteAddr, '出口地址')}
                                   title={formatRemoteAddress(forward.remoteAddr)}
                                 >
