@@ -5,6 +5,7 @@ import com.admin.common.aop.LogAnnotation;
 import com.admin.common.lang.R;
 import com.admin.entity.*;
 import com.admin.service.*;
+import com.admin.service.impl.TunnelServiceImpl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -253,6 +254,23 @@ public class BackupController extends BaseController {
                 Integer inPort = coalesce(j.getInteger("inPort"), j.getInteger("in_port"));
                 Long entryNodeId = forward.getTunnelId() != null
                         ? tunnelEntryNodeMap.get(forward.getTunnelId().longValue()) : null;
+
+                // Fallback: if entryNodeId not in map, query DB for the entry ChainTunnel
+                if (entryNodeId == null && forward.getTunnelId() != null) {
+                    ChainTunnel entryChain = chainTunnelService.getOne(
+                            new QueryWrapper<ChainTunnel>()
+                                    .eq("tunnel_id", forward.getTunnelId())
+                                    .eq("chain_type", 1));
+                    if (entryChain != null) {
+                        entryNodeId = entryChain.getNodeId();
+                    }
+                }
+
+                // Auto-allocate port if inPort is missing or zero
+                if ((inPort == null || inPort == 0) && entryNodeId != null) {
+                    inPort = findAvailablePort(entryNodeId, forward.getId());
+                }
+
                 if (inPort != null && entryNodeId != null) {
                     ForwardPort fp = new ForwardPort();
                     fp.setForwardId(forward.getId());
@@ -289,6 +307,22 @@ public class BackupController extends BaseController {
 
         CompletableFuture.runAsync(() -> forwardService.syncAllToGost());
         return R.ok("稳定版数据迁移完成，转发配置正在后台同步到Gost节点，中间链路节点需手动配置");
+    }
+
+    /** 在节点可用端口范围内找第一个未被占用的端口（用于稳定版迁移时自动分配） */
+    private Integer findAvailablePort(Long nodeId, Long excludeForwardId) {
+        Node node = nodeService.getById(nodeId);
+        if (node == null || node.getPort() == null) return null;
+
+        Set<Integer> used = new HashSet<>();
+        chainTunnelService.list(new QueryWrapper<ChainTunnel>().eq("node_id", nodeId))
+                .stream().map(ChainTunnel::getPort).filter(Objects::nonNull).forEach(used::add);
+        forwardPortService.list(new QueryWrapper<ForwardPort>().eq("node_id", nodeId)
+                .ne("forward_id", excludeForwardId))
+                .stream().map(ForwardPort::getPort).filter(Objects::nonNull).forEach(used::add);
+
+        return TunnelServiceImpl.parsePorts(node.getPort()).stream()
+                .filter(p -> !used.contains(p)).findFirst().orElse(null);
     }
 
     /** 解析稳定版 tcpListenAddr，支持 ":8080"、"0.0.0.0:8080"、"8080" 三种格式 */

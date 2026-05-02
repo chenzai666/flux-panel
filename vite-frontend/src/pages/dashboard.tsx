@@ -771,10 +771,10 @@ export default function DashboardPage() {
                          <Line
                            type="monotone"
                            dataKey="flow"
-                           stroke="#8b5cf6"
+                           stroke="#c96442"
                            strokeWidth={3}
                            dot={false}
-                           activeDot={{ r: 4, stroke: '#8b5cf6', strokeWidth: 2, fill: '#fff' }}
+                           activeDot={{ r: 4, stroke: '#c96442', strokeWidth: 2, fill: '#fff' }}
                          />
                        </LineChart>
                      </ResponsiveContainer>

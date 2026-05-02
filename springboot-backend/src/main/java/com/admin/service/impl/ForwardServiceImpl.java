@@ -356,10 +356,20 @@ public class ForwardServiceImpl extends ServiceImpl<ForwardMapper, Forward> impl
                 if (node == null) return R.err("部分节点不存在");
                 ForwardPort forwardPort = forwardPortService.getOne(
                         new QueryWrapper<ForwardPort>().eq("forward_id", existForward.getId()).eq("node_id", node.getId()));
-                if (forwardPort == null) return R.err("部分端口记录不存在");
-                forwardPort.setPort(ct.getPort());
-                forwardPortService.updateById(forwardPort);
-                GostDto gostDto = GostUtil.AddAndUpdateService(serviceName, limiter, node, existForward, forwardPort, newTunnel, "UpdateService");
+                GostDto gostDto;
+                if (forwardPort == null) {
+                    // ForwardPort missing (e.g. after stable→beta import) — create and register
+                    forwardPort = new ForwardPort();
+                    forwardPort.setForwardId(existForward.getId());
+                    forwardPort.setNodeId(node.getId());
+                    forwardPort.setPort(ct.getPort());
+                    forwardPortService.save(forwardPort);
+                    gostDto = GostUtil.AddAndUpdateService(serviceName, limiter, node, existForward, forwardPort, newTunnel, "AddService");
+                } else {
+                    forwardPort.setPort(ct.getPort());
+                    forwardPortService.updateById(forwardPort);
+                    gostDto = GostUtil.AddAndUpdateService(serviceName, limiter, node, existForward, forwardPort, newTunnel, "UpdateService");
+                }
                 if (!Objects.equals(gostDto.getMsg(), "OK")) return R.err(gostDto.getMsg());
             }
         }
