@@ -1120,8 +1120,6 @@ public class ForwardServiceImpl extends ServiceImpl<ForwardMapper, Forward> impl
                 .toList();
     }
 
-
-
     // ========== 内部数据类 ==========
 
     @Data
