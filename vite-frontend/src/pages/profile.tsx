@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardBody } from "@heroui/card";
+﻿import React, { useState, useEffect } from 'react';
 import { Button } from "@heroui/button";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@heroui/modal";
 import { Input } from "@heroui/input";
@@ -22,6 +21,7 @@ interface MenuItem {
   label: string;
   icon: React.ReactNode;
   color: string;
+  bgColor: string;
   description: string;
 }
 
@@ -55,39 +55,43 @@ export default function ProfilePage() {
     setIsAdmin(adminFlag);
   }, []);
 
-  // 管理员菜单项
+  // 管理员菜单项 - 更精致的图标和配色
   const adminMenuItems: MenuItem[] = [
     {
       path: '/limit',
       label: '限速管理',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
-      color: 'bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400',
+      color: 'text-orange-600 dark:text-orange-400',
+      bgColor: 'bg-orange-50 dark:bg-orange-500/15',
       description: '管理用户限速策略'
     },
     {
       path: '/user',
       label: '用户管理',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
         </svg>
       ),
-      color: 'bg-[#E6F1FB] dark:bg-[#0d1e35] text-[#0C447C] dark:text-[#70aee8]',
+      color: 'text-blue-600 dark:text-blue-400',
+      bgColor: 'bg-blue-50 dark:bg-blue-500/15',
       description: '管理系统用户'
     },
     {
       path: '/config',
       label: '网站配置',
       icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       ),
-      color: 'bg-[#fdf0eb] dark:bg-[#2d2420] text-[#c96442] dark:text-[#d4856a]',
+      color: 'text-purple-600 dark:text-purple-400',
+      bgColor: 'bg-purple-50 dark:bg-purple-500/15',
       description: '配置网站设置'
     }
   ];
@@ -160,106 +164,128 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="px-3 lg:px-6 py-8 flex flex-col h-full">
+    <div className="px-4 lg:px-6 py-4 lg:py-5 flex flex-col h-full">
 
-      <div className="space-y-6 flex-1">
+      <div className="space-y-4 flex-1">
         {/* 用户信息卡片 */}
-        <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none hover:shadow-sm transition-shadow">
-          <CardBody className="p-4">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+        <div className="bg-white dark:bg-[#231e1b] rounded-xl border border-[#e5e0d8] dark:border-[#2d2824] shadow-none p-5">
+          <div className="flex items-center space-x-4">
+            {/* 头像 - 渐变背景 */}
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#c96442] to-[#d4856a] flex items-center justify-center shadow-md">
+              <span className="text-white text-xl font-bold">
+                {username ? username.charAt(0).toUpperCase() : 'U'}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-base font-semibold text-[#1a1a1a] dark:text-[#e8e2da] truncate">{username}</h3>
+              <div className="flex items-center space-x-2 mt-1.5">
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold ${
+                  isAdmin 
+                    ? 'bg-[#c96442]/10 text-[#c96442] dark:bg-[#d4856a]/15 dark:text-[#d4856a]' 
+                    : 'bg-blue-500/10 text-blue-600 dark:bg-blue-400/15 dark:text-blue-400'
+                }`}>
+                  {isAdmin ? '管理员' : '普通用户'}
+                </span>
+                <span className="text-[11px] text-[#9b9590] dark:text-[#5d5854]">
+                  {new Date().toLocaleDateString('zh-CN')}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 管理员功能 - 列表式菜单项 */}
+        {isAdmin && (
+          <div className="bg-white dark:bg-[#231e1b] rounded-xl border border-[#e5e0d8] dark:border-[#2d2824] shadow-none overflow-hidden">
+            <div className="px-4 pt-3 pb-1">
+              <span className="text-[11px] font-semibold text-[#9b9590] dark:text-[#5d5854] uppercase tracking-wider">管理功能</span>
+            </div>
+            {adminMenuItems.map((item, index) => (
+              <button
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                className={`h5-list-item w-full flex items-center px-4 py-3.5 text-left ${
+                  index < adminMenuItems.length - 1 ? 'border-b border-[#f5f1eb] dark:border-[#2d2824]' : ''
+                }`}
+              >
+                <div className={`w-9 h-9 ${item.bgColor} ${item.color} rounded-xl flex items-center justify-center mr-3 flex-shrink-0`}>
+                  {item.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da]">{item.label}</div>
+                  <div className="text-[11px] text-[#9b9590] dark:text-[#5d5854] mt-0.5">{item.description}</div>
+                </div>
+                <svg className="w-4 h-4 text-[#c9c3bb] dark:text-[#4d4844] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                 </svg>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-base font-medium text-foreground">{username}</h3>
-                <div className="flex items-center space-x-2 mt-1">
-                  <span className={`px-2 py-1 rounded-md text-xs font-medium ${
-                    isAdmin
-                      ? 'bg-[#fdf0eb] dark:bg-[#2d2420] text-[#c96442] dark:text-[#d4856a]'
-                      : 'bg-[#E6F1FB] dark:bg-[#0d1e35] text-[#0C447C] dark:text-[#70aee8]'
-                  }`}>
-                    {isAdmin ? '管理员' : '普通用户'}
-                  </span>
-                  <span className="text-xs text-default-500">
-                    {new Date().toLocaleDateString('zh-CN')}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* 功能网格 */}
-        <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none hover:shadow-sm transition-shadow">
-          <CardBody className="p-4">
-            <div className="grid grid-cols-3 gap-3">
-              {/* 管理员功能 */}
-              {isAdmin && adminMenuItems.map((item) => (
-                <button
-                  key={item.path}
-                  onClick={() => navigate(item.path)}
-                  className="flex flex-col items-center p-3 rounded-2xl bg-[#faf8f5] dark:bg-[#2d2824]/50 hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors duration-200"
-                >
-                  <div className={`w-10 h-10 ${item.color} rounded-full flex items-center justify-center mb-2`}>
-                    {item.icon}
-                  </div>
-                  <span className="text-xs text-foreground text-center">{item.label}</span>
-                </button>
-              ))}
-              
-              {/* 修改密码 */}
-              <button
-                onClick={onOpen}
-                className="flex flex-col items-center p-3 rounded-2xl bg-[#faf8f5] dark:bg-[#2d2824]/50 hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors duration-200"
-              >
-                <div className="w-10 h-10 bg-[#fdf0eb] dark:bg-[#2d2420] text-[#c96442] dark:text-[#d4856a] rounded-full flex items-center justify-center mb-2">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <span className="text-xs text-foreground text-center">修改密码</span>
               </button>
-              
-              {/* 退出登录 */}
-              <button
-                onClick={handleLogout}
-                className="flex flex-col items-center p-3 rounded-2xl bg-[#faf8f5] dark:bg-[#2d2824]/50 hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors duration-200"
-              >
-                <div className="w-10 h-10 bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mb-2">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <span className="text-xs text-foreground text-center">退出登录</span>
-              </button>
+            ))}
+          </div>
+        )}
+
+        {/* 常用功能 - 列表式菜单项 */}
+        <div className="bg-white dark:bg-[#231e1b] rounded-xl border border-[#e5e0d8] dark:border-[#2d2824] shadow-none overflow-hidden">
+          <div className="px-4 pt-3 pb-1">
+            <span className="text-[11px] font-semibold text-[#9b9590] dark:text-[#5d5854] uppercase tracking-wider">常用功能</span>
+          </div>
+          
+          {/* 修改密码 */}
+          <button
+            onClick={onOpen}
+            className="h5-list-item w-full flex items-center px-4 py-3.5 text-left border-b border-[#f5f1eb] dark:border-[#2d2824]"
+          >
+            <div className="w-9 h-9 bg-emerald-50 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              </svg>
             </div>
-          </CardBody>
-        </Card>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da]">修改密码</div>
+              <div className="text-[11px] text-[#9b9590] dark:text-[#5d5854] mt-0.5">更新登录密码</div>
+            </div>
+            <svg className="w-4 h-4 text-[#c9c3bb] dark:text-[#4d4844] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
 
-        <div className="fixed inset-x-0 bottom-20 text-center py-4">
-               <p className="text-xs text-[#9c8678] dark:text-[#7a6b60]">
-                 Powered by{' '}
-                 <a
-                   href="https://github.com/bqlpfy/flux-panel"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   className="text-[#c96442] dark:text-[#c96442]/80 hover:text-[#b5583a] transition-colors"
-                 >
-                   flux-panel
-                 </a>
-               </p>
-               <p className="text-xs text-[#9c8678] dark:text-[#7a6b60] mt-1">
-                 v{ isWebViewFunc() ? siteConfig.app_version : siteConfig.version}
-               </p>
-             </div>
+          {/* 退出登录 */}
+          <button
+            onClick={handleLogout}
+            className="h5-list-item w-full flex items-center px-4 py-3.5 text-left"
+          >
+            <div className="w-9 h-9 bg-red-50 dark:bg-red-500/15 text-red-500 dark:text-red-400 rounded-xl flex items-center justify-center mr-3 flex-shrink-0">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-red-500 dark:text-red-400">退出登录</div>
+              <div className="text-[11px] text-[#9b9590] dark:text-[#5d5854] mt-0.5">退出当前账号</div>
+            </div>
+            <svg className="w-4 h-4 text-[#c9c3bb] dark:text-[#4d4844] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
 
+        {/* 底部版本信息 */}
+        <div className="text-center py-6">
+          <p className="text-[11px] text-[#9b9590] dark:text-[#5d5854]">
+            Powered by{' '}
+            <a 
+              href="https://github.com/chenzai666/flux-panel" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[#9b9590] dark:text-[#5d5854] hover:text-[#6b6560] dark:hover:text-[#9b9590] transition-colors"
+            >
+              flux-panel
+            </a>
+          </p>
+          <p className="text-[11px] text-[#9b9590] dark:text-[#5d5854] mt-0.5">
+            v{ isWebViewFunc() ? siteConfig.app_version : siteConfig.version}
+          </p>
+        </div>
       </div>
-
-
-      
-
 
       {/* 修改密码弹窗 */}
       <Modal 
@@ -276,7 +302,7 @@ export default function ProfilePage() {
         <ModalContent>
           {(onClose: () => void) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">修改密码</ModalHeader>
+              <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">修改密码</ModalHeader>
               <ModalBody>
                 <div className="space-y-4">
                   <Input
@@ -312,8 +338,8 @@ export default function ProfilePage() {
                   />
                 </div>
               </ModalBody>
-              <ModalFooter>
-                <Button variant="light" className="text-[#6b5a4e] dark:text-[#b5a99a]" onPress={onClose}>
+              <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+                <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onClose}>
                   取消
                 </Button>
                 <Button

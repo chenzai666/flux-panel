@@ -6,7 +6,6 @@ import com.admin.common.lang.R;
 import com.admin.entity.Forward;
 import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * <p>
@@ -88,16 +87,9 @@ public interface ForwardService extends IService<Forward> {
      */
     R batchDeleteForwards(java.util.List<Long> ids);
 
-    /**
-     * 批量强制删除端口转发
-     * @param ids 转发ID列表
-     * @return 结果
-     */
     R batchForceDeleteForwards(java.util.List<Long> ids);
 
-    /**
-     * 将数据库中所有 status=1 的转发重新推送到 Gost 节点
-     * 用于备份恢复/迁移后使节点配置与数据库保持一致
-     */
+    void updateForwardA(Forward forward);
+
     void syncAllToGost();
 }

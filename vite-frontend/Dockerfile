@@ -3,11 +3,18 @@ FROM node:20.19.0 AS builder
 
 WORKDIR /app
 
+# 增加 Node 内存限制，防止 CI 环境 OOM
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+# 接收来自 docker build --build-arg 的版本号
+ARG VERSION=dev
+ENV VITE_APP_VERSION=${VERSION}
+
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
+RUN npm install --legacy-peer-deps --prefer-offline --no-audit --progress=false
 
 COPY . .
-RUN npm run build
+RUN npx vite build
 
 # 生产阶段
 FROM nginx:stable-alpine AS production-stage
@@ -18,4 +25,4 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"] 
+CMD ["nginx", "-g", "daemon off;"]

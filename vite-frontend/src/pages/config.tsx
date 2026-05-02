@@ -1,15 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Input } from "@heroui/input";
+import { Textarea } from "@heroui/input";
 import { Spinner } from "@heroui/spinner";
 import { Divider } from "@heroui/divider";
 import { Switch } from "@heroui/switch";
 import { Select, SelectItem } from "@heroui/select";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import toast from 'react-hot-toast';
-import { updateConfigs, exportBackup, importBackup } from '@/api';
-import { SettingsIcon } from '@/components/icons';
+import { updateConfigs, exportConfig, importConfig } from '@/api';
 
 import { isAdmin } from '@/utils/auth';
 import { getCachedConfigs, clearConfigCache, updateSiteConfig } from '@/config/site';
@@ -36,7 +37,7 @@ interface ConfigItem {
   label: string;
   placeholder?: string;
   description?: string;
-  type: 'input' | 'switch' | 'select';
+  type: 'input' | 'switch' | 'select' | 'textarea';
   options?: { label: string; value: string; description?: string }[];
   dependsOn?: string; // 依赖的配置项key
   dependsValue?: string; // 依赖的配置项值
@@ -98,6 +99,13 @@ const CONFIG_ITEMS: ConfigItem[] = [
         description: '拖动滑块完成图片拼接' 
       }
     ]
+  },
+  {
+    key: 'announcement',
+    label: '网站公告',
+    placeholder: '请输入公告内容，留空则不显示公告',
+    description: '设置后将显示在用户首页顶部，支持换行。留空则不显示公告',
+    type: 'textarea'
   }
 ];
 
@@ -105,7 +113,7 @@ const CONFIG_ITEMS: ConfigItem[] = [
 const getInitialConfigs = (): Record<string, string> => {
   if (typeof window === 'undefined') return {};
   
-  const configKeys = ['app_name', 'captcha_enabled', 'captcha_type', 'ip'];
+  const configKeys = ['app_name', 'captcha_enabled', 'captcha_type', 'ip', 'announcement'];
   const initialConfigs: Record<string, string> = {};
   
   try {
@@ -125,13 +133,16 @@ export default function ConfigPage() {
   const navigate = useNavigate();
   const initialConfigs = getInitialConfigs();
   const [configs, setConfigs] = useState<Record<string, string>>(initialConfigs);
-  const [backupLoading, setBackupLoading] = useState(false);
-  const [importLoading, setImportLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(Object.keys(initialConfigs).length === 0); // 如果有缓存数据，不显示loading
   const [saving, setSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [originalConfigs, setOriginalConfigs] = useState<Record<string, string>>(initialConfigs);
+  const [exporting, setExporting] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const [importPreview, setImportPreview] = useState<any>(null);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 权限检查
   useEffect(() => {
@@ -204,53 +215,6 @@ export default function ConfigPage() {
     setHasChanges(hasChangesNow);
   };
 
-  // 导出备份
-  const handleExport = async () => {
-    setBackupLoading(true);
-    try {
-      const response = await exportBackup();
-      if (response.code !== 0) {
-        toast.error('导出失败: ' + response.msg);
-        return;
-      }
-      const blob = new Blob([JSON.stringify(response.data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `flux-panel-backup-${new Date().toISOString().slice(0, 10)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success('备份已下载');
-    } catch {
-      toast.error('导出失败，请重试');
-    } finally {
-      setBackupLoading(false);
-    }
-  };
-
-  // 导入备份
-  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    e.target.value = '';
-
-    setImportLoading(true);
-    try {
-      const text = await file.text();
-      const data = JSON.parse(text);
-      const response = await importBackup(data);
-      if (response.code !== 0) {
-        toast.error('导入失败: ' + response.msg);
-        return;
-      }
-      toast.success(response.data || '导入成功，请刷新页面');
-    } catch (err: any) {
-      toast.error('文件解析失败: ' + (err?.message || '请确认文件格式正确'));
-    } finally {
-      setImportLoading(false);
-    }
-  };
-
   // 保存配置
   const handleSave = async () => {
     setSaving(true);
@@ -289,7 +253,118 @@ export default function ConfigPage() {
     }
   };
 
+  // 导出备份
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const res = await exportConfig();
+      if (res.code === 0 && res.data) {
+        // 生成下载文件
+        const jsonStr = JSON.stringify(res.data, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const date = new Date().toISOString().slice(0, 10);
+        a.download = `flux-panel-backup-${date}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast.success('备份导出成功');
+      } else {
+        toast.error('导出失败: ' + (res.msg || '未知错误'));
+      }
+    } catch (error) {
+      toast.error('导出备份出错');
+    } finally {
+      setExporting(false);
+    }
+  };
 
+  // 选择导入文件
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith('.json')) {
+      toast.error('请选择 JSON 格式的备份文件');
+      return;
+    }
+
+    setImportFile(file);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string);
+        // 预览数据
+        const preview: any = {};
+        if (data.version) preview.version = data.version;
+        if (data.exportTimeStr) preview.exportTimeStr = data.exportTimeStr;
+
+        const tables = ['vite_config', 'node', 'tunnel', 'user', 'user_tunnel', 'speed_limit', 'forward'];
+        const tableNames: Record<string, string> = {
+          vite_config: '网站配置',
+          node: '节点',
+          tunnel: '隧道',
+          user: '用户',
+          user_tunnel: '用户隧道',
+          speed_limit: '限速规则',
+          forward: '转发'
+        };
+
+        preview.tables = tables
+          .filter(t => data[t] && Array.isArray(data[t]) && data[t].length > 0)
+          .map(t => ({
+            key: t,
+            name: tableNames[t] || t,
+            count: data[t].length
+          }));
+
+        setImportPreview(preview);
+        setImportModalOpen(true);
+      } catch (err) {
+        toast.error('备份文件格式错误，请检查文件内容');
+      }
+    };
+    reader.readAsText(file);
+    // 重置 input 以便重复选择同一文件
+    e.target.value = '';
+  };
+
+  // 确认导入
+  const confirmImport = async () => {
+    if (!importFile) return;
+
+    setImporting(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async (ev) => {
+        try {
+          const data = JSON.parse(ev.target?.result as string);
+          const res = await importConfig(data);
+          if (res.code === 0) {
+            toast.success(res.data?.message || '导入成功');
+            setImportModalOpen(false);
+            setImportFile(null);
+            setImportPreview(null);
+            // 重新加载配置
+            loadConfigs();
+          } else {
+            toast.error('导入失败: ' + (res.msg || '未知错误'));
+          }
+        } catch (err) {
+          toast.error('导入数据解析失败');
+        } finally {
+          setImporting(false);
+        }
+      };
+      reader.readAsText(importFile);
+    } catch (error) {
+      toast.error('导入备份出错');
+      setImporting(false);
+    }
+  };
 
   // 检查配置项是否应该显示（依赖检查）
   const shouldShowItem = (item: ConfigItem): boolean => {
@@ -332,7 +407,7 @@ export default function ConfigPage() {
               wrapper: isChanged ? "border-warning-300" : ""
             }}
           >
-            <span className="text-sm text-[#6b5a4e] dark:text-[#b5a99a]">
+            <span className="text-sm text-[#1a1a1a] dark:text-[#9b9590]">
               {configs[item.key] === 'true' ? '已启用' : '已禁用'}
             </span>
           </Switch>
@@ -368,6 +443,24 @@ export default function ConfigPage() {
           </Select>
         );
 
+      case 'textarea':
+        return (
+          <Textarea
+            value={configs[item.key] || ''}
+            onChange={(e) => handleConfigChange(item.key, e.target.value)}
+            placeholder={item.placeholder}
+            variant="bordered"
+            minRows={3}
+            maxRows={8}
+            classNames={{
+              input: "text-sm",
+              inputWrapper: isChanged 
+                ? "border-warning-300 data-[hover=true]:border-warning-400" 
+                : ""
+            }}
+          />
+        );
+
       default:
         return null;
     }
@@ -385,31 +478,54 @@ export default function ConfigPage() {
 
   return (
     
-      <div className="p-6 max-w-4xl mx-auto">
+      <div className="px-4 lg:px-6 py-4 lg:py-5 max-w-4xl mx-auto">
         {/* 页面标题 */}
-        <div className="flex items-center gap-3 mb-6">
-          <SettingsIcon className="w-8 h-8 text-primary" />
-          <div>
-            <h1 className="text-2xl font-bold">网站配置</h1>
-            <p className="text-[#6b5a4e] dark:text-[#9c8678]">
-              管理网站的基本信息和显示设置
-            </p>
-          </div>
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">网站配置</h1>
         </div>
 
-        <Card className="shadow-md">
-          <CardHeader className="pb-4">
+        <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
+          <CardHeader className="px-5 py-4 border-b border-[#e5e0d8] dark:border-[#2d2824]">
             <div className="flex justify-between items-center w-full">
-              <div>
-                <h2 className="text-xl font-semibold">基本设置</h2>
-                <p className="text-sm text-[#6b5a4e] dark:text-[#9c8678]">
-                  配置网站的基本信息，这些设置会影响网站的显示效果
-                </p>
-              </div>
+              <h2 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">基本设置</h2>
               <div className="flex gap-2">
-
+                {/* 隐藏的文件选择 input */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept=".json"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
                 <Button
-                  className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg disabled:opacity-50"
+                  variant="flat"
+                  color="primary"
+                  startContent={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                  }
+                  onPress={handleExport}
+                  isLoading={exporting}
+                >
+                  导出备份
+                </Button>
+                <Button
+                  variant="flat"
+                  color="primary"
+                  startContent={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  }
+                  onPress={() => fileInputRef.current?.click()}
+                  isLoading={importing}
+                >
+                  导入备份
+                </Button>
+
+<Button
+                  className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                   startContent={<SaveIcon className="w-4 h-4" />}
                   onClick={handleSave}
                   isLoading={saving}
@@ -437,11 +553,11 @@ export default function ConfigPage() {
               return (
                 <div key={item.key} className="space-y-3">
                   <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium text-[#4a3c33] dark:text-[#d4c8bc]">
+                    <label className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da]">
                       {item.label}
                     </label>
                     {item.description && (
-                      <p className="text-xs text-[#9c8678] dark:text-[#7a6b60]">
+                      <p className="text-xs text-[#9b9590] dark:text-[#5d5854]">
                         {item.description}
                       </p>
                     )}
@@ -462,90 +578,77 @@ export default function ConfigPage() {
 
         {/* 操作提示 */}
         {hasChanges && (
-          <Card className="mt-4 bg-warning-50 dark:bg-warning-900/20 border-warning-200 dark:border-warning-800">
-            <CardBody className="py-3">
-              <div className="flex items-center gap-2 text-warning-700 dark:text-warning-300">
-                <div className="w-2 h-2 bg-warning-500 rounded-full animate-pulse" />
-                <span className="text-sm">
-                  检测到配置变更，请记得保存您的修改
-                </span>
-              </div>
-            </CardBody>
-          </Card>
+          <div className="mt-4 flex items-center gap-2 px-4 py-3 bg-[#FAEEDA] dark:bg-[#2d1f00] border border-[#FAC775] dark:border-[#5d3a00] rounded-xl">
+            <div className="w-2 h-2 bg-[#FAC775] rounded-full animate-pulse flex-shrink-0" />
+            <span className="text-sm text-[#633806] dark:text-[#FAC775]">
+              检测到配置变更，请记得保存您的修改
+            </span>
+          </div>
         )}
 
-        {/* 备份管理 */}
-        <Card className="mt-6 shadow-none border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b]">
-          <CardHeader className="pb-2">
-            <div>
-              <h2 className="text-xl font-semibold">备份管理</h2>
-              <p className="text-sm text-[#6b5a4e] dark:text-[#9c8678] mt-1">
-                导出当前所有数据备份，或从备份文件恢复。支持导入稳定版 v1.x 备份进行迁移。
-              </p>
-            </div>
-          </CardHeader>
-          <Divider />
-          <CardBody className="pt-5 space-y-5">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 p-4 rounded-xl border border-[#e5e0d8] dark:border-[#2d2824] bg-[#faf8f5] dark:bg-[#2d2824]/30">
-                <h3 className="font-medium text-[#4a3c33] dark:text-[#d4c8bc] mb-1">导出备份</h3>
-                <p className="text-xs text-[#9c8678] dark:text-[#7a6b60] mb-3">
-                  将节点、隧道、转发、用户等所有数据导出为 JSON 文件
-                </p>
-                <Button
-                  size="sm"
-                  className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg font-medium"
-                  isLoading={backupLoading}
-                  onPress={handleExport}
-                  startContent={!backupLoading && (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
+        {/* 备份导入确认弹窗 */}
+        <Modal 
+          isOpen={importModalOpen}
+          onOpenChange={setImportModalOpen}
+          size="2xl"
+          scrollBehavior="outside"
+          backdrop="blur"
+          placement="center"
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">确认导入备份</ModalHeader>
+                <ModalBody>
+                  {importPreview && (
+                    <>
+                      <p className="text-[#6b6560] dark:text-[#8a8480]">
+                        即将导入以下备份数据到当前面板：
+                      </p>
+                      {importPreview.version && (
+                        <p className="text-sm text-[#9b9590] dark:text-[#5d5854]">
+                          备份版本：{importPreview.version}
+                        </p>
+                      )}
+                      {importPreview.exportTimeStr && (
+                        <p className="text-sm text-[#9b9590] dark:text-[#5d5854]">
+                          导出时间：{importPreview.exportTimeStr}
+                        </p>
+                      )}
+                      <div className="mt-3 space-y-2">
+                        <p className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da]">包含数据：</p>
+                        {importPreview.tables?.map((t: any) => (
+                          <div key={t.key} className="flex items-center gap-2 text-sm text-[#6b6560] dark:text-[#8a8480]">
+                            <span className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
+                            <span>{t.name}</span>
+                            <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">({t.count} 条)</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-3 p-3 bg-warning-50 dark:bg-warning-900/20 rounded-xl">
+                        <p className="text-sm text-warning-700 dark:text-warning-300">
+                          ⚠️ 导入操作会将备份数据追加到现有数据中，不会删除已有数据。如果存在重复数据可能导致冲突，建议先导出当前备份再导入新数据。
+                        </p>
+                      </div>
+                    </>
                   )}
-                >
-                  {backupLoading ? '导出中...' : '导出备份'}
-                </Button>
-              </div>
-
-              <div className="flex-1 p-4 rounded-xl border border-[#e5e0d8] dark:border-[#2d2824] bg-[#faf8f5] dark:bg-[#2d2824]/30">
-                <h3 className="font-medium text-[#4a3c33] dark:text-[#d4c8bc] mb-1">导入备份 / 迁移向导</h3>
-                <p className="text-xs text-[#9c8678] dark:text-[#7a6b60] mb-3">
-                  从 JSON 文件恢复数据，支持 beta 格式和稳定版 v1.x 自动迁移。<span className="text-[#c96442]">导入会清除现有数据，请谨慎操作。</span>
-                </p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".json"
-                  className="hidden"
-                  onChange={handleImportFile}
-                />
-                <Button
-                  size="sm"
-                  variant="flat"
-                  className="text-[#c96442] bg-[#c96442]/10 hover:bg-[#c96442]/20 rounded-lg font-medium"
-                  isLoading={importLoading}
-                  onPress={() => fileInputRef.current?.click()}
-                  startContent={!importLoading && (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4-4m0 0l4 4m-4-4v12" />
-                    </svg>
-                  )}
-                >
-                  {importLoading ? '导入中...' : '选择文件导入'}
-                </Button>
-              </div>
-            </div>
-
-            <div className="p-3 rounded-lg bg-[#faf8f5] dark:bg-[#2d2824]/50 border border-[#e5e0d8] dark:border-[#3d3834]">
-              <p className="text-xs text-[#9c8678] dark:text-[#7a6b60]">
-                <span className="font-medium text-[#6b5a4e] dark:text-[#b5a99a]">迁移说明：</span>
-                从稳定版 v1.x 导入时，系统将自动把每条隧道的入口/出口节点转换为 beta 格式的转发链，并从
-                <code className="mx-1 px-1 bg-[#e5e0d8] dark:bg-[#3d3834] rounded text-[#4a3c33] dark:text-[#d4c8bc]">in_port</code>
-                生成对应的端口记录。中间链路节点需在迁移完成后手动配置。管理员账号不会被导入覆盖。
-              </p>
-            </div>
-          </CardBody>
-        </Card>
+                </ModalBody>
+                <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+                  <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onClose}>
+                    取消
+                  </Button>
+                  <Button
+                    className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
+                    onPress={confirmImport}
+                    isLoading={importing}
+                  >
+                    确认导入
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </div>
     
   );

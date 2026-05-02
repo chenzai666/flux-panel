@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -6,6 +6,7 @@ import { Textarea } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import { Chip } from "@heroui/chip";
+import { Checkbox } from "@heroui/checkbox";
 import { Spinner } from "@heroui/spinner";
 import { Switch } from "@heroui/switch";
 import { Alert } from "@heroui/alert";
@@ -37,9 +38,9 @@ import {
   getForwardList,
   updateForward,
   deleteForward,
-  forceDeleteForward,
   batchDeleteForward,
   batchForceDeleteForward,
+  forceDeleteForward,
   userTunnel,
   pauseForwardService,
   resumeForwardService,
@@ -105,10 +106,6 @@ interface DiagnosisResult {
     message?: string;
     averageTime?: number;
     packetLoss?: number;
-    fromChainType?: number; // 1: 入口, 2: 链, 3: 出口
-    fromInx?: number;
-    toChainType?: number;
-    toInx?: number;
   }>;
 }
 
@@ -170,6 +167,12 @@ export default function ForwardPage() {
   const [currentDiagnosisForward, setCurrentDiagnosisForward] = useState<Forward | null>(null);
   const [diagnosisResult, setDiagnosisResult] = useState<DiagnosisResult | null>(null);
   const [addressModalTitle, setAddressModalTitle] = useState('');
+  
+  // 批量选择相关状态
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [batchDeleteModalOpen, setBatchDeleteModalOpen] = useState(false);
+  const [batchDeleteLoading, setBatchDeleteLoading] = useState(false);
+  const [isBatchForce, setIsBatchForce] = useState(false);
   const [addressList, setAddressList] = useState<AddressItem[]>([]);
   
   // 导出相关状态
@@ -182,7 +185,7 @@ export default function ForwardPage() {
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [importData, setImportData] = useState('');
   const [importLoading, setImportLoading] = useState(false);
-  const [importIgnorePort, setImportIgnorePort] = useState(true);
+  const [importIgnorePort, setImportIgnorePort] = useState(false);
   const [selectedTunnelForImport, setSelectedTunnelForImport] = useState<number | null>(null);
   const [importResults, setImportResults] = useState<Array<{
     line: string;
@@ -201,15 +204,9 @@ export default function ForwardPage() {
     strategy: 'fifo'
   });
   
-  // 批量删除状态
-  const [isBatchMode, setIsBatchMode] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [isBatchForce, setIsBatchForce] = useState(false);
-  const [batchDeleteModalOpen, setBatchDeleteModalOpen] = useState(false);
-  const [batchDeleteLoading, setBatchDeleteLoading] = useState(false);
-
   // 表单验证错误
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [selectedTunnel, setSelectedTunnel] = useState<Tunnel | null>(null);
 
   useEffect(() => {
     loadData();
@@ -416,14 +413,6 @@ export default function ForwardPage() {
       newErrors.tunnelId = '请选择关联隧道';
     }
     
-    // 验证入口端口（可选，如果填写则验证）
-    if (form.inPort !== null && form.inPort !== undefined) {
-      const port = Number(form.inPort);
-      if (isNaN(port) || port < 1 || port > 65535) {
-        newErrors.inPort = '端口必须在 1-65535 之间';
-      }
-    }
-    
     if (!form.remoteAddr.trim()) {
       newErrors.remoteAddr = '请输入远程地址';
     } else {
@@ -442,6 +431,16 @@ export default function ForwardPage() {
       }
     }
     
+    if (form.inPort !== null && (form.inPort < 1 || form.inPort > 65535)) {
+      newErrors.inPort = '端口号必须在1-65535之间';
+    }
+    
+    if (selectedTunnel && selectedTunnel.inNodePortSta && selectedTunnel.inNodePortEnd && form.inPort) {
+      if (form.inPort < selectedTunnel.inNodePortSta || form.inPort > selectedTunnel.inNodePortEnd) {
+        newErrors.inPort = `端口号必须在${selectedTunnel.inNodePortSta}-${selectedTunnel.inNodePortEnd}范围内`;
+      }
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -457,6 +456,7 @@ export default function ForwardPage() {
       interfaceName: '',
       strategy: 'fifo'
     });
+    setSelectedTunnel(null);
     setErrors({});
     setModalOpen(true);
   };
@@ -474,6 +474,8 @@ export default function ForwardPage() {
       interfaceName: forward.interfaceName || '',
       strategy: forward.strategy || 'fifo'
     });
+    const tunnel = tunnels.find(t => t.id === forward.tunnelId);
+    setSelectedTunnel(tunnel || null);
     setErrors({});
     setModalOpen(true);
   };
@@ -517,28 +519,57 @@ export default function ForwardPage() {
     }
   };
 
-  // 批量删除相关
-  const enterBatchMode = () => { setIsBatchMode(true); setSelectedIds([]); setIsBatchForce(false); };
-  const exitBatchMode = () => { setIsBatchMode(false); setSelectedIds([]); setIsBatchForce(false); };
+  // 批量选择切换
   const toggleSelect = (id: number) => {
-    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+    setSelectedIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
   };
+
+  // 全选/取消全选
+  const toggleSelectAll = () => {
+    const allIds = getSortedForwards().map(f => f.id);
+    if (selectedIds.size === allIds.length && allIds.length > 0) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(allIds));
+    }
+  };
+
+  // 批量删除确认
+  const handleBatchDelete = () => {
+    if (selectedIds.size === 0) {
+      toast.error('请先选择要删除的转发');
+      return;
+    }
+    setBatchDeleteModalOpen(true);
+  };
+
+  // 确认批量删除
   const confirmBatchDelete = async () => {
-    if (selectedIds.length === 0) return;
     setBatchDeleteLoading(true);
     try {
+      const ids = Array.from(selectedIds);
       const res = isBatchForce
-        ? await batchForceDeleteForward(selectedIds)
-        : await batchDeleteForward(selectedIds);
+        ? await batchForceDeleteForward(ids)
+        : await batchDeleteForward(ids);
       if (res.code === 0) {
-        toast.success('批量删除成功');
+        toast.success(res.data || '批量删除成功');
+        setSelectedIds(new Set());
         setBatchDeleteModalOpen(false);
-        exitBatchMode();
+        setIsBatchForce(false);
         loadData();
       } else {
         toast.error(res.msg || '批量删除失败');
       }
-    } catch {
+    } catch (error) {
+      console.error('批量删除失败:', error);
       toast.error('批量删除失败');
     } finally {
       setBatchDeleteLoading(false);
@@ -547,14 +578,9 @@ export default function ForwardPage() {
 
   // 处理隧道选择变化
   const handleTunnelChange = (tunnelId: string) => {
-    const newId = parseInt(tunnelId);
-    const isSwitch = isEdit && form.tunnelId !== null && form.tunnelId !== newId;
-    setForm(prev => ({
-      ...prev,
-      tunnelId: newId,
-      // 切换隧道时清空端口，避免用旧端口在新隧道上分配
-      inPort: isSwitch ? null : prev.inPort,
-    }));
+    const tunnel = tunnels.find(t => t.id === parseInt(tunnelId));
+    setSelectedTunnel(tunnel || null);
+    setForm(prev => ({ ...prev, tunnelId: parseInt(tunnelId) }));
   };
 
   // 提交表单
@@ -581,6 +607,7 @@ export default function ForwardPage() {
           tunnelId: form.tunnelId,
           inPort: form.inPort,
           remoteAddr: processedRemoteAddr,
+          interfaceName: form.interfaceName,
           strategy: addressCount > 1 ? form.strategy : 'fifo'
         };
         res = await updateForward(updateData);
@@ -591,6 +618,7 @@ export default function ForwardPage() {
           tunnelId: form.tunnelId,
           inPort: form.inPort,
           remoteAddr: processedRemoteAddr,
+          interfaceName: form.interfaceName,
           strategy: addressCount > 1 ? form.strategy : 'fifo'
         };
         res = await createForward(createData);
@@ -733,28 +761,13 @@ export default function ForwardPage() {
 
   // 格式化入口地址
   const formatInAddress = (ipString: string, port: number): string => {
-    if (!ipString) return '';
+    if (!ipString || !port) return '';
     
-    const items = ipString.split(',').map(item => item.trim()).filter(item => item);
-    if (items.length === 0) return '';
+    const ips = ipString.split(',').map(ip => ip.trim()).filter(ip => ip);
+    if (ips.length === 0) return '';
     
-    // 检查第一项是否已经包含端口（格式：IP:端口）
-    const firstItem = items[0];
-    const hasPort = /:\d+$/.test(firstItem);
-    
-    if (hasPort) {
-      // inIp 已经包含完整的 IP:Port 组合
-      if (items.length === 1) {
-        return items[0];
-      }
-      return `${items[0]} (+${items.length - 1}个)`;
-    }
-    
-    // inIp 只包含IP，需要添加端口（兼容旧数据）
-    if (!port) return '';
-    
-    if (items.length === 1) {
-      const ip = items[0];
+    if (ips.length === 1) {
+      const ip = ips[0];
       if (ip.includes(':') && !ip.startsWith('[')) {
         return `[${ip}]:${port}`;
       } else {
@@ -762,7 +775,7 @@ export default function ForwardPage() {
       }
     }
     
-    const firstIp = items[0];
+    const firstIp = ips[0];
     let formattedFirstIp;
     if (firstIp.includes(':') && !firstIp.startsWith('[')) {
       formattedFirstIp = `[${firstIp}]`;
@@ -770,7 +783,7 @@ export default function ForwardPage() {
       formattedFirstIp = firstIp;
     }
     
-    return `${formattedFirstIp}:${port} (+${items.length - 1}个)`;
+    return `${formattedFirstIp}:${port} (+${ips.length - 1})`;
   };
 
   // 格式化远程地址
@@ -798,27 +811,18 @@ export default function ForwardPage() {
     let addresses: string[];
     if (port !== null) {
       // 入口地址处理
-      const items = addressString.split(',').map(item => item.trim()).filter(item => item);
-      if (items.length <= 1) {
+      const ips = addressString.split(',').map(ip => ip.trim()).filter(ip => ip);
+      if (ips.length <= 1) {
         copyToClipboard(formatInAddress(addressString, port), title);
         return;
       }
-      
-      // 检查是否已经包含端口
-      const hasPort = /:\d+$/.test(items[0]);
-      if (hasPort) {
-        // 已经包含完整的 IP:Port 组合，直接使用
-        addresses = items;
-      } else {
-        // 只包含IP，需要添加端口
-        addresses = items.map(ip => {
-          if (ip.includes(':') && !ip.startsWith('[')) {
-            return `[${ip}]:${port}`;
-          } else {
-            return `${ip}:${port}`;
-          }
-        });
-      }
+      addresses = ips.map(ip => {
+        if (ip.includes(':') && !ip.startsWith('[')) {
+          return `[${ip}]:${port}`;
+        } else {
+          return `${ip}:${port}`;
+        }
+      });
     } else {
       // 远程地址处理
       addresses = addressString.split(',').map(addr => addr.trim()).filter(addr => addr);
@@ -934,7 +938,7 @@ export default function ForwardPage() {
     setImportData('');
     setImportResults([]);
     setSelectedTunnelForImport(null);
-    setImportIgnorePort(true);
+    setImportIgnorePort(false);
     setImportModalOpen(true);
   };
 
@@ -1242,22 +1246,25 @@ export default function ForwardPage() {
     const strategyDisplay = getStrategyDisplay(forward.strategy);
     
     return (
-      <Card key={forward.id} className={`group shadow-sm border border-divider hover:shadow-md transition-shadow duration-200${isBatchMode && selectedIds.includes(forward.id) ? ' ring-2 ring-danger' : ''}`}>
+      <Card key={forward.id} className="group border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors duration-200">
         <CardHeader className="pb-2">
           <div className="flex justify-between items-start w-full">
-            {isBatchMode && (
-              <input type="checkbox" className="mr-2 mt-0.5 flex-shrink-0 w-4 h-4 accent-[#c96442]"
-                checked={selectedIds.includes(forward.id)}
-                onChange={() => toggleSelect(forward.id)} />
-            )}
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-foreground truncate text-sm">{forward.name}</h3>
-              <p className="text-xs text-default-500 truncate">{forward.tunnelName}</p>
+            <div className="flex items-start gap-2 flex-1 min-w-0">
+              <Checkbox
+                isSelected={selectedIds.has(forward.id)}
+                onValueChange={() => toggleSelect(forward.id)}
+                size="sm"
+                className="mt-0.5 flex-shrink-0"
+              />
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da] truncate text-sm">{forward.name}</h3>
+                <p className="text-xs text-[#9b9590] dark:text-[#5d5854] truncate">{forward.tunnelName}</p>
+              </div>
             </div>
             <div className="flex items-center gap-1.5 ml-2">
               {viewMode === 'direct' && (
                 <div 
-                  className={`cursor-grab active:cursor-grabbing p-2 text-default-400 hover:text-default-600 transition-colors touch-manipulation ${
+                  className={`cursor-grab active:cursor-grabbing p-2 text-[#9b9590] dark:text-[#5d5854] hover:text-[#6b6560] dark:text-[#8a8480] transition-colors touch-manipulation ${
                     isMobile 
                       ? 'opacity-100' // 移动端始终显示
                       : 'opacity-0 group-hover:opacity-100 sm:opacity-0 sm:group-hover:opacity-100'
@@ -1266,8 +1273,8 @@ export default function ForwardPage() {
                   title={isMobile ? "长按拖拽排序" : "拖拽排序"}
                   style={{ touchAction: 'none' }}
                 >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M7 2a2 2 0 1 1 .001 4.001A2 2 0 0 1 7 2zm0 6a2 2 0 1 1 .001 4.001A2 2 0 0 1 7 8zm0 6a2 2 0 1 1 .001 4.001A2 2 0 0 1 7 14zm6-8a2 2 0 1 1-.001-4.001A2 2 0 0 1 13 6zm0 2a2 2 0 1 1 .001 4.001A2 2 0 0 1 13 8zm0 6a2 2 0 1 1 .001 4.001A2 2 0 0 1 13 14z" />
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 16v-2M6 12H4m16 0h-2" />
                   </svg>
                 </div>
               )}
@@ -1277,38 +1284,38 @@ export default function ForwardPage() {
                 onValueChange={() => handleServiceToggle(forward)}
                 isDisabled={forward.status !== 1 && forward.status !== 0}
               />
-              <Chip 
-                color={statusDisplay.color as any} 
-                variant="flat" 
-                size="sm"
-                className="text-xs"
-              >
+              <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border ${
+                statusDisplay.color === 'success' ? 'badge-status-success' :
+                statusDisplay.color === 'warning' ? 'badge-status-warning' :
+                statusDisplay.color === 'danger' ? 'badge-status-danger' :
+                'badge-status-info'
+              }`}>
                 {statusDisplay.text}
-              </Chip>
+              </span>
             </div>
           </div>
         </CardHeader>
         
-        <CardBody className="pt-0 pb-3">
+        <CardBody className="pt-0 pb-4">
           <div className="space-y-2">
             {/* 地址信息 */}
             <div className="space-y-1">
               <div 
-                className={`cursor-pointer px-2 py-1 bg-[#faf8f5] dark:bg-[#2d2824]/40 rounded border border-[#e5e0d8] dark:border-[#3d3834] transition-colors duration-200 ${
-                  hasMultipleAddresses(forward.inIp) ? 'hover:bg-default-100 dark:hover:bg-default-200/50' : ''
+                className={`cursor-pointer px-2 py-1 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#3d3834] transition-colors duration-200 ${
+                  hasMultipleAddresses(forward.inIp) ? 'hover:bg-[#f0ece6] dark:bg-[#2d2824] dark:hover:bg-[#3d3834]/50' : ''
                 }`}
                 onClick={() => showAddressModal(forward.inIp, forward.inPort, '入口端口')}
                 title={formatInAddress(forward.inIp, forward.inPort)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                    <span className="text-xs font-medium text-default-600 flex-shrink-0">入口:</span>
-                    <code className="text-xs font-mono text-foreground truncate min-w-0">
+                    <span className="text-xs font-medium text-[#6b6560] dark:text-[#8a8480] flex-shrink-0">入口:</span>
+                    <code className="text-xs font-mono text-[#1a1a1a] dark:text-[#e8e2da] truncate min-w-0">
                       {formatInAddress(forward.inIp, forward.inPort)}
                     </code>
                   </div>
                   {hasMultipleAddresses(forward.inIp) && (
-                    <svg className="w-3 h-3 text-default-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 text-[#9b9590] dark:text-[#5d5854] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
                   )}
@@ -1316,21 +1323,21 @@ export default function ForwardPage() {
               </div>
               
               <div 
-                className={`cursor-pointer px-2 py-1 bg-[#faf8f5] dark:bg-[#2d2824]/40 rounded border border-[#e5e0d8] dark:border-[#3d3834] transition-colors duration-200 ${
-                  hasMultipleAddresses(forward.remoteAddr) ? 'hover:bg-default-100 dark:hover:bg-default-200/50' : ''
+                className={`cursor-pointer px-2 py-1 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#3d3834] transition-colors duration-200 ${
+                  hasMultipleAddresses(forward.remoteAddr) ? 'hover:bg-[#f0ece6] dark:bg-[#2d2824] dark:hover:bg-[#3d3834]/50' : ''
                 }`}
                 onClick={() => showAddressModal(forward.remoteAddr, null, '目标地址')}
                 title={formatRemoteAddress(forward.remoteAddr)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                    <span className="text-xs font-medium text-default-600 flex-shrink-0">目标:</span>
-                    <code className="text-xs font-mono text-foreground truncate min-w-0">
+                    <span className="text-xs font-medium text-[#6b6560] dark:text-[#8a8480] flex-shrink-0">目标:</span>
+                    <code className="text-xs font-mono text-[#1a1a1a] dark:text-[#e8e2da] truncate min-w-0">
                       {formatRemoteAddress(forward.remoteAddr)}
                     </code>
                   </div>
                   {hasMultipleAddresses(forward.remoteAddr) && (
-                    <svg className="w-3 h-3 text-default-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 text-[#9b9590] dark:text-[#5d5854] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
                   )}
@@ -1339,12 +1346,12 @@ export default function ForwardPage() {
             </div>
 
             {/* 统计信息 */}
-            <div className="flex items-center justify-between pt-2 border-t border-divider">
+            <div className="flex items-center justify-between pt-2 border-t border-[#e5e0d8] dark:border-[#2d2824]">
               <Chip color={strategyDisplay.color as any} variant="flat" size="sm" className="text-xs">
                 {strategyDisplay.text}
               </Chip>
               <div className="flex items-center gap-1">
-                <Chip variant="flat" size="sm" className="text-xs bg-[#c96442]/10 text-[#c96442] border-[#c96442]/20">
+                <Chip variant="flat" size="sm" className="text-xs" color="primary">
                   ↑{formatFlow(forward.inFlow || 0)}
                 </Chip>
                
@@ -1359,11 +1366,12 @@ export default function ForwardPage() {
             <Button
               size="sm"
               variant="flat"
-              className="flex-1 min-h-8 text-[#c96442] bg-[#c96442]/10 hover:bg-[#c96442]/20"
+              color="primary"
               onPress={() => handleEdit(forward)}
+              className="flex-1 min-h-8"
               startContent={
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
               }
             >
@@ -1376,8 +1384,8 @@ export default function ForwardPage() {
               onPress={() => handleDiagnose(forward)}
               className="flex-1 min-h-8"
               startContent={
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
               }
             >
@@ -1390,9 +1398,8 @@ export default function ForwardPage() {
               onPress={() => handleDelete(forward)}
               className="flex-1 min-h-8"
               startContent={
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clipRule="evenodd" />
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 012 0v4a1 1 0 11-2 0V7zM12 7a1 1 0 012 0v4a1 1 0 11-2 0V7z" clipRule="evenodd" />
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
               }
             >
@@ -1410,7 +1417,7 @@ export default function ForwardPage() {
         <div className="flex items-center justify-center h-64">
           <div className="flex items-center gap-3">
             <Spinner size="sm" />
-            <span className="text-default-600">正在加载...</span>
+            <span className="text-[#6b6560] dark:text-[#8a8480]">正在加载...</span>
           </div>
         </div>
       
@@ -1421,60 +1428,86 @@ export default function ForwardPage() {
 
   return (
     
-      <div className="px-3 lg:px-6 py-8">
+      <div className="px-4 lg:px-6 py-4 lg:py-5">
         {/* 页面头部 */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex-1">
-          </div>
-          <div className="flex items-center gap-3">
-            {/* 批量模式工具栏 */}
-            {isBatchMode ? (
-              <>
-                <span className="text-sm text-default-500">已选 {selectedIds.length} 项</span>
-                <Button size="sm" variant="flat" color="danger" onPress={() => setBatchDeleteModalOpen(true)} isDisabled={selectedIds.length === 0}>
-                  删除所选
-                </Button>
-                <Button size="sm" variant="flat" className="text-[#6b5a4e] dark:text-[#b5a99a]" onPress={exitBatchMode}>
-                  取消
-                </Button>
-              </>
-            ) : (
-              <>
-                {/* 显示模式切换按钮 */}
-                <Button
-                  size="sm"
-                  variant="flat"
-                  className="text-sm text-[#6b5a4e] dark:text-[#b5a99a]"
-                  onPress={handleViewModeChange}
-                  isIconOnly
-                  title={viewMode === 'grouped' ? '切换到直接显示' : '切换到分类显示'}
-                >
-                  {viewMode === 'grouped' ? (
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zM3 16a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" clipRule="evenodd" />
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                    </svg>
-                  )}
-                </Button>
-                {/* 导入按钮 */}
-                <Button size="sm" variant="flat" color="warning" onPress={handleImport}>
-                  导入
-                </Button>
-                {/* 导出按钮 */}
-                <Button size="sm" variant="flat" color="success" onPress={handleExport} isLoading={exportLoading}>
-                  导出
-                </Button>
-                <Button size="sm" variant="flat" color="danger" onPress={enterBatchMode}>
-                  批量
-                </Button>
-                <Button size="sm" className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg" onPress={handleAdd}>
-                  新增
-                </Button>
-              </>
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">转发管理</h1>
+          <div className="flex items-center gap-2">
+            {/* 批量删除按钮 */}
+            {selectedIds.size > 0 && (
+              <Button
+                size="sm"
+                variant="flat"
+                color="danger"
+                onPress={handleBatchDelete}
+                startContent={
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                }
+              >
+                删除({selectedIds.size})
+              </Button>
             )}
+            {/* 全选按钮 */}
+            <Checkbox
+              isSelected={selectedIds.size === getSortedForwards().length && getSortedForwards().length > 0}
+              isIndeterminate={selectedIds.size > 0 && selectedIds.size < getSortedForwards().length}
+              onValueChange={toggleSelectAll}
+              size="sm"
+            />
+            {/* 显示模式切换按钮 */}
+            <Button
+              size="sm"
+              variant="flat"
+              color="default"
+              onPress={handleViewModeChange}
+              isIconOnly
+              className="text-sm"
+              title={viewMode === 'grouped' ? '切换到直接显示' : '切换到分类显示'}
+            >
+              {viewMode === 'grouped' ? (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 12a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1v-7z" />
+                </svg>
+              )}
+            </Button>
+            
+            {/* 导入按钮 */}
+            <Button
+              size="sm"
+              variant="flat"
+              color="warning"
+              onPress={handleImport}
+            >
+              导入
+            </Button>
+            
+            {/* 导出按钮 */}
+            <Button
+              size="sm"
+              variant="flat"
+              color="success"
+              onPress={handleExport}
+              isLoading={exportLoading}
+          
+            >
+              导出
+            </Button>
+
+            <Button
+              size="sm"
+              className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
+              onPress={handleAdd}
+            >
+              新增转发
+            </Button>
+            
+        
           </div>
         </div>
 
@@ -1485,24 +1518,24 @@ export default function ForwardPage() {
           userGroups.length > 0 ? (
             <div className="space-y-6">
               {userGroups.map((userGroup) => (
-                <Card key={userGroup.userId || 'unknown'} className="shadow-sm border border-divider w-full overflow-hidden">
+                <Card key={userGroup.userId || 'unknown'} className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl w-full overflow-hidden">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between w-full min-w-0">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                          <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                          <svg className="w-5 h-5 text-[#c96442] dark:text-[#d4856a]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h2 className="text-base font-medium text-foreground truncate max-w-[150px] sm:max-w-[250px] md:max-w-[350px] lg:max-w-[450px]">{userGroup.userName}</h2>
-                          <p className="text-xs text-default-500 truncate max-w-[150px] sm:max-w-[250px] md:max-w-[350px] lg:max-w-[450px]">
+                          <h2 className="text-base font-medium text-[#1a1a1a] dark:text-[#e8e2da] truncate max-w-[150px] sm:max-w-[250px] md:max-w-[350px] lg:max-w-[450px]">{userGroup.userName}</h2>
+                          <p className="text-xs text-[#9b9590] dark:text-[#5d5854] truncate max-w-[150px] sm:max-w-[250px] md:max-w-[350px] lg:max-w-[450px]">
                             {userGroup.tunnelGroups.length} 个隧道，
                             {userGroup.tunnelGroups.reduce((total, tg) => total + tg.forwards.length, 0)} 个转发
                           </p>
                         </div>
                       </div>
-                      <Chip variant="flat" size="sm" className="text-xs flex-shrink-0 ml-2 bg-[#c96442]/10 text-[#c96442] border-[#c96442]/20">
+                      <Chip color="primary" variant="flat" size="sm" className="text-xs flex-shrink-0 ml-2">
                         用户
                       </Chip>
                     </div>
@@ -1523,7 +1556,7 @@ export default function ForwardPage() {
                                   </svg>
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                  <h3 className="text-sm font-medium text-foreground truncate max-w-[120px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-[400px]">{tunnelGroup.tunnelName}</h3>
+                                  <h3 className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da] truncate max-w-[120px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-[400px]">{tunnelGroup.tunnelName}</h3>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2 flex-shrink-0 ml-2">
@@ -1533,7 +1566,7 @@ export default function ForwardPage() {
                               </div>
                             </div>
                           }
-                          className="shadow-none border border-divider"
+                          className="shadow-none border border-[#e5e0d8] dark:border-[#2d2824]"
                         >
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 p-4">
                             {tunnelGroup.forwards.map((forward) => renderForwardCard(forward, undefined))}
@@ -1547,19 +1580,12 @@ export default function ForwardPage() {
             </div>
           ) : (
             /* 空状态 */
-            <Card className="shadow-none border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b]">
+            <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
               <CardBody className="text-center py-16">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center">
-                    <svg className="w-8 h-8 text-default-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground">暂无转发配置</h3>
-                    <p className="text-default-500 text-sm mt-1">还没有创建任何转发配置，点击上方按钮开始创建</p>
-                  </div>
-                </div>
+                <svg className="w-10 h-10 text-[#d0cac2] dark:text-[#3d3834] mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                </svg>
+                <p className="text-sm text-[#9b9590] dark:text-[#5d5854]">暂无转发配置</p>
               </CardBody>
             </Card>
           )
@@ -1587,19 +1613,12 @@ export default function ForwardPage() {
             </DndContext>
           ) : (
             /* 空状态 */
-            <Card className="shadow-none border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b]">
+            <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
               <CardBody className="text-center py-16">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center">
-                    <svg className="w-8 h-8 text-default-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground">暂无转发配置</h3>
-                    <p className="text-default-500 text-sm mt-1">还没有创建任何转发配置，点击上方按钮开始创建</p>
-                  </div>
-                </div>
+                <svg className="w-10 h-10 text-[#d0cac2] dark:text-[#3d3834] mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                </svg>
+                <p className="text-sm text-[#9b9590] dark:text-[#5d5854]">暂无转发配置</p>
               </CardBody>
             </Card>
           )
@@ -1617,13 +1636,8 @@ export default function ForwardPage() {
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1">
-                  <h2 className="text-xl font-bold">
-                    {isEdit ? '编辑转发' : '新增转发'}
-                  </h2>
-                  <p className="text-small text-default-500">
-                    {isEdit ? '修改现有转发配置的信息' : '创建新的转发配置'}
-                  </p>
+                <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">
+                  {isEdit ? '编辑转发' : '新增转发'}
                 </ModalHeader>
                 <ModalBody>
                   <div className="space-y-4 pb-4">
@@ -1650,7 +1664,6 @@ export default function ForwardPage() {
                       isInvalid={!!errors.tunnelId}
                       errorMessage={errors.tunnelId}
                       variant="bordered"
-                      description={isEdit ? "切换隧道将迁移入口端口配置，原端口会被释放" : undefined}
                     >
                       {tunnels.map((tunnel) => (
                         <SelectItem key={tunnel.id} >
@@ -1658,31 +1671,37 @@ export default function ForwardPage() {
                         </SelectItem>
                       ))}
                     </Select>
-
+                    
                     <Input
                       label="入口端口"
-                      placeholder="留空则自动分配可用端口"
+                      placeholder="留空自动分配"
                       type="number"
-                      value={form.inPort !== null ? form.inPort.toString() : ''}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setForm(prev => ({
-                          ...prev,
-                          inPort: value ? parseInt(value) : null
-                        }));
-                      }}
+                      value={form.inPort?.toString() || ''}
+                      onChange={(e) => setForm(prev => ({
+                        ...prev,
+                        inPort: e.target.value ? parseInt(e.target.value) : null
+                      }))}
                       isInvalid={!!errors.inPort}
                       errorMessage={errors.inPort}
                       variant="bordered"
-                      description="指定入口端口，留空则从节点可用端口中自动分配"
+                      description={
+                        selectedTunnel && selectedTunnel.inNodePortSta && selectedTunnel.inNodePortEnd
+                          ? `允许范围: ${selectedTunnel.inNodePortSta}-${selectedTunnel.inNodePortEnd}`
+                          : '留空将自动分配可用端口'
+                      }
                       endContent={
-                        <button type="button"
+                        <button
+                          type="button"
                           className="text-xs text-[#c96442] hover:text-[#a0512e] font-medium whitespace-nowrap px-1 py-0.5 rounded transition-colors"
                           onClick={() => {
-                            const port = Math.floor(Math.random() * (60000 - 10000 + 1)) + 10000;
+                            const min = selectedTunnel?.inNodePortSta || 10000;
+                            const max = selectedTunnel?.inNodePortEnd || 60000;
+                            const port = Math.floor(Math.random() * (max - min + 1)) + min;
                             setForm(prev => ({ ...prev, inPort: port }));
                           }}
-                        >随机</button>
+                        >
+                          随机
+                        </button>
                       }
                     />
                     
@@ -1697,6 +1716,17 @@ export default function ForwardPage() {
                       description="格式: IP:端口 或 域名:端口，支持多个地址（每行一个）"
                       minRows={3}
                       maxRows={6}
+                    />
+                    
+                    <Input
+                      label="出口网卡名或IP"
+                      placeholder="请输入出口网卡名或IP"
+                      value={form.interfaceName}
+                      onChange={(e) => setForm(prev => ({ ...prev, interfaceName: e.target.value }))}
+                      isInvalid={!!errors.interfaceName}
+                      errorMessage={errors.interfaceName}
+                      variant="bordered"
+                      description="用于多IP服务器指定使用那个IP请求远程地址，不懂的默认为空就行"
                     />
                     
                     {getAddressCount(form.remoteAddr) > 1 && (
@@ -1719,8 +1749,8 @@ export default function ForwardPage() {
                     )}
                   </div>
                 </ModalBody>
-                <ModalFooter>
-                  <Button variant="light" onPress={onClose}>
+                <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+                  <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onClose}>
                     取消
                   </Button>
                   <Button
@@ -1748,23 +1778,21 @@ export default function ForwardPage() {
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1">
-                  <h2 className="text-lg font-bold text-danger">确认删除</h2>
-                </ModalHeader>
+                <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold text-[#791F1F] dark:text-[#f7a0a0]">确认删除</ModalHeader>
                 <ModalBody>
-                  <p className="text-default-600">
-                    确定要删除转发 <span className="font-semibold text-foreground">"{forwardToDelete?.name}"</span> 吗？
+                  <p className="text-[#6b6560] dark:text-[#8a8480]">
+                    确定要删除转发 <span className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">"{forwardToDelete?.name}"</span> 吗？
                   </p>
-                  <p className="text-small text-default-500 mt-2">
+                  <p className="text-sm text-[#9b9590] dark:text-[#5d5854] mt-2">
                     此操作无法撤销，删除后该转发将永久消失。
                   </p>
                 </ModalBody>
-                <ModalFooter>
-                  <Button variant="light" onPress={onClose}>
+                <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
+                  <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onClose}>
                     取消
                   </Button>
-                  <Button 
-                    color="danger" 
+                  <Button
+                    color="danger"
                     onPress={confirmDelete}
                     isLoading={deleteLoading}
                   >
@@ -1776,41 +1804,10 @@ export default function ForwardPage() {
           </ModalContent>
         </Modal>
 
-        {/* 批量删除确认弹窗 */}
-        <Modal isOpen={batchDeleteModalOpen} onOpenChange={setBatchDeleteModalOpen} backdrop="blur" placement="center">
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  <h2 className="text-lg font-bold text-danger">批量删除确认</h2>
-                </ModalHeader>
-                <ModalBody>
-                  <p className="text-default-600">
-                    确定要删除选中的 <span className="font-semibold text-foreground">{selectedIds.length}</span> 条转发吗？
-                  </p>
-                  <p className="text-small text-default-500 mt-2">此操作无法撤销。</p>
-                  <label className="flex items-center gap-2 mt-3 cursor-pointer select-none">
-                    <input type="checkbox" checked={isBatchForce} onChange={e => setIsBatchForce(e.target.checked)}
-                      className="w-4 h-4 accent-[#c96442] rounded" />
-                    <span className="text-sm text-[#6b6560] dark:text-[#8a8480]">强制删除</span>
-                    <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">（跳过节点服务验证）</span>
-                  </label>
-                </ModalBody>
-                <ModalFooter>
-                  <Button variant="light" onPress={onClose}>取消</Button>
-                  <Button color="danger" onPress={confirmBatchDelete} isLoading={batchDeleteLoading} isDisabled={selectedIds.length === 0}>
-                    确认删除
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-
         {/* 地址列表弹窗 */}
-        <Modal isOpen={addressModalOpen} onClose={() => setAddressModalOpen(false)} size="lg" scrollBehavior="outside">
+        <Modal isOpen={addressModalOpen} onClose={() => setAddressModalOpen(false)} size="lg" scrollBehavior="outside" backdrop="blur" placement="center">
           <ModalContent>
-            <ModalHeader className="text-base">{addressModalTitle}</ModalHeader>
+            <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">{addressModalTitle}</ModalHeader>
             <ModalBody className="pb-6">
               <div className="mb-4 text-right">
                 <Button size="sm" onClick={copyAllAddresses}>
@@ -1820,8 +1817,8 @@ export default function ForwardPage() {
               
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {addressList.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center p-3 border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg">
-                    <code className="text-sm flex-1 mr-3 text-foreground">{item.address}</code>
+                  <div key={item.id} className="flex justify-between items-center p-3 border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#e5e0d8] dark:border-[#2d2824] rounded-lg">
+                    <code className="text-sm flex-1 mr-3 text-[#1a1a1a] dark:text-[#e8e2da]">{item.address}</code>
                     <Button
                       size="sm"
                       variant="light"
@@ -1854,7 +1851,7 @@ export default function ForwardPage() {
           <ModalContent>
             <ModalHeader className="flex flex-col gap-1">
               <h2 className="text-xl font-bold">导出转发数据</h2>
-              <p className="text-small text-default-500">
+              <p className="text-small text-[#9b9590] dark:text-[#5d5854]">
                 格式：目标地址|转发名称|入口端口
               </p>
             </ModalHeader>
@@ -1884,9 +1881,9 @@ export default function ForwardPage() {
                 {/* 导出按钮和数据 */}
                 {exportData && (
                   <div className="flex justify-between items-center">
-                    <Button
-                      size="sm"
-                      className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg"
+                    <Button 
+                      className="claude-btn claude-btn-primary"
+                      size="sm" 
                       onPress={executeExport}
                       isLoading={exportLoading}
                       isDisabled={!selectedTunnelForExport}
@@ -1898,10 +1895,9 @@ export default function ForwardPage() {
                     >
                       重新生成
                     </Button>
-                    <Button
-                      variant="flat"
-                      size="sm"
-                      className="text-[#6b5a4e] dark:text-[#b5a99a]"
+                    <Button 
+                      color="secondary" 
+                      size="sm" 
                       onPress={copyExportData}
                       startContent={
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -1919,8 +1915,8 @@ export default function ForwardPage() {
                 {!exportData && (
                   <div className="text-right">
                     <Button
+                      className="claude-btn claude-btn-primary"
                       size="sm"
-                      className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg"
                       onPress={executeExport}
                       isLoading={exportLoading}
                       isDisabled={!selectedTunnelForExport}
@@ -1978,10 +1974,10 @@ export default function ForwardPage() {
           <ModalContent>
             <ModalHeader className="flex flex-col gap-1">
               <h2 className="text-xl font-bold">导入转发数据</h2>
-              <p className="text-small text-default-500">
+              <p className="text-small text-[#9b9590] dark:text-[#5d5854]">
                 格式：目标地址|转发名称|入口端口，每行一个，入口端口留空将自动分配可用端口
               </p>
-              <p className="text-small text-default-400">
+              <p className="text-small text-[#9b9590] dark:text-[#5d5854]">
                 目标地址支持单个地址(如：example.com:8080)或多个地址用逗号分隔(如：3.3.3.3:3,4.4.4.4:4)
               </p>
             </ModalHeader>
@@ -2025,8 +2021,8 @@ export default function ForwardPage() {
 
                   <div className="flex items-center justify-between mt-3 px-1">
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-medium">自动分配端口</span>
-                      <span className="text-xs text-default-400">从稳定版导入时建议开启，忽略原端口号</span>
+                      <span className="text-sm font-medium">忽略端口号（自动分配）</span>
+                      <span className="text-xs text-default-400">开启后跳过数据中的端口号，由系统自动分配</span>
                     </div>
                     <Switch
                       isSelected={importIgnorePort}
@@ -2042,7 +2038,7 @@ export default function ForwardPage() {
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-base font-semibold">导入结果</h3>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-default-500">
+                        <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">
                           成功：{importResults.filter(r => r.success).length} / 
                           总计：{importResults.length}
                         </span>
@@ -2079,8 +2075,8 @@ export default function ForwardPage() {
                                 }`}>
                                   {result.success ? '成功' : '失败'}
                                 </span>
-                                <span className="text-xs text-default-500">|</span>
-                                <code className="text-xs font-mono text-default-600 truncate">{result.line}</code>
+                                <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">|</span>
+                                <code className="text-xs font-mono text-[#6b6560] dark:text-[#8a8480] truncate">{result.line}</code>
                               </div>
                               <div className={`text-xs ${
                                 result.success ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'
@@ -2119,367 +2115,199 @@ export default function ForwardPage() {
         <Modal 
           isOpen={diagnosisModalOpen}
           onOpenChange={setDiagnosisModalOpen}
-          size="4xl"
-          scrollBehavior="inside"
-          backdrop="blur"
-          placement="center"
-          classNames={{
-            base: "rounded-2xl",
-            header: "rounded-t-2xl",
-            body: "rounded-none",
-            footer: "rounded-b-2xl"
-          }}
+          
+          size="2xl"
+        scrollBehavior="outside"
+        backdrop="blur"
+        placement="center"
         >
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1 bg-content1 border-b border-divider">
+                <ModalHeader className="flex flex-col gap-1">
                   <h2 className="text-xl font-bold">转发诊断结果</h2>
                   {currentDiagnosisForward && (
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-small text-default-500 truncate flex-1 min-w-0">{currentDiagnosisForward.name}</span>
-                      <Chip
-                        variant="flat"
+                      <span className="text-small text-[#9b9590] dark:text-[#5d5854] truncate flex-1 min-w-0">{currentDiagnosisForward.name}</span>
+                      <Chip 
+                        color="primary"
+                        variant="flat" 
                         size="sm"
-                        className="flex-shrink-0 bg-[#c96442]/10 text-[#c96442] border-[#c96442]/20"
+                        className="flex-shrink-0"
                       >
                         转发服务
                       </Chip>
                     </div>
                   )}
                 </ModalHeader>
-                <ModalBody className="bg-content1">
+                <ModalBody>
                   {diagnosisLoading ? (
                     <div className="flex items-center justify-center py-16">
                       <div className="flex items-center gap-3">
                         <Spinner size="sm" />
-                        <span className="text-default-600">正在诊断...</span>
+                        <span className="text-[#6b6560] dark:text-[#8a8480]">正在诊断转发连接...</span>
                       </div>
                     </div>
                   ) : diagnosisResult ? (
                     <div className="space-y-4">
-                      {/* 统计摘要 */}
-                      <div className="grid grid-cols-3 gap-3">
-                        <div className="text-center p-3 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded-lg border border-[#e5e0d8] dark:border-[#3d3834]">
-                          <div className="text-2xl font-bold text-foreground">{diagnosisResult.results.length}</div>
-                          <div className="text-xs text-default-500 mt-1">总测试数</div>
-                        </div>
-                        <div className="text-center p-3 bg-success-50 dark:bg-success-900/20 rounded-lg border border-success-200 dark:border-success-700">
-                          <div className="text-2xl font-bold text-success-600 dark:text-success-400">
-                            {diagnosisResult.results.filter(r => r.success).length}
-                          </div>
-                          <div className="text-xs text-success-600 dark:text-success-400/80 mt-1">成功</div>
-                        </div>
-                        <div className="text-center p-3 bg-danger-50 dark:bg-danger-900/20 rounded-lg border border-danger-200 dark:border-danger-700">
-                          <div className="text-2xl font-bold text-danger-600 dark:text-danger-400">
-                            {diagnosisResult.results.filter(r => !r.success).length}
-                          </div>
-                          <div className="text-xs text-danger-600 dark:text-danger-400/80 mt-1">失败</div>
-                        </div>
-                      </div>
-
-                      {/* 桌面端表格展示 */}
-                      <div className="hidden md:block space-y-3">
-                        {(() => {
-                          // 使用后端返回的 chainType 和 inx 字段进行分组
-                          const groupedResults = {
-                            entry: diagnosisResult.results.filter(r => r.fromChainType === 1),
-                            chains: {} as Record<number, typeof diagnosisResult.results>,
-                            exit: diagnosisResult.results.filter(r => r.fromChainType === 3)
-                          };
-                          
-                          // 按 inx 分组链路测试
-                          diagnosisResult.results.forEach(r => {
-                            if (r.fromChainType === 2 && r.fromInx != null) {
-                              if (!groupedResults.chains[r.fromInx]) {
-                                groupedResults.chains[r.fromInx] = [];
-                              }
-                              groupedResults.chains[r.fromInx].push(r);
-                            }
-                          });
-
-                          const renderTableSection = (title: string, results: typeof diagnosisResult.results) => {
-                            if (results.length === 0) return null;
-                            
-                            return (
-                              <div key={title} className="border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg overflow-hidden bg-white dark:bg-[#231e1b]">
-                                <div className="bg-primary/10 dark:bg-primary/20 px-3 py-2 border-b border-divider">
-                                  <h3 className="text-sm font-semibold text-primary">{title}</h3>
-                                </div>
-                                <table className="w-full text-sm">
-                                  <thead className="bg-[#faf8f5] dark:bg-[#2d2824]/80">
-                                    <tr>
-                                      <th className="px-3 py-2 text-left font-semibold text-xs">路径</th>
-                                      <th className="px-3 py-2 text-center font-semibold text-xs w-20">状态</th>
-                                      <th className="px-3 py-2 text-center font-semibold text-xs w-24">延迟(ms)</th>
-                                      <th className="px-3 py-2 text-center font-semibold text-xs w-24">丢包率</th>
-                                      <th className="px-3 py-2 text-center font-semibold text-xs w-20">质量</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody className="divide-y divide-[#e5e0d8] dark:divide-[#2d2824] bg-white dark:bg-[#231e1b]">
-                                    {results.map((result, index) => {
-                              const quality = getQualityDisplay(result.averageTime, result.packetLoss);
-                              
-                              return (
-                                <tr key={index} className={`hover:bg-[#faf8f5] dark:hover:bg-[#2d2824]/30 ${
-                                  result.success ? 'bg-white dark:bg-[#231e1b]' : 'bg-danger-50 dark:bg-danger-900/30'
-                                }`}>
-                                  <td className="px-3 py-2">
-                                    <div className="flex items-center gap-2">
-                                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${
-                                        result.success 
-                                          ? 'bg-success text-white' 
-                                          : 'bg-danger text-white'
-                                      }`}>
-                                        {result.success ? '✓' : '✗'}
-                                      </span>
-                                      <div className="flex-1 min-w-0">
-                                        <div className="font-medium text-foreground truncate">{result.description}</div>
-                                        <div className="text-xs text-default-500 truncate">
-                                          {result.targetIp}:{result.targetPort}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </td>
-                                  <td className="px-3 py-2 text-center">
+                      {diagnosisResult.results.map((result, index) => {
+                        const quality = getQualityDisplay(result.averageTime, result.packetLoss);
+                        
+                        return (
+                          <Card key={index} className={`shadow-sm border rounded-2xl ${result.success ? 'border-success' : 'border-danger'}`}>
+                            <CardHeader className="pb-2">
+                              <div className="flex items-center justify-between w-full">
+                                <div>
+                                  <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{result.description}</h3>
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <span className="text-small text-[#9b9590] dark:text-[#5d5854]">节点: {result.nodeName}</span>
                                     <Chip 
                                       color={result.success ? 'success' : 'danger'} 
-                                      variant="flat"
+                                      variant="flat" 
                                       size="sm"
-                                      className="min-w-[50px]"
                                     >
-                                      {result.success ? '成功' : '失败'}
+                                      {result.success ? '连接成功' : '连接失败'}
                                     </Chip>
-                                  </td>
-                                  <td className="px-3 py-2 text-center">
-                                    {result.success ? (
-                                      <span className="font-semibold text-primary">
-                                        {result.averageTime?.toFixed(0)}
-                                      </span>
-                                    ) : (
-                                      <span className="text-default-400">-</span>
-                                    )}
-                                  </td>
-                                  <td className="px-3 py-2 text-center">
-                                    {result.success ? (
-                                      <span className={`font-semibold ${
-                                        (result.packetLoss || 0) > 0 ? 'text-warning' : 'text-success'
-                                      }`}>
-                                        {result.packetLoss?.toFixed(1)}%
-                                      </span>
-                                    ) : (
-                                      <span className="text-default-400">-</span>
-                                    )}
-                                  </td>
-                                  <td className="px-3 py-2 text-center">
-                                    {result.success && quality ? (
-                                      <Chip 
-                                        color={quality.color as any} 
-                                        variant="flat" 
-                                        size="sm"
-                                        className="text-xs"
-                                      >
-                                        {quality.text}
-                                      </Chip>
-                                    ) : (
-                                      <span className="text-default-400">-</span>
-                                    )}
-                                  </td>
-                                </tr>
-                              );
-                                    })}
-                                  </tbody>
-                                </table>
-                              </div>
-                            );
-                          };
-
-                          return (
-                            <>
-                              {/* 入口测试 */}
-                              {renderTableSection('🚪 入口测试', groupedResults.entry)}
-                              
-                              {/* 链路测试（按跳数排序） */}
-                              {Object.keys(groupedResults.chains)
-                                .map(Number)
-                                .sort((a, b) => a - b)
-                                .map(hop => renderTableSection(`🔗 转发链 - 第${hop}跳`, groupedResults.chains[hop]))}
-                              
-                              {/* 出口测试 */}
-                              {renderTableSection('🚀 出口测试', groupedResults.exit)}
-                            </>
-                          );
-                        })()}
-                      </div>
-
-                      {/* 移动端卡片展示 */}
-                      <div className="md:hidden space-y-3">
-                        {(() => {
-                          // 使用后端返回的 chainType 和 inx 字段进行分组
-                          const groupedResults = {
-                            entry: diagnosisResult.results.filter(r => r.fromChainType === 1),
-                            chains: {} as Record<number, typeof diagnosisResult.results>,
-                            exit: diagnosisResult.results.filter(r => r.fromChainType === 3)
-                          };
-                          
-                          // 按 inx 分组链路测试
-                          diagnosisResult.results.forEach(r => {
-                            if (r.fromChainType === 2 && r.fromInx != null) {
-                              if (!groupedResults.chains[r.fromInx]) {
-                                groupedResults.chains[r.fromInx] = [];
-                              }
-                              groupedResults.chains[r.fromInx].push(r);
-                            }
-                          });
-
-                          const renderCardSection = (title: string, results: typeof diagnosisResult.results) => {
-                            if (results.length === 0) return null;
-                            
-                            return (
-                              <div key={title} className="space-y-2">
-                                <div className="px-2 py-1.5 bg-primary/10 dark:bg-primary/20 rounded-lg border border-primary/30">
-                                  <h3 className="text-sm font-semibold text-primary">{title}</h3>
+                                  </div>
                                 </div>
-                                {results.map((result, index) => {
-                                  const quality = getQualityDisplay(result.averageTime, result.packetLoss);
-                                  
-                                  return (
-                                    <div key={index} className={`border rounded-lg p-3 ${
-                                      result.success
-                                        ? 'border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b]'
-                                        : 'border-danger-200 dark:border-danger-300/30 bg-danger-50 dark:bg-danger-900/30'
-                                    }`}>
-                                      <div className="flex items-start gap-2 mb-2">
-                                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0 ${
-                                          result.success ? 'bg-success text-white' : 'bg-danger text-white'
-                                        }`}>
-                                          {result.success ? '✓' : '✗'}
-                                        </span>
-                                        <div className="flex-1 min-w-0">
-                                          <div className="font-semibold text-sm text-foreground break-words">
-                                            {result.description}
-                                          </div>
-                                          <div className="text-xs text-default-500 mt-0.5 break-all">
-                                            {result.targetIp}:{result.targetPort}
-                                          </div>
-                                        </div>
-                                        <Chip 
-                                          color={result.success ? 'success' : 'danger'} 
-                                          variant="flat"
-                                          size="sm"
-                                          className="flex-shrink-0"
-                                        >
-                                          {result.success ? '成功' : '失败'}
-                                        </Chip>
-                                      </div>
-                                      
-                                      {result.success ? (
-                                        <div className="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-divider">
-                                          <div className="text-center">
-                                            <div className="text-lg font-bold text-primary">
-                                              {result.averageTime?.toFixed(0)}
-                                            </div>
-                                            <div className="text-xs text-default-500">延迟(ms)</div>
-                                          </div>
-                                          <div className="text-center">
-                                            <div className={`text-lg font-bold ${
-                                              (result.packetLoss || 0) > 0 ? 'text-warning' : 'text-success'
-                                            }`}>
-                                              {result.packetLoss?.toFixed(1)}%
-                                            </div>
-                                            <div className="text-xs text-default-500">丢包率</div>
-                                          </div>
-                                          <div className="text-center">
-                                            {quality && (
-                                              <>
-                                                <Chip 
-                                                  color={quality.color as any} 
-                                                  variant="flat" 
-                                                  size="sm"
-                                                  className="text-xs"
-                                                >
-                                                  {quality.text}
-                                                </Chip>
-                                                <div className="text-xs text-default-500 mt-0.5">质量</div>
-                                              </>
-                                            )}
-                                          </div>
-                                        </div>
-                                      ) : (
-                                        <div className="mt-2 pt-2 border-t border-divider">
-                                          <div className="text-xs text-danger">
-                                            {result.message || '连接失败'}
-                                          </div>
-                                        </div>
+                              </div>
+                            </CardHeader>
+                            
+                            <CardBody className="pt-0">
+                              {result.success ? (
+                                <div className="space-y-3">
+                                  <div className="grid grid-cols-3 gap-4">
+                                    <div className="text-center">
+                                      <div className="text-2xl font-bold text-[#c96442] dark:text-[#d4856a]">{result.averageTime?.toFixed(0)}</div>
+                                      <div className="text-small text-[#9b9590] dark:text-[#5d5854]">平均延迟(ms)</div>
+                                    </div>
+                                    <div className="text-center">
+                                      <div className="text-2xl font-bold text-warning">{result.packetLoss?.toFixed(1)}</div>
+                                      <div className="text-small text-[#9b9590] dark:text-[#5d5854]">丢包率(%)</div>
+                                    </div>
+                                    <div className="text-center">
+                                      {quality && (
+                                        <>
+                                          <Chip color={quality.color as any} variant="flat" size="lg">
+                                            {quality.text}
+                                          </Chip>
+                                          <div className="text-small text-[#9b9590] dark:text-[#5d5854] mt-1">连接质量</div>
+                                        </>
                                       )}
                                     </div>
-                                  );
-                                })}
-                              </div>
-                            );
-                          };
-
-                          return (
-                            <>
-                              {/* 入口测试 */}
-                              {renderCardSection('🚪 入口测试', groupedResults.entry)}
-                              
-                              {/* 链路测试（按跳数排序） */}
-                              {Object.keys(groupedResults.chains)
-                                .map(Number)
-                                .sort((a, b) => a - b)
-                                .map(hop => renderCardSection(`🔗 转发链 - 第${hop}跳`, groupedResults.chains[hop]))}
-                              
-                              {/* 出口测试 */}
-                              {renderCardSection('🚀 出口测试', groupedResults.exit)}
-                            </>
-                          );
-                        })()}
-                      </div>
-
-                      {/* 失败详情（仅桌面端显示，移动端已在卡片中显示） */}
-                      {diagnosisResult.results.some(r => !r.success) && (
-                        <div className="space-y-2 hidden md:block">
-                          <h4 className="text-sm font-semibold text-danger">失败详情</h4>
-                          <div className="space-y-2">
-                            {diagnosisResult.results.filter(r => !r.success).map((result, index) => (
-                              <Alert
-                                key={index}
-                                color="danger"
-                                variant="flat"
-                                title={result.description}
-                                description={result.message || '连接失败'}
-                                className="text-xs"
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                                  </div>
+                                  <div className="text-small text-[#9b9590] dark:text-[#5d5854] flex items-center gap-1">
+                                    <span className="flex-shrink-0">目标地址:</span>
+                                    <code className="font-mono truncate min-w-0" title={`${result.targetIp}${result.targetPort ? ':' + result.targetPort : ''}`}>
+                                      {result.targetIp}{result.targetPort ? ':' + result.targetPort : ''}
+                                    </code>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="space-y-2">
+                                  <div className="text-small text-[#9b9590] dark:text-[#5d5854] flex items-center gap-1">
+                                    <span className="flex-shrink-0">目标地址:</span>
+                                    <code className="font-mono truncate min-w-0" title={`${result.targetIp}${result.targetPort ? ':' + result.targetPort : ''}`}>
+                                      {result.targetIp}{result.targetPort ? ':' + result.targetPort : ''}
+                                    </code>
+                                  </div>
+                                  <Alert
+                                    color="danger"
+                                    variant="flat"
+                                    title="错误详情"
+                                    description={result.message}
+                                  />
+                                </div>
+                              )}
+                            </CardBody>
+                          </Card>
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="text-center py-16">
-                      <div className="w-16 h-16 bg-default-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-default-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-16 h-16 bg-[#f0ece6] dark:bg-[#2d2824] rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-[#9b9590] dark:text-[#5d5854]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
-                      <h3 className="text-lg font-semibold text-foreground">暂无诊断数据</h3>
+                      <h3 className="text-lg font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">暂无诊断数据</h3>
                     </div>
                   )}
                 </ModalBody>
-                <ModalFooter className="bg-content1 border-t border-divider">
+                <ModalFooter>
                   <Button variant="light" onPress={onClose}>
                     关闭
                   </Button>
                   {currentDiagnosisForward && (
                     <Button
-                      className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
+                      className="claude-btn claude-btn-primary"
                       onPress={() => handleDiagnose(currentDiagnosisForward)}
                       isLoading={diagnosisLoading}
                     >
                       重新诊断
                     </Button>
                   )}
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+        {/* 批量删除确认模态框 */}
+        <Modal 
+          isOpen={batchDeleteModalOpen}
+          onOpenChange={setBatchDeleteModalOpen}
+          size="2xl"
+          scrollBehavior="outside"
+          backdrop="blur"
+          placement="center"
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  <h2 className="text-lg font-bold text-danger">确认批量删除</h2>
+                </ModalHeader>
+                <ModalBody>
+                  <p className="text-[#6b6560] dark:text-[#8a8480]">
+                    确定要删除选中的 <span className="font-semibold text-danger">{selectedIds.size}</span> 条转发吗？
+                  </p>
+                  <div className="max-h-40 overflow-y-auto mt-2 space-y-1">
+                    {getSortedForwards()
+                      .filter(f => selectedIds.has(f.id))
+                      .map(f => (
+                        <div key={f.id} className="text-sm text-[#6b6560] dark:text-[#8a8480] flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 bg-danger rounded-full flex-shrink-0" />
+                          <span className="truncate">{f.name}</span>
+                          <span className="text-[#9b9590] dark:text-[#5d5854] text-xs">({f.tunnelName})</span>
+                        </div>
+                      ))}
+                  </div>
+                  <p className="text-small text-[#9b9590] dark:text-[#5d5854] mt-2">
+                    此操作无法撤销，删除后这些转发将永久消失。
+                  </p>
+                  <label className="flex items-center gap-2 mt-3 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={isBatchForce}
+                      onChange={e => setIsBatchForce(e.target.checked)}
+                      className="w-4 h-4 accent-[#c96442] rounded"
+                    />
+                    <span className="text-sm text-[#6b6560] dark:text-[#8a8480]">强制删除</span>
+                    <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">（跳过节点服务验证）</span>
+                  </label>
+                </ModalBody>
+                <ModalFooter>
+                  <Button variant="light" onPress={onClose}>
+                    取消
+                  </Button>
+                  <Button
+                    color="danger"
+                    onPress={confirmBatchDelete}
+                    isLoading={batchDeleteLoading}
+                  >
+                    确认删除({selectedIds.size})
+                  </Button>
                 </ModalFooter>
               </>
             )}

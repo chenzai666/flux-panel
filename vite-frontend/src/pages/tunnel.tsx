@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
-import { Input, Textarea } from "@heroui/input";
+import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import { Chip } from "@heroui/chip";
@@ -38,23 +38,18 @@ import {
   diagnoseTunnel
 } from "@/api";
 
-interface ChainTunnel {
-  nodeId: number;
-  protocol?: string;
-  strategy?: string;
-  chainType?: number; // 1: 入口, 2: 转发链, 3: 出口
-  inx?: number;
-  port?: number;
-}
-
 interface Tunnel {
   id: number;
   name: string;
-  type: number; // 1: 端口转发, 2: 隧道转发
-  inNodeId: ChainTunnel[];
-  outNodeId?: ChainTunnel[];
-  chainNodes?: ChainTunnel[][];
+  type: number;
+  inNodeId: number;
+  outNodeId?: number;
   inIp: string;
+  outIp?: string;
+  protocol?: string;
+  tcpListenAddr: string;
+  udpListenAddr: string;
+  interfaceName?: string;
   flow: number;
   trafficRatio: number;
   status: number;
@@ -71,12 +66,14 @@ interface TunnelForm {
   id?: number;
   name: string;
   type: number;
-  inNodeId: ChainTunnel[];
-  outNodeId: ChainTunnel[];
-  chainNodes: ChainTunnel[][];
+  inNodeId: number | null;
+  outNodeId?: number | null;
+  protocol: string;
+  tcpListenAddr: string;
+  udpListenAddr: string;
+  interfaceName?: string;
   flow: number;
   trafficRatio: number;
-  inIp: string;
   status: number;
 }
 
@@ -94,10 +91,6 @@ interface DiagnosisResult {
     message?: string;
     averageTime?: number;
     packetLoss?: number;
-    fromChainType?: number;
-    fromInx?: number;
-    toChainType?: number;
-    toInx?: number;
   }>;
 }
 
@@ -138,12 +131,6 @@ function SortableTunnelCard({
     position: isDragging ? 'relative' as const : undefined,
   };
 
-  const getNodeName = (id: number) => {
-    if (!id || id === -1) return '-';
-    const n = nodes.find(n => n.id === id);
-    return n ? n.name : `节点${id}`;
-  };
-
   const getDisplayIp = (ipStr?: string) => {
     if (!ipStr) return '-';
     const ips = ipStr.split(',').map(s => s.trim()).filter(Boolean);
@@ -151,30 +138,16 @@ function SortableTunnelCard({
     return ips.length === 1 ? ips[0] : `${ips[0]} 等${ips.length}个`;
   };
 
-  const getEntryNodeDisplay = () => {
-    const nodes2 = tunnel.inNodeId || [];
-    if (nodes2.length === 0) return '-';
-    const names = nodes2.map(ct => getNodeName(ct.nodeId));
-    if (names.length <= 2) return names.join(', ');
-    return `${names[0]}, ${names[1]} 等${names.length}个`;
-  };
-
-  const getExitNodeDisplay = () => {
-    if (tunnel.type === 1) {
-      return getEntryNodeDisplay();
-    }
-    const outNodes = tunnel.outNodeId || [];
-    if (outNodes.length === 0) return '-';
-    const names = outNodes.map(ct => getNodeName(ct.nodeId));
-    if (names.length <= 2) return names.join(', ');
-    return `${names[0]}, ${names[1]} 等${names.length}个`;
+  const getNodeName = (id?: number) => {
+    if (!id) return '-';
+    const n = nodes.find(n => n.id === id);
+    return n ? n.name : `节点${id}`;
   };
 
   const statusCls = tunnel.status === 1 ? 'badge-status-success' : 'badge-status-info';
   const statusText = tunnel.status === 1 ? '启用' : '禁用';
   const typeText = tunnel.type === 1 ? '端口转发' : '隧道转发';
   const flowText = tunnel.flow === 1 ? '单向' : '双向';
-  const chainHops = tunnel.type === 2 ? (tunnel.chainNodes?.length || 0) : 0;
 
   return (
     <div ref={setNodeRef} style={style}>
@@ -228,11 +201,10 @@ function SortableTunnelCard({
         >
           <div className="space-y-2">
             <div className="space-y-1.5">
-              {/* Entry nodes */}
               <div className="p-2 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded border border-[#e5e0d8] dark:border-[#3d3834]">
                 <div className="text-xs font-medium text-[#6b6560] dark:text-[#8a8480] mb-1">入口节点</div>
                 <code className="text-xs font-mono text-[#1a1a1a] dark:text-[#e8e2da] block truncate">
-                  {getEntryNodeDisplay()}
+                  {getNodeName(tunnel.inNodeId)}
                 </code>
                 <code className="text-xs font-mono text-[#9b9590] dark:text-[#5d5854] block truncate">
                   {getDisplayIp(tunnel.inIp)}
@@ -245,30 +217,15 @@ function SortableTunnelCard({
                 </svg>
               </div>
 
-              {/* Chain hops (type=2 only) */}
-              {tunnel.type === 2 && chainHops > 0 && (
-                <>
-                  <div className="p-2 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded border border-[#e5e0d8] dark:border-[#3d3834]">
-                    <div className="text-xs font-medium text-[#6b6560] dark:text-[#8a8480] mb-1">转发链</div>
-                    <code className="text-xs font-mono text-[#1a1a1a] dark:text-[#e8e2da] block truncate">
-                      {chainHops}跳中转
-                    </code>
-                  </div>
-                  <div className="text-center py-0.5">
-                    <svg className="w-3 h-3 text-[#9b9590] dark:text-[#5d5854] mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                    </svg>
-                  </div>
-                </>
-              )}
-
-              {/* Exit nodes */}
               <div className="p-2 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded border border-[#e5e0d8] dark:border-[#3d3834]">
                 <div className="text-xs font-medium text-[#6b6560] dark:text-[#8a8480] mb-1">
                   {tunnel.type === 1 ? '出口节点（同入口）' : '出口节点'}
                 </div>
                 <code className="text-xs font-mono text-[#1a1a1a] dark:text-[#e8e2da] block truncate">
-                  {getExitNodeDisplay()}
+                  {tunnel.type === 1 ? getNodeName(tunnel.inNodeId) : getNodeName(tunnel.outNodeId)}
+                </code>
+                <code className="text-xs font-mono text-[#9b9590] dark:text-[#5d5854] block truncate">
+                  {tunnel.type === 1 ? getDisplayIp(tunnel.inIp) : getDisplayIp(tunnel.outIp)}
                 </code>
               </div>
             </div>
@@ -329,15 +286,9 @@ export default function TunnelPage() {
   const [diagnosisResult, setDiagnosisResult] = useState<DiagnosisResult | null>(null);
 
   const [form, setForm] = useState<TunnelForm>({
-    name: '',
-    type: 1,
-    inNodeId: [],
-    outNodeId: [],
-    chainNodes: [],
-    flow: 1,
-    trafficRatio: 1.0,
-    inIp: '',
-    status: 1
+    name: '', type: 1, inNodeId: null, outNodeId: null,
+    protocol: 'tls', tcpListenAddr: '[::]', udpListenAddr: '[::]',
+    interfaceName: '', flow: 1, trafficRatio: 1.0, status: 1
   });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
 
@@ -448,123 +399,33 @@ export default function TunnelPage() {
     }
   };
 
-  // Chain tunnel form helpers
-  const getSelectedChainNodeIds = (): number[] => {
-    return (form.chainNodes || []).flatMap(group => group.map(node => node.nodeId));
-  };
-
-  const getChainGroups = (): ChainTunnel[][] => {
-    return form.chainNodes || [];
-  };
-
-  const addNodeToChain = (groupIndex: number, nodeId: number) => {
-    setForm(prev => {
-      const chainNodes = [...(prev.chainNodes || [])];
-      const group = chainNodes[groupIndex] || [];
-      const strategy = group.length > 0 ? group[0].strategy : 'round';
-      const protocol = group.length > 0 ? group[0].protocol : 'tls';
-      chainNodes[groupIndex] = [
-        ...group,
-        { nodeId, chainType: 2, protocol, strategy }
-      ];
-      return { ...prev, chainNodes };
-    });
-  };
-
-  const removeNodeFromChain = (groupIndex: number, nodeId: number) => {
-    setForm(prev => {
-      const chainNodes = [...(prev.chainNodes || [])];
-      chainNodes[groupIndex] = (chainNodes[groupIndex] || []).filter(node => node.nodeId !== nodeId);
-      return { ...prev, chainNodes };
-    });
-  };
-
-  const removeChainNode = (groupIndex: number) => {
-    setForm(prev => ({
-      ...prev,
-      chainNodes: (prev.chainNodes || []).filter((_, index) => index !== groupIndex)
-    }));
-  };
-
-  const updateChainProtocol = (groupIndex: number, protocol: string) => {
-    setForm(prev => {
-      const chainNodes = [...(prev.chainNodes || [])];
-      chainNodes[groupIndex] = (chainNodes[groupIndex] || []).map(node => ({ ...node, protocol }));
-      return { ...prev, chainNodes };
-    });
-  };
-
-  const updateChainStrategy = (groupIndex: number, strategy: string) => {
-    setForm(prev => {
-      const chainNodes = [...(prev.chainNodes || [])];
-      chainNodes[groupIndex] = (chainNodes[groupIndex] || []).map(node => ({ ...node, strategy }));
-      return { ...prev, chainNodes };
-    });
-  };
-
   const validateForm = (): boolean => {
     const newErrors: {[key: string]: string} = {};
     if (!form.name.trim()) newErrors.name = '请输入隧道名称';
     else if (form.name.length < 2 || form.name.length > 50) newErrors.name = '隧道名称长度应在2-50个字符之间';
-
-    if (!form.inNodeId || form.inNodeId.length === 0) {
-      newErrors.inNodeId = '请至少选择一个入口节点';
-    } else {
-      const offlineNodes = form.inNodeId.filter(item => {
-        const node = nodes.find(n => n.id === item.nodeId);
-        return node && node.status !== 1;
-      });
-      if (offlineNodes.length > 0) newErrors.inNodeId = '所有入口节点必须在线';
-    }
-
+    if (!form.inNodeId) newErrors.inNodeId = '请选择入口节点';
+    if (!form.tcpListenAddr.trim()) newErrors.tcpListenAddr = '请输入TCP监听地址';
+    if (!form.udpListenAddr.trim()) newErrors.udpListenAddr = '请输入UDP监听地址';
     if (form.trafficRatio < 0.0 || form.trafficRatio > 100.0) newErrors.trafficRatio = '流量倍率必须在0.0-100.0之间';
-
     if (form.type === 2) {
-      if (!form.outNodeId || form.outNodeId.length === 0) {
-        newErrors.outNodeId = '请至少选择一个出口节点';
-      } else {
-        const offlineNodes = form.outNodeId.filter(item => {
-          const node = nodes.find(n => n.id === item.nodeId);
-          return node && node.status !== 1;
-        });
-        if (offlineNodes.length > 0) {
-          newErrors.outNodeId = '所有出口节点必须在线';
-        }
-        const inNodeIds = form.inNodeId.map(item => item.nodeId);
-        const outNodeIds = form.outNodeId.map(item => item.nodeId);
-        const overlap = inNodeIds.filter(id => outNodeIds.includes(id));
-        if (overlap.length > 0) newErrors.outNodeId = '隧道转发模式下，入口和出口不能有相同节点';
-      }
+      if (!form.outNodeId) newErrors.outNodeId = '请选择出口节点';
+      else if (form.inNodeId === form.outNodeId) newErrors.outNodeId = '入口和出口不能是同一个节点';
+      if (!form.protocol) newErrors.protocol = '请选择协议类型';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleAdd = () => {
     setIsEdit(false);
-    setForm({
-      name: '', type: 1, inNodeId: [], outNodeId: [], chainNodes: [],
-      flow: 1, trafficRatio: 1.0, inIp: '', status: 1
-    });
+    setForm({ name: '', type: 1, inNodeId: null, outNodeId: null, protocol: 'tls', tcpListenAddr: '[::]', udpListenAddr: '[::]', interfaceName: '', flow: 1, trafficRatio: 1.0, status: 1 });
     setErrors({});
     setModalOpen(true);
   };
 
   const handleEdit = (tunnel: Tunnel) => {
     setIsEdit(true);
-    setForm({
-      id: tunnel.id,
-      name: tunnel.name,
-      type: tunnel.type,
-      inNodeId: tunnel.inNodeId || [],
-      outNodeId: tunnel.outNodeId || [],
-      chainNodes: tunnel.chainNodes || [],
-      flow: tunnel.flow,
-      trafficRatio: tunnel.trafficRatio,
-      inIp: tunnel.inIp ? tunnel.inIp.split(',').map(ip => ip.trim()).join('\n') : '',
-      status: tunnel.status
-    });
+    setForm({ id: tunnel.id, name: tunnel.name, type: tunnel.type, inNodeId: tunnel.inNodeId, outNodeId: tunnel.outNodeId || null, protocol: tunnel.protocol || 'tls', tcpListenAddr: tunnel.tcpListenAddr || '[::]', udpListenAddr: tunnel.udpListenAddr || '[::]', interfaceName: tunnel.interfaceName || '', flow: tunnel.flow, trafficRatio: tunnel.trafficRatio, status: tunnel.status });
     setErrors({});
     setModalOpen(true);
   };
@@ -592,36 +453,14 @@ export default function TunnelPage() {
   };
 
   const handleTypeChange = (type: number) => {
-    setForm(prev => ({
-      ...prev,
-      type,
-      outNodeId: type === 1 ? [] : prev.outNodeId,
-      chainNodes: type === 1 ? [] : prev.chainNodes
-    }));
+    setForm(prev => ({ ...prev, type, outNodeId: type === 1 ? null : prev.outNodeId, protocol: type === 1 ? 'tls' : prev.protocol }));
   };
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
     setSubmitLoading(true);
     try {
-      const cleanedChainNodes = (form.chainNodes || [])
-        .map(group => group.filter(node => node.nodeId !== -1))
-        .filter(group => group.length > 0);
-      const cleanedOutNodeId = (form.outNodeId || []).filter(node => node.nodeId !== -1);
-      const inIpString = form.inIp
-        .split('\n')
-        .map(ip => ip.trim())
-        .filter(ip => ip)
-        .join(',');
-
-      const data = {
-        ...form,
-        inIp: inIpString,
-        outNodeId: cleanedOutNodeId,
-        chainNodes: cleanedChainNodes
-      };
-
-      const response = isEdit ? await updateTunnel(data) : await createTunnel(data);
+      const response = isEdit ? await updateTunnel({ ...form }) : await createTunnel({ ...form });
       if (response.code === 0) {
         toast.success(isEdit ? '更新成功' : '创建成功');
         setModalOpen(false);
@@ -647,20 +486,10 @@ export default function TunnelPage() {
         setDiagnosisResult(response.data);
       } else {
         toast.error(response.msg || '诊断失败');
-        setDiagnosisResult({
-          tunnelName: tunnel.name,
-          tunnelType: tunnel.type === 1 ? '端口转发' : '隧道转发',
-          timestamp: Date.now(),
-          results: [{ success: false, description: '诊断失败', nodeName: '-', nodeId: '-', targetIp: '-', targetPort: 443, message: response.msg || '诊断过程中发生错误' }]
-        });
+        setDiagnosisResult({ tunnelName: tunnel.name, tunnelType: tunnel.type === 1 ? '端口转发' : '隧道转发', timestamp: Date.now(), results: [{ success: false, description: '诊断失败', nodeName: '-', nodeId: '-', targetIp: '-', targetPort: 443, message: response.msg || '诊断过程中发生错误' }] });
       }
     } catch {
-      setDiagnosisResult({
-        tunnelName: tunnel.name,
-        tunnelType: tunnel.type === 1 ? '端口转发' : '隧道转发',
-        timestamp: Date.now(),
-        results: [{ success: false, description: '网络错误', nodeName: '-', nodeId: '-', targetIp: '-', targetPort: 443, message: '无法连接到服务器' }]
-      });
+      setDiagnosisResult({ tunnelName: tunnel.name, tunnelType: tunnel.type === 1 ? '端口转发' : '隧道转发', timestamp: Date.now(), results: [{ success: false, description: '网络错误', nodeName: '-', nodeId: '-', targetIp: '-', targetPort: 443, message: '无法连接到服务器' }] });
     } finally {
       setDiagnosisLoading(false);
     }
@@ -784,398 +613,111 @@ export default function TunnelPage() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4">
-                <div>
-                  <div className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">
-                    {isEdit ? '编辑隧道' : '新增隧道'}
-                  </div>
-                  {isEdit && (
-                    <div className="text-xs text-[#9b9590] dark:text-[#5d5854] mt-0.5">编辑时只能修改隧道名称、流量计算和流量倍率</div>
-                  )}
-                </div>
+              <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">
+                {isEdit ? '编辑隧道' : '新增隧道'}
               </ModalHeader>
               <ModalBody>
-                <div className="space-y-4 py-2">
-                  {/* 基本信息 */}
-                  <div>
-                    <h3 className="text-base font-semibold text-[#1a1a1a] dark:text-[#e8e2da] mb-3">基本信息</h3>
-                    <div className="space-y-3">
-                      <Input
-                        label="隧道名称"
-                        placeholder="请输入隧道名称"
-                        value={form.name}
-                        onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-                        isInvalid={!!errors.name} errorMessage={errors.name} variant="bordered"
-                      />
+                <div className="space-y-4">
+                  <Input label="隧道名称" placeholder="请输入隧道名称" value={form.name}
+                    onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
+                    isInvalid={!!errors.name} errorMessage={errors.name} variant="bordered" />
 
-                      <Select
-                        label="隧道类型"
-                        placeholder="请选择隧道类型"
-                        selectedKeys={[form.type.toString()]}
-                        onSelectionChange={keys => { const k = Array.from(keys)[0] as string; if (k) handleTypeChange(parseInt(k)); }}
-                        isInvalid={!!errors.type} errorMessage={errors.type}
-                        variant="bordered" isDisabled={isEdit}
-                        description={isEdit ? '编辑时无法修改隧道类型' : undefined}
-                      >
-                        <SelectItem key="1">端口转发</SelectItem>
-                        <SelectItem key="2">隧道转发</SelectItem>
-                      </Select>
+                  <Select label="隧道类型" placeholder="请选择隧道类型" selectedKeys={[form.type.toString()]}
+                    onSelectionChange={keys => { const k = Array.from(keys)[0] as string; if (k) handleTypeChange(parseInt(k)); }}
+                    isInvalid={!!errors.type} errorMessage={errors.type} variant="bordered" isDisabled={isEdit}>
+                    <SelectItem key="1">端口转发</SelectItem>
+                    <SelectItem key="2">隧道转发</SelectItem>
+                  </Select>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <Select
-                          label="流量计算"
-                          placeholder="请选择流量计算方式"
-                          selectedKeys={[form.flow.toString()]}
-                          onSelectionChange={keys => { const k = Array.from(keys)[0] as string; if (k) setForm(p => ({ ...p, flow: parseInt(k) })); }}
-                          variant="bordered"
-                        >
-                          <SelectItem key="1">单向计算（仅上传）</SelectItem>
-                          <SelectItem key="2">双向计算（上传+下载）</SelectItem>
-                        </Select>
-                        <Input
-                          label="流量倍率"
-                          placeholder="请输入流量倍率"
-                          type="number"
-                          value={form.trafficRatio.toString()}
-                          onChange={e => setForm(p => ({ ...p, trafficRatio: parseFloat(e.target.value) || 0 }))}
-                          isInvalid={!!errors.trafficRatio} errorMessage={errors.trafficRatio}
-                          variant="bordered"
-                          endContent={<span className="text-[#9b9590] text-small">x</span>}
-                        />
-                      </div>
-
-                      <Textarea
-                        label="入口IP"
-                        placeholder={"一行一个IP地址或域名，例如:\n192.168.1.100\nexample.com"}
-                        value={form.inIp}
-                        onChange={e => setForm(p => ({ ...p, inIp: e.target.value }))}
-                        isInvalid={!!errors.inIp} errorMessage={errors.inIp}
-                        variant="bordered" minRows={3} maxRows={5}
-                        description="支持多个IP，每行一个地址，为空时使用入口节点IP"
-                      />
-                    </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Select label="流量计算" placeholder="请选择流量计算方式" selectedKeys={[form.flow.toString()]}
+                      onSelectionChange={keys => { const k = Array.from(keys)[0] as string; if (k) setForm(p => ({ ...p, flow: parseInt(k) })); }}
+                      variant="bordered">
+                      <SelectItem key="1">单向计算（仅上传）</SelectItem>
+                      <SelectItem key="2">双向计算（上传+下载）</SelectItem>
+                    </Select>
+                    <Input label="流量倍率" placeholder="请输入流量倍率" type="number"
+                      value={form.trafficRatio.toString()}
+                      onChange={e => setForm(p => ({ ...p, trafficRatio: parseFloat(e.target.value) || 0 }))}
+                      isInvalid={!!errors.trafficRatio} errorMessage={errors.trafficRatio} variant="bordered"
+                      endContent={<span className="text-[#9b9590] text-small">x</span>} />
                   </div>
 
                   <Divider />
+                  <h3 className="text-base font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">入口配置</h3>
 
-                  {/* 入口配置 */}
-                  <div>
-                    <h3 className="text-base font-semibold text-[#1a1a1a] dark:text-[#e8e2da] mb-3">入口配置</h3>
-                    <div className="p-3 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded-lg border border-[#e5e0d8] dark:border-[#3d3834]">
-                      <Select
-                        label="入口节点"
-                        placeholder="请选择入口节点（可多选）"
-                        selectionMode="multiple"
-                        selectedKeys={form.inNodeId.map(ct => ct.nodeId.toString())}
-                        disabledKeys={[
-                          ...nodes.filter(node => node.status !== 1).map(node => node.id.toString()),
-                          ...(form.outNodeId || []).map(ct => ct.nodeId.toString()),
-                          ...getSelectedChainNodeIds().map(id => id.toString())
-                        ]}
-                        onSelectionChange={keys => {
-                          const selIds = Array.from(keys).map(key => parseInt(key as string));
-                          const newInNodeId: ChainTunnel[] = selIds.map(nodeId => {
-                            const existing = form.inNodeId.find(ct => ct.nodeId === nodeId);
-                            return existing || { nodeId, chainType: 1 };
-                          });
-                          setForm(prev => ({ ...prev, inNodeId: newInNodeId }));
-                        }}
-                        isInvalid={!!errors.inNodeId} errorMessage={errors.inNodeId}
-                        variant="bordered" isDisabled={isEdit}
-                      >
+                  <Select label="入口节点" placeholder="请选择入口节点"
+                    selectedKeys={form.inNodeId ? [form.inNodeId.toString()] : []}
+                    onSelectionChange={keys => { const k = Array.from(keys)[0] as string; if (k) setForm(p => ({ ...p, inNodeId: parseInt(k) })); }}
+                    isInvalid={!!errors.inNodeId} errorMessage={errors.inNodeId} variant="bordered" isDisabled={isEdit}>
+                    {nodes.map(node => (
+                      <SelectItem key={node.id} textValue={`${node.name} (${node.status === 1 ? '在线' : '离线'})`}>
+                        <div className="flex items-center justify-between">
+                          <span>{node.name}</span>
+                          <Chip color={node.status === 1 ? 'success' : 'danger'} variant="flat" size="sm">
+                            {node.status === 1 ? '在线' : '离线'}
+                          </Chip>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </Select>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input label="TCP监听地址" placeholder="请输入TCP监听地址" value={form.tcpListenAddr}
+                      onChange={e => setForm(p => ({ ...p, tcpListenAddr: e.target.value }))}
+                      isInvalid={!!errors.tcpListenAddr} errorMessage={errors.tcpListenAddr} variant="bordered"
+                      startContent={<span className="text-[#9b9590] text-small">TCP</span>} />
+                    <Input label="UDP监听地址" placeholder="请输入UDP监听地址" value={form.udpListenAddr}
+                      onChange={e => setForm(p => ({ ...p, udpListenAddr: e.target.value }))}
+                      isInvalid={!!errors.udpListenAddr} errorMessage={errors.udpListenAddr} variant="bordered"
+                      startContent={<span className="text-[#9b9590] text-small">UDP</span>} />
+                  </div>
+
+                  {form.type === 2 && (
+                    <Input label="出口网卡名或IP" placeholder="请输入出口网卡名或IP" value={form.interfaceName}
+                      onChange={e => setForm(p => ({ ...p, interfaceName: e.target.value }))}
+                      isInvalid={!!errors.interfaceName} errorMessage={errors.interfaceName} variant="bordered" />
+                  )}
+
+                  {form.type === 2 && (
+                    <>
+                      <Divider />
+                      <h3 className="text-base font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">出口配置</h3>
+                      <Select label="协议类型" placeholder="请选择协议类型" selectedKeys={[form.protocol]}
+                        onSelectionChange={keys => { const k = Array.from(keys)[0] as string; if (k) setForm(p => ({ ...p, protocol: k })); }}
+                        isInvalid={!!errors.protocol} errorMessage={errors.protocol} variant="bordered">
+                        <SelectItem key="tls">TLS</SelectItem>
+                        <SelectItem key="wss">WSS</SelectItem>
+                        <SelectItem key="tcp">TCP</SelectItem>
+                        <SelectItem key="mtls">MTLS</SelectItem>
+                        <SelectItem key="mwss">MWSS</SelectItem>
+                        <SelectItem key="mtcp">MTCP</SelectItem>
+                      </Select>
+                      <Select label="出口节点" placeholder="请选择出口节点"
+                        selectedKeys={form.outNodeId ? [form.outNodeId.toString()] : []}
+                        onSelectionChange={keys => { const k = Array.from(keys)[0] as string; if (k) setForm(p => ({ ...p, outNodeId: parseInt(k) })); }}
+                        isInvalid={!!errors.outNodeId} errorMessage={errors.outNodeId} variant="bordered" isDisabled={isEdit}>
                         {nodes.map(node => (
-                          <SelectItem key={node.id} textValue={node.name}>
+                          <SelectItem key={node.id} textValue={`${node.name} (${node.status === 1 ? '在线' : '离线'})`}>
                             <div className="flex items-center justify-between">
                               <span>{node.name}</span>
                               <div className="flex items-center gap-2">
-                                <Chip color={node.status === 1 ? 'success' : 'default'} variant="flat" size="sm">
+                                <Chip color={node.status === 1 ? 'success' : 'danger'} variant="flat" size="sm">
                                   {node.status === 1 ? '在线' : '离线'}
                                 </Chip>
-                                {(form.outNodeId || []).some(ct => ct.nodeId === node.id) && (
-                                  <Chip color="danger" variant="flat" size="sm">已选为出口</Chip>
-                                )}
-                                {getSelectedChainNodeIds().includes(node.id) && (
-                                  <Chip color="primary" variant="flat" size="sm">已选为转发链</Chip>
-                                )}
+                                {form.inNodeId === node.id && <Chip color="warning" variant="flat" size="sm">已选为入口</Chip>}
                               </div>
                             </div>
                           </SelectItem>
                         ))}
                       </Select>
-                    </div>
-                  </div>
-
-                  {/* 转发链配置（隧道转发 type=2 only） */}
-                  {form.type === 2 && (
-                    <>
-                      <Divider />
-                      <div>
-                        <div className="flex items-center justify-between mb-3">
-                          <h3 className="text-base font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">转发链配置</h3>
-                          <Button
-                            size="sm"
-                            variant="flat"
-                            className="text-[#c96442] border-[#c96442]/30 hover:bg-[#c96442]/10"
-                            onPress={() => {
-                              setForm(prev => ({
-                                ...prev,
-                                chainNodes: [
-                                  ...(prev.chainNodes || []),
-                                  [{ nodeId: -1, chainType: 2, protocol: 'tls', strategy: 'round' }]
-                                ]
-                              }));
-                            }}
-                            isDisabled={isEdit}
-                            startContent={
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                              </svg>
-                            }
-                          >
-                            添加一跳
-                          </Button>
-                        </div>
-
-                        {getChainGroups().length > 0 ? (
-                          <div className="space-y-3">
-                            {getChainGroups().map((groupNodes, groupIndex) => {
-                              const protocol = groupNodes.length > 0 ? groupNodes[0].protocol || 'tls' : 'tls';
-                              const strategy = groupNodes.length > 0 ? groupNodes[0].strategy || 'round' : 'round';
-
-                              return (
-                                <div key={groupIndex} className="p-3 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded-lg border border-[#e5e0d8] dark:border-[#3d3834]">
-                                  <div className="flex items-center justify-between mb-2">
-                                    <span className="text-sm font-medium text-[#6b6560] dark:text-[#8a8480]">第{groupIndex + 1}跳</span>
-                                    <Button
-                                      size="sm" color="danger" variant="light" isIconOnly
-                                      onPress={() => removeChainNode(groupIndex)}
-                                      isDisabled={isEdit}
-                                    >
-                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                      </svg>
-                                    </Button>
-                                  </div>
-
-                                  <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-                                    <div className="col-span-1 md:col-span-2">
-                                      <Select
-                                        label="节点"
-                                        placeholder="选择节点（可多选）"
-                                        selectionMode="multiple"
-                                        selectedKeys={groupNodes.filter(ct => ct.nodeId !== -1).map(ct => ct.nodeId.toString())}
-                                        disabledKeys={[
-                                          ...nodes.filter(node => node.status !== 1).map(node => node.id.toString()),
-                                          ...form.inNodeId.map(ct => ct.nodeId.toString()),
-                                          ...(form.outNodeId || []).map(ct => ct.nodeId.toString()),
-                                          ...(form.chainNodes || [])
-                                            .flatMap((group, idx) => idx !== groupIndex ? group.map(ct => ct.nodeId) : [])
-                                            .filter(id => id !== -1)
-                                            .map(id => id.toString())
-                                        ]}
-                                        onSelectionChange={keys => {
-                                          const selIds = Array.from(keys).map(key => parseInt(key as string));
-                                          const currentNodes = groupNodes.filter(ct => ct.nodeId !== -1);
-                                          const currentNodeIds = currentNodes.map(ct => ct.nodeId);
-                                          const addedIds = selIds.filter(id => !currentNodeIds.includes(id));
-                                          const removedIds = currentNodeIds.filter(id => !selIds.includes(id));
-                                          addedIds.forEach(nodeId => addNodeToChain(groupIndex, nodeId));
-                                          removedIds.forEach(nodeId => removeNodeFromChain(groupIndex, nodeId));
-                                        }}
-                                        variant="bordered" size="sm" isDisabled={isEdit}
-                                      >
-                                        {nodes.map(node => (
-                                          <SelectItem key={node.id} textValue={node.name}>
-                                            <div className="flex items-center justify-between">
-                                              <span className="text-sm">{node.name}</span>
-                                              <div className="flex items-center gap-2">
-                                                <Chip color={node.status === 1 ? 'success' : 'default'} variant="flat" size="sm">
-                                                  {node.status === 1 ? '在线' : '离线'}
-                                                </Chip>
-                                                {form.inNodeId.some(ct => ct.nodeId === node.id) && (
-                                                  <Chip color="warning" variant="flat" size="sm">已选为入口</Chip>
-                                                )}
-                                                {(form.outNodeId || []).some(ct => ct.nodeId === node.id) && (
-                                                  <Chip color="danger" variant="flat" size="sm">已选为出口</Chip>
-                                                )}
-                                                {(form.chainNodes || []).some((group, idx) =>
-                                                  idx !== groupIndex && group.some(ct => ct.nodeId === node.id && ct.nodeId !== -1)
-                                                ) && (
-                                                  <Chip color="primary" variant="flat" size="sm">已选为其他跳</Chip>
-                                                )}
-                                              </div>
-                                            </div>
-                                          </SelectItem>
-                                        ))}
-                                      </Select>
-                                    </div>
-
-                                    <Select
-                                      label="协议"
-                                      placeholder="选择协议"
-                                      selectedKeys={[protocol]}
-                                      onSelectionChange={keys => {
-                                        const k = Array.from(keys)[0] as string;
-                                        if (k) updateChainProtocol(groupIndex, k);
-                                      }}
-                                      variant="bordered" size="sm" isDisabled={isEdit}
-                                    >
-                                      <SelectItem key="tls">TLS</SelectItem>
-                                      <SelectItem key="wss">WSS</SelectItem>
-                                      <SelectItem key="tcp">TCP</SelectItem>
-                                      <SelectItem key="mtls">MTLS</SelectItem>
-                                      <SelectItem key="mwss">MWSS</SelectItem>
-                                      <SelectItem key="mtcp">MTCP</SelectItem>
-                                    </Select>
-
-                                    <Select
-                                      label="负载策略"
-                                      placeholder="选择策略"
-                                      selectedKeys={[strategy]}
-                                      onSelectionChange={keys => {
-                                        const k = Array.from(keys)[0] as string;
-                                        if (k) updateChainStrategy(groupIndex, k);
-                                      }}
-                                      variant="bordered" size="sm" isDisabled={isEdit}
-                                    >
-                                      <SelectItem key="fifo">主备</SelectItem>
-                                      <SelectItem key="round">轮询</SelectItem>
-                                      <SelectItem key="rand">随机</SelectItem>
-                                    </Select>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          <div className="text-center py-8 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded-lg border border-dashed border-[#e5e0d8] dark:border-[#3d3834]">
-                            <p className="text-sm text-[#9b9590] dark:text-[#5d5854]">还没有添加转发链，点击上方"添加一跳"按钮开始添加</p>
-                          </div>
-                        )}
-                      </div>
                     </>
                   )}
 
-                  {/* 出口配置（隧道转发 type=2 only） */}
-                  {form.type === 2 && (
-                    <>
-                      <Divider />
-                      <div>
-                        <h3 className="text-base font-semibold text-[#1a1a1a] dark:text-[#e8e2da] mb-3">出口配置</h3>
-                        <div className="p-3 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded-lg border border-[#e5e0d8] dark:border-[#3d3834]">
-                          <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-                            <div className="col-span-1 md:col-span-2">
-                              <Select
-                                label="出口节点"
-                                placeholder="请选择出口节点（可多选）"
-                                selectionMode="multiple"
-                                selectedKeys={(form.outNodeId || []).filter(ct => ct.nodeId !== -1).map(ct => ct.nodeId.toString())}
-                                disabledKeys={[
-                                  ...nodes.filter(node => node.status !== 1).map(node => node.id.toString()),
-                                  ...form.inNodeId.map(ct => ct.nodeId.toString()),
-                                  ...getSelectedChainNodeIds().map(id => id.toString())
-                                ]}
-                                onSelectionChange={keys => {
-                                  const selIds = Array.from(keys).map(key => parseInt(key as string));
-                                  const currentOutNodes = form.outNodeId || [];
-                                  let protocol = 'tls';
-                                  let strategy = 'round';
-                                  if (currentOutNodes.length > 0) {
-                                    protocol = currentOutNodes[0].protocol || 'tls';
-                                    strategy = currentOutNodes[0].strategy || 'round';
-                                  }
-                                  const realNodes = currentOutNodes.filter(ct => ct.nodeId !== -1);
-                                  const newOutNodeId: ChainTunnel[] = selIds.map(nodeId => {
-                                    const existing = realNodes.find(ct => ct.nodeId === nodeId);
-                                    return existing || { nodeId, chainType: 3, protocol, strategy };
-                                  });
-                                  setForm(prev => ({ ...prev, outNodeId: newOutNodeId }));
-                                }}
-                                isInvalid={!!errors.outNodeId} errorMessage={errors.outNodeId}
-                                variant="bordered" isDisabled={isEdit}
-                              >
-                                {nodes.map(node => (
-                                  <SelectItem key={node.id} textValue={node.name}>
-                                    <div className="flex items-center justify-between">
-                                      <span>{node.name}</span>
-                                      <div className="flex items-center gap-2">
-                                        <Chip color={node.status === 1 ? 'success' : 'default'} variant="flat" size="sm">
-                                          {node.status === 1 ? '在线' : '离线'}
-                                        </Chip>
-                                        {form.inNodeId.some(ct => ct.nodeId === node.id) && (
-                                          <Chip color="warning" variant="flat" size="sm">已选为入口</Chip>
-                                        )}
-                                        {getSelectedChainNodeIds().includes(node.id) && (
-                                          <Chip color="primary" variant="flat" size="sm">已选为转发链</Chip>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </SelectItem>
-                                ))}
-                              </Select>
-                            </div>
-
-                            <Select
-                              label="协议"
-                              placeholder="选择协议"
-                              selectedKeys={[(() => {
-                                if (!form.outNodeId || form.outNodeId.length === 0) return 'tls';
-                                return form.outNodeId[0].protocol || 'tls';
-                              })()]}
-                              onSelectionChange={keys => {
-                                const k = Array.from(keys)[0] as string;
-                                if (k) {
-                                  setForm(prev => {
-                                    const currentOutNodes = prev.outNodeId || [];
-                                    const currentStrategy = currentOutNodes.length > 0 ? currentOutNodes[0].strategy || 'round' : 'round';
-                                    if (currentOutNodes.length === 0) {
-                                      return { ...prev, outNodeId: [{ nodeId: -1, chainType: 3, protocol: k, strategy: currentStrategy }] };
-                                    }
-                                    return { ...prev, outNodeId: currentOutNodes.map(ct => ({ ...ct, protocol: k })) };
-                                  });
-                                }
-                              }}
-                              variant="bordered" isDisabled={isEdit}
-                            >
-                              <SelectItem key="tls">TLS</SelectItem>
-                              <SelectItem key="wss">WSS</SelectItem>
-                              <SelectItem key="tcp">TCP</SelectItem>
-                              <SelectItem key="mtls">MTLS</SelectItem>
-                              <SelectItem key="mwss">MWSS</SelectItem>
-                              <SelectItem key="mtcp">MTCP</SelectItem>
-                            </Select>
-
-                            <Select
-                              label="负载策略"
-                              placeholder="选择策略"
-                              selectedKeys={[(() => {
-                                if (!form.outNodeId || form.outNodeId.length === 0) return 'round';
-                                return form.outNodeId[0].strategy || 'round';
-                              })()]}
-                              onSelectionChange={keys => {
-                                const k = Array.from(keys)[0] as string;
-                                if (k) {
-                                  setForm(prev => {
-                                    const currentOutNodes = prev.outNodeId || [];
-                                    const currentProtocol = currentOutNodes.length > 0 ? currentOutNodes[0].protocol || 'tls' : 'tls';
-                                    if (currentOutNodes.length === 0) {
-                                      return { ...prev, outNodeId: [{ nodeId: -1, chainType: 3, protocol: currentProtocol, strategy: k }] };
-                                    }
-                                    return { ...prev, outNodeId: currentOutNodes.map(ct => ({ ...ct, strategy: k })) };
-                                  });
-                                }
-                              }}
-                              variant="bordered" isDisabled={isEdit}
-                            >
-                              <SelectItem key="fifo">主备</SelectItem>
-                              <SelectItem key="round">轮询</SelectItem>
-                              <SelectItem key="rand">随机</SelectItem>
-                            </Select>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
+                  <Alert color="primary" variant="flat" title="TCP,UDP监听地址"
+                    description="V6或者双栈填写[::],V4填写0.0.0.0。不懂的就去看文档网站内的说明" className="mt-4" />
+                  <Alert color="primary" variant="flat" title="出口网卡名或IP"
+                    description="用于多IP服务器指定使用那个IP和出口服务器通讯，不懂的默认为空就行" className="mt-4" />
                 </div>
               </ModalBody>
               <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
@@ -1246,18 +788,16 @@ export default function TunnelPage() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4">
-                <div>
-                  <div className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">隧道诊断结果</div>
-                  {currentDiagnosisTunnel && (
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">{currentDiagnosisTunnel.name}</span>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border badge-status-info">
-                        {currentDiagnosisTunnel.type === 1 ? '端口转发' : '隧道转发'}
-                      </span>
-                    </div>
-                  )}
-                </div>
+              <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">
+                隧道诊断结果
+                {currentDiagnosisTunnel && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-small text-[#9b9590] dark:text-[#5d5854]">{currentDiagnosisTunnel.name}</span>
+                    <Chip color={currentDiagnosisTunnel.type === 1 ? 'primary' : 'secondary'} variant="flat" size="sm">
+                      {currentDiagnosisTunnel.type === 1 ? '端口转发' : '隧道转发'}
+                    </Chip>
+                  </div>
+                )}
               </ModalHeader>
               <ModalBody>
                 {diagnosisLoading ? (
@@ -1268,134 +808,66 @@ export default function TunnelPage() {
                     </div>
                   </div>
                 ) : diagnosisResult ? (
-                  <div className="space-y-3 py-2">
-                    {/* Summary stats */}
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="text-center p-3 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded-lg border border-[#e5e0d8] dark:border-[#3d3834]">
-                        <div className="text-2xl font-bold text-[#1a1a1a] dark:text-[#e8e2da]">{diagnosisResult.results.length}</div>
-                        <div className="text-xs text-[#9b9590] dark:text-[#5d5854] mt-1">总测试数</div>
-                      </div>
-                      <div className="text-center p-3 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded-lg border border-[#e5e0d8] dark:border-[#3d3834]">
-                        <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                          {diagnosisResult.results.filter(r => r.success).length}
-                        </div>
-                        <div className="text-xs text-[#9b9590] dark:text-[#5d5854] mt-1">成功</div>
-                      </div>
-                      <div className="text-center p-3 bg-[#faf8f5] dark:bg-[#2d2824]/50 rounded-lg border border-[#e5e0d8] dark:border-[#3d3834]">
-                        <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-                          {diagnosisResult.results.filter(r => !r.success).length}
-                        </div>
-                        <div className="text-xs text-[#9b9590] dark:text-[#5d5854] mt-1">失败</div>
-                      </div>
-                    </div>
-
-                    {/* Results grouped by chain type */}
-                    {(() => {
-                      const groupedResults = {
-                        entry: diagnosisResult.results.filter(r => r.fromChainType === 1),
-                        chains: {} as Record<number, typeof diagnosisResult.results>,
-                        exit: diagnosisResult.results.filter(r => r.fromChainType === 3),
-                        ungrouped: diagnosisResult.results.filter(r => r.fromChainType == null)
-                      };
-
-                      diagnosisResult.results.forEach(r => {
-                        if (r.fromChainType === 2 && r.fromInx != null) {
-                          if (!groupedResults.chains[r.fromInx]) {
-                            groupedResults.chains[r.fromInx] = [];
-                          }
-                          groupedResults.chains[r.fromInx].push(r);
-                        }
-                      });
-
-                      const renderResultCard = (result: typeof diagnosisResult.results[0], index: number) => {
-                        const quality = getQualityDisplay(result.averageTime, result.packetLoss);
-                        return (
-                          <Card key={index} className={`rounded-2xl shadow-sm border ${result.success ? 'border-success bg-white dark:bg-[#231e1b]' : 'border-danger bg-danger-50 dark:bg-danger-900/20'}`}>
-                            <CardHeader className="pb-2">
-                              <div className="flex items-center justify-between w-full">
-                                <div className="flex items-center gap-3">
-                                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${result.success ? 'bg-success text-white' : 'bg-danger text-white'}`}>
-                                    {result.success ? '✓' : '✗'}
-                                  </div>
-                                  <div>
-                                    <h4 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{result.description}</h4>
-                                    <p className="text-xs text-[#9b9590] dark:text-[#5d5854]">{result.nodeName}</p>
-                                  </div>
-                                </div>
-                                <Chip color={result.success ? 'success' : 'danger'} variant="flat" size="sm">
-                                  {result.success ? '成功' : '失败'}
-                                </Chip>
-                              </div>
-                            </CardHeader>
-                            <CardBody className="pt-0">
-                              {result.success ? (
-                                <div className="space-y-3">
-                                  <div className="grid grid-cols-3 gap-4">
-                                    <div className="text-center">
-                                      <div className="text-2xl font-bold text-[#c96442]">{result.averageTime?.toFixed(0)}</div>
-                                      <div className="text-xs text-[#9b9590] dark:text-[#5d5854]">平均延迟(ms)</div>
-                                    </div>
-                                    <div className="text-center">
-                                      <div className="text-2xl font-bold text-amber-500">{result.packetLoss?.toFixed(1)}</div>
-                                      <div className="text-xs text-[#9b9590] dark:text-[#5d5854]">丢包率(%)</div>
-                                    </div>
-                                    <div className="text-center">
-                                      {quality && (
-                                        <>
-                                          <Chip color={quality.color as any} variant="flat" size="lg">{quality.text}</Chip>
-                                          <div className="text-xs text-[#9b9590] dark:text-[#5d5854] mt-1">连接质量</div>
-                                        </>
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div className="text-xs text-[#9b9590] dark:text-[#5d5854]">
-                                    目标地址: <code className="font-mono text-[#1a1a1a] dark:text-[#e8e2da]">{result.targetIp}{result.targetPort ? ':' + result.targetPort : ''}</code>
-                                  </div>
-                                </div>
-                              ) : (
-                                <div className="space-y-2">
-                                  <div className="text-xs text-[#9b9590] dark:text-[#5d5854]">
-                                    目标地址: <code className="font-mono text-[#1a1a1a] dark:text-[#e8e2da]">{result.targetIp}{result.targetPort ? ':' + result.targetPort : ''}</code>
-                                  </div>
-                                  <Alert color="danger" variant="flat" title="错误详情" description={result.message} />
-                                </div>
-                              )}
-                            </CardBody>
-                          </Card>
-                        );
-                      };
-
-                      const renderSection = (title: string, results: typeof diagnosisResult.results) => {
-                        if (results.length === 0) return null;
-                        return (
-                          <div key={title} className="space-y-2">
-                            <div className="text-xs font-medium text-[#6b6560] dark:text-[#8a8480] px-1">{title}</div>
-                            {results.map((result, index) => renderResultCard(result, index))}
-                          </div>
-                        );
-                      };
-
+                  <div className="space-y-4">
+                    {diagnosisResult.results.map((result, index) => {
+                      const quality = getQualityDisplay(result.averageTime, result.packetLoss);
                       return (
-                        <>
-                          {renderSection('入口测试', groupedResults.entry)}
-                          {Object.keys(groupedResults.chains)
-                            .map(Number)
-                            .sort((a, b) => a - b)
-                            .map(hop => renderSection(`转发链 - 第${hop}跳`, groupedResults.chains[hop]))}
-                          {renderSection('出口测试', groupedResults.exit)}
-                          {renderSection('测试结果', groupedResults.ungrouped)}
-                        </>
+                        <Card key={index} className={`rounded-2xl shadow-sm border ${result.success ? 'border-success' : 'border-danger'}`}>
+                          <CardHeader className="pb-2">
+                            <div className="flex items-center justify-between w-full">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${result.success ? 'bg-success text-white' : 'bg-danger text-white'}`}>
+                                  {result.success ? '✓' : '✗'}
+                                </div>
+                                <div>
+                                  <h4 className="font-semibold">{result.description}</h4>
+                                  <p className="text-small text-[#9b9590] dark:text-[#5d5854]">{result.nodeName}</p>
+                                </div>
+                              </div>
+                              <Chip color={result.success ? 'success' : 'danger'} variant="flat">{result.success ? '成功' : '失败'}</Chip>
+                            </div>
+                          </CardHeader>
+                          <CardBody className="pt-0">
+                            {result.success ? (
+                              <div className="space-y-3">
+                                <div className="grid grid-cols-3 gap-4">
+                                  <div className="text-center">
+                                    <div className="text-2xl font-bold text-[#c96442]">{result.averageTime?.toFixed(0)}</div>
+                                    <div className="text-small text-[#9b9590]">平均延迟(ms)</div>
+                                  </div>
+                                  <div className="text-center">
+                                    <div className="text-2xl font-bold text-warning">{result.packetLoss?.toFixed(1)}</div>
+                                    <div className="text-small text-[#9b9590]">丢包率(%)</div>
+                                  </div>
+                                  <div className="text-center">
+                                    {quality && (<><Chip color={quality.color as any} variant="flat" size="lg">{quality.text}</Chip><div className="text-small text-[#9b9590] mt-1">连接质量</div></>)}
+                                  </div>
+                                </div>
+                                <div className="text-small text-[#9b9590]">
+                                  目标地址: <code className="font-mono">{result.targetIp}{result.targetPort ? ':' + result.targetPort : ''}</code>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="space-y-2">
+                                <div className="text-small text-[#9b9590]">
+                                  目标地址: <code className="font-mono">{result.targetIp}{result.targetPort ? ':' + result.targetPort : ''}</code>
+                                </div>
+                                <Alert color="danger" variant="flat" title="错误详情" description={result.message} />
+                              </div>
+                            )}
+                          </CardBody>
+                        </Card>
                       );
-                    })()}
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-16">
-                    <p className="text-sm text-[#9b9590] dark:text-[#5d5854]">暂无诊断数据</p>
+                    <p className="text-sm text-[#9b9590]">暂无诊断数据</p>
                   </div>
                 )}
               </ModalBody>
-              <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
-                <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onClose}>关闭</Button>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>关闭</Button>
                 {currentDiagnosisTunnel && (
                   <Button className="bg-[#c96442] text-white font-medium rounded-lg" onPress={() => handleDiagnose(currentDiagnosisTunnel)} isLoading={diagnosisLoading}>
                     重新诊断

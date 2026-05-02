@@ -22,22 +22,20 @@ public class Node extends BaseEntity {
 
     private String secret;
 
+    private String ip;
+
     private String serverIp;
 
     private String version;
 
-    private String port;
+    private Integer portSta;
+
+    private Integer portEnd;
 
     private Integer http;
 
     private Integer tls;
 
     private Integer socks;
-
-    private String interfaceName;
-
-    private String tcpListenAddr;
-
-    private String udpListenAddr;
 
 }

@@ -3,17 +3,15 @@ package com.admin.controller;
 import com.admin.common.aop.LogAnnotation;
 import com.admin.common.dto.FlowDto;
 import com.admin.common.dto.GostConfigDto;
+import com.admin.common.lang.R;
 import com.admin.common.task.CheckGostConfigAsync;
 import com.admin.common.utils.AESCrypto;
 import com.admin.common.utils.GostUtil;
 import com.admin.entity.*;
-import com.admin.service.ChainTunnelService;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * 流量上报控制器
@@ -65,10 +64,6 @@ public class FlowController extends BaseController {
 
     @Resource
     CheckGostConfigAsync checkGostConfigAsync;
-
-    @Resource
-    @Lazy
-    ChainTunnelService chainTunnelService;
 
     /**
      * 加密消息包装器
@@ -151,25 +146,16 @@ public class FlowController extends BaseController {
         // 2. 尝试解密数据
         String decryptedData = decryptIfNeeded(rawData, secret);
 
-        // 3. 解析为FlowDto列表（gost可能上报单个对象或数组）
-        JSONArray flowDataList;
-        String trimmed = decryptedData.trim();
-        if (trimmed.startsWith("[")) {
-            flowDataList = JSONObject.parseArray(decryptedData);
-        } else {
-            flowDataList = new JSONArray();
-            flowDataList.add(JSONObject.parseObject(decryptedData));
+        // 3. 解析为FlowDto列表
+        FlowDto flowDataList = JSONObject.parseObject(decryptedData, FlowDto.class);
+        if (Objects.equals(flowDataList.getN(), "web_api")) {
+            return SUCCESS_RESPONSE;
         }
-        log.info("节点上报流量数据{}", flowDataList);
-        for (int i = 0; i < flowDataList.size(); i++) {
-            String jsonObject = flowDataList.getJSONObject(i).toJSONString();
-            FlowDto flowDto = JSONObject.parseObject(jsonObject, FlowDto.class);
-            if (!Objects.equals(flowDto.getN(), "web_api")) {
-                processFlowData(flowDto);
-            }
-        }
-        return SUCCESS_RESPONSE;
 
+        // 记录日志
+        log.info("节点上报流量数据{}", flowDataList);
+        // 4. 处理流量数据
+        return processFlowData(flowDataList);
     }
 
     /**
@@ -226,30 +212,24 @@ public class FlowController extends BaseController {
     /**
      * 处理流量数据的核心逻辑
      */
-    private void processFlowData(FlowDto flowDataList) {
+    private String processFlowData(FlowDto flowDataList) {
         String[] serviceIds = parseServiceName(flowDataList.getN());
         String forwardId = serviceIds[0];
         String userId = serviceIds[1];
         String userTunnelId = serviceIds[2];
 
         Forward forward = forwardService.getById(forwardId);
-        if (forward != null){
-            Tunnel tunnel = tunnelService.getById(forward.getTunnelId());
 
-            //  处理流量倍率及单双向计算
-            BigDecimal trafficRatio = tunnel.getTrafficRatio();
-            BigDecimal originalD = BigDecimal.valueOf(flowDataList.getD());
-            BigDecimal originalU = BigDecimal.valueOf(flowDataList.getU());
-            BigDecimal newD = originalD.multiply(trafficRatio);
-            BigDecimal newU = originalU.multiply(trafficRatio);
-            flowDataList.setD(newD.longValue() * tunnel.getFlow());
-            flowDataList.setU(newU.longValue() * tunnel.getFlow());
-        }
+        // 获取流量计费类型
+        int flowType = getFlowType(forward);
+
+        //  处理流量倍率及单双向计算
+        FlowDto flowStats = filterFlowData(flowDataList, forward, flowType);
 
         // 先更新所有流量统计 - 确保流量数据的一致性
-        updateForwardFlow(forwardId, flowDataList);
-        updateUserFlow(userId, flowDataList);
-        updateUserTunnelFlow(userTunnelId, flowDataList);
+        updateForwardFlow(forwardId, flowStats);
+        updateUserFlow(userId, flowStats);
+        updateUserTunnelFlow(userTunnelId, flowStats);
 
         // 7. 检查和服务暂停操作
         String name = buildServiceName(forwardId, userId, userTunnelId);
@@ -258,6 +238,7 @@ public class FlowController extends BaseController {
             checkUserTunnelRelatedLimits(userTunnelId, name, userId);
         }
 
+        return SUCCESS_RESPONSE;
     }
 
     private void checkUserRelatedLimits(String userId, String name) {
@@ -296,7 +277,7 @@ public class FlowController extends BaseController {
         UserTunnel userTunnel = userTunnelService.getById(userTunnelId);
         if (userTunnel == null) return;
         long flow = userTunnel.getInFlow() + userTunnel.getOutFlow();
-        if (flow >= userTunnel.getFlow() * BYTES_TO_GB) {
+        if (flow >= userTunnel.getFlow() *  BYTES_TO_GB) {
             pauseSpecificForward(userTunnel.getTunnelId(), name, userId);
             return;
         }
@@ -320,13 +301,43 @@ public class FlowController extends BaseController {
 
     public void pauseService(List<Forward> forwardList, String name) {
         for (Forward forward : forwardList) {
-            List<ChainTunnel> chainTunnels = chainTunnelService.list(new QueryWrapper<ChainTunnel>().eq("tunnel_id", forward.getTunnelId()).eq("chain_type", 1));
-            for (ChainTunnel chainTunnel : chainTunnels) {
-                GostUtil.PauseAndResumeService(chainTunnel.getNodeId(), name, "PauseService");
+            Tunnel tunnel = tunnelService.getById(forward.getTunnelId());
+            if (tunnel != null){
+                GostUtil.PauseService(tunnel.getInNodeId(), name);
+                if (tunnel.getType() == 2){
+                    GostUtil.PauseRemoteService(tunnel.getOutNodeId(), name);
+                }
             }
             forward.setStatus(0);
             forwardService.updateById(forward);
         }
+    }
+
+    private FlowDto filterFlowData(FlowDto flowDto, Forward forward, int flowType) {
+        if (forward != null) {
+            Tunnel tunnel = tunnelService.getById(forward.getTunnelId());
+            if (tunnel != null) {
+                BigDecimal trafficRatio = tunnel.getTrafficRatio();
+
+                BigDecimal originalD = BigDecimal.valueOf(flowDto.getD());
+                BigDecimal originalU = BigDecimal.valueOf(flowDto.getU());
+
+                BigDecimal newD = originalD.multiply(trafficRatio);
+                BigDecimal newU = originalU.multiply(trafficRatio);
+
+                flowDto.setD(newD.longValue() * flowType);
+                flowDto.setU(newU.longValue() * flowType);
+            }
+        }
+        return flowDto;
+    }
+
+    private int getFlowType(Forward forward) {
+        int defaultFlowType = 2;
+        if (forward == null) return defaultFlowType;
+        Tunnel tunnel = tunnelService.getById(forward.getTunnelId());
+        if (tunnel == null) return defaultFlowType;
+        return tunnel.getFlow();
     }
 
     private void updateForwardFlow(String forwardId, FlowDto flowStats) {

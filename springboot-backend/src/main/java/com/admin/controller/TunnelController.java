@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,6 +63,32 @@ public class TunnelController extends BaseController {
     public R delete(@RequestBody Map<String, Object> params) {
         Long id = Long.valueOf(params.get("id").toString());
         return tunnelService.deleteTunnel(id);
+    }
+
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/force-delete")
+    public R forceDelete(@RequestBody Map<String, Object> params) {
+        Long id = Long.valueOf(params.get("id").toString());
+        return tunnelService.forceDeleteTunnel(id);
+    }
+
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/batch-delete")
+    public R batchDelete(@RequestBody Map<String, Object> params) {
+        java.util.List<Long> ids = ((java.util.List<?>) params.get("ids"))
+                .stream().map(o -> Long.valueOf(o.toString())).collect(java.util.stream.Collectors.toList());
+        return tunnelService.batchDeleteTunnels(ids);
+    }
+
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/batch-force-delete")
+    public R batchForceDelete(@RequestBody Map<String, Object> params) {
+        java.util.List<Long> ids = ((java.util.List<?>) params.get("ids"))
+                .stream().map(o -> Long.valueOf(o.toString())).collect(java.util.stream.Collectors.toList());
+        return tunnelService.batchForceDeleteTunnels(ids);
     }
 
     // ============ 用户隧道权限管理相关方法 ============
@@ -136,26 +161,6 @@ public class TunnelController extends BaseController {
     public R diagnoseTunnel(@RequestBody Map<String, Object> params) {
         Long tunnelId = Long.valueOf(params.get("tunnelId").toString());
         return tunnelService.diagnoseTunnel(tunnelId);
-    }
-
-    @LogAnnotation
-    @RequireRole
-    @PostMapping("/batch-delete")
-    public R batchDelete(@RequestBody Map<String, Object> params) {
-        @SuppressWarnings("unchecked")
-        List<Integer> rawIds = (List<Integer>) params.get("ids");
-        List<Long> ids = rawIds.stream().map(Long::valueOf).collect(java.util.stream.Collectors.toList());
-        return tunnelService.batchDeleteTunnels(ids);
-    }
-
-    @LogAnnotation
-    @RequireRole
-    @PostMapping("/batch-force-delete")
-    public R batchForceDelete(@RequestBody Map<String, Object> params) {
-        @SuppressWarnings("unchecked")
-        List<Integer> rawIds = (List<Integer>) params.get("ids");
-        List<Long> ids = rawIds.stream().map(Long::valueOf).collect(java.util.stream.Collectors.toList());
-        return tunnelService.batchForceDeleteTunnels(ids);
     }
 
 }

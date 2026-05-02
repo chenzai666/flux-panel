@@ -66,4 +66,30 @@ public class ViteConfigController extends BaseController {
         return viteConfigService.updateConfig(name, value);
     }
 
+    /**
+     * 导出配置备份
+     * 需要管理员权限
+     * 导出所有表数据（vite_config、node、tunnel、user、user_tunnel、speed_limit、forward）
+     * 可通过页面导出，也可通过脚本 curl 调用
+     */
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/export")
+    public R exportBackup() {
+        return viteConfigService.exportBackup();
+    }
+
+    /**
+     * 导入配置备份
+     * 需要管理员权限
+     * 导入备份数据（会追加数据，不删除已有数据）
+     * 可通过页面上传，也可通过脚本 curl 调用
+     */
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/import")
+    public R importBackup(@RequestBody Map<String, Object> backupData) {
+        return viteConfigService.importBackup(backupData);
+    }
+
 }

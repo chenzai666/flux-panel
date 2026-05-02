@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader } from "@heroui/card";
+﻿import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
 import { useState, useEffect } from "react";
@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 
 import { getUserPackageInfo } from "@/api";
+import { getConfigs } from "@/api";
 
 interface UserInfo {
   flow: number;
@@ -64,6 +65,7 @@ export default function DashboardPage() {
   const [forwardList, setForwardList] = useState<Forward[]>([]);
   const [statisticsFlows, setStatisticsFlows] = useState<StatisticsFlow[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
   
   const [addressModalOpen, setAddressModalOpen] = useState(false);
   const [addressModalTitle, setAddressModalTitle] = useState('');
@@ -96,13 +98,13 @@ export default function DashboardPage() {
             toast('账户将于明天过期，请及时续费', { 
               icon: '⚠️',
               duration: 6000,
-              style: { background: '#f59e0b', color: '#fff' }
+              style: { background: '#FAEEDA', color: '#633806' }
             });
           } else {
             toast(`账户将于${diffDays}天后过期，请及时续费`, { 
               icon: '⚠️',
               duration: 6000,
-              style: { background: '#f59e0b', color: '#fff' }
+              style: { background: '#FAEEDA', color: '#633806' }
             });
           }
         } else if (diffDays <= 0) {
@@ -110,7 +112,7 @@ export default function DashboardPage() {
           toast('账户已过期，请立即续费', { 
             icon: '⚠️',
             duration: 8000,
-            style: { background: '#ef4444', color: '#fff' }
+            style: { background: '#FCEBEB', color: '#791F1F' }
           });
         }
       }
@@ -132,13 +134,13 @@ export default function DashboardPage() {
               toast(`隧道"${tunnel.tunnelName}"将于明天过期`, { 
                 icon: '⚠️',
                 duration: 5000,
-                style: { background: '#f59e0b', color: '#fff' }
+                style: { background: '#FAEEDA', color: '#633806' }
               });
             } else {
               toast(`隧道"${tunnel.tunnelName}"将于${diffDays}天后过期`, { 
                 icon: '⚠️',
                 duration: 5000,
-                style: { background: '#f59e0b', color: '#fff' }
+                style: { background: '#FAEEDA', color: '#633806' }
               });
             }
           } else if (diffDays <= 0) {
@@ -146,7 +148,7 @@ export default function DashboardPage() {
             toast(`隧道"${tunnel.tunnelName}"已过期`, { 
               icon: '⚠️',
               duration: 6000,
-              style: { background: '#ef4444', color: '#fff' }
+              style: { background: '#FCEBEB', color: '#791F1F' }
             });
           }
         }
@@ -172,6 +174,7 @@ export default function DashboardPage() {
     setIsAdmin(adminStatus === 'true');
     
     loadPackageData();
+    loadAnnouncement();
     localStorage.setItem('e', '/dashboard');
   }, []);
 
@@ -196,6 +199,17 @@ export default function DashboardPage() {
       toast.error('获取套餐信息失败');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadAnnouncement = async () => {
+    try {
+      const res = await getConfigs();
+      if (res.code === 0 && res.data?.announcement) {
+        setAnnouncement(res.data.announcement);
+      }
+    } catch (error) {
+      // 公告加载失败不影响主页面
     }
   };
 
@@ -253,8 +267,7 @@ export default function DashboardPage() {
 
   const getExpStatus = (expTime?: string) => {
     if (!expTime) return { 
-      color: 'text-green-600 dark:text-green-400', 
-      bg: 'bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20',
+      style: { background: 'var(--color-success-bg)', color: 'var(--color-success-text)', borderColor: 'var(--color-success-border)' },
       text: '永久' 
     };
 
@@ -263,16 +276,14 @@ export default function DashboardPage() {
 
     if (isNaN(expDate.getTime())) {
       return { 
-        color: 'text-[#9c8678] dark:text-[#7a6b60]',
-        bg: 'bg-[#faf8f5] dark:bg-[#2d2824]/30 border-[#e5e0d8] dark:border-[#3d3834]',
+        style: { background: 'var(--color-background-tertiary)', color: 'var(--color-text-secondary)', borderColor: 'var(--color-border-secondary)' },
         text: '无效' 
       };
     }
 
     if (expDate < now) {
       return { 
-        color: 'text-red-600 dark:text-red-400', 
-        bg: 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20',
+        style: { background: 'var(--color-danger-bg)', color: 'var(--color-danger-text)', borderColor: 'var(--color-danger-border)' },
         text: '已过期' 
       };
     }
@@ -282,20 +293,17 @@ export default function DashboardPage() {
 
     if (diffDays <= 7) {
       return { 
-        color: 'text-red-600 dark:text-red-400', 
-        bg: 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20',
+        style: { background: 'var(--color-danger-bg)', color: 'var(--color-danger-text)', borderColor: 'var(--color-danger-border)' },
         text: `${diffDays}天后过期` 
       };
     } else if (diffDays <= 30) {
       return { 
-        color: 'text-orange-600 dark:text-orange-400', 
-        bg: 'bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/20',
+        style: { background: 'var(--color-warning-bg)', color: 'var(--color-warning-text)', borderColor: 'var(--color-warning-border)' },
         text: `${diffDays}天后过期` 
       };
     } else {
       return { 
-        color: 'text-green-600 dark:text-green-400', 
-        bg: 'bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20',
+        style: { background: 'var(--color-success-bg)', color: 'var(--color-success-text)', borderColor: 'var(--color-success-border)' },
         text: `${diffDays}天后过期` 
       };
     }
@@ -323,10 +331,18 @@ export default function DashboardPage() {
     return 0;
   };
 
+  // 配额条颜色随使用率变化：绿 → 琥珀 → 红（精确对齐参考 HTML 色值）
   const getUsageColor = (percentage: number) => {
-    if (percentage >= 90) return 'bg-[#E24B4A]';
-    if (percentage >= 70) return 'bg-[#BA7517]';
-    return 'bg-[#639922]';
+    if (percentage >= 90) return 'bg-[#E24B4A]';           // 红色
+    if (percentage >= 70) return 'bg-[#BA7517]';           // 琥珀色
+    return 'bg-[#639922]';                                  // 绿色
+  };
+
+  // 配额值文字颜色（≥ 90% 红色加粗提醒）
+  const getUsageTextColor = (percentage: number) => {
+    if (percentage >= 90) return 'text-[#E24B4A] font-medium';
+    if (percentage >= 70) return 'text-[#BA7517]';
+    return 'text-[#9b9590] dark:text-[#5d5854]';
   };
 
   const renderProgressBar = (percentage: number, size: 'sm' | 'md' = 'md', isUnlimited: boolean = false) => {
@@ -335,7 +351,7 @@ export default function DashboardPage() {
     if (isUnlimited) {
       return (
         <div className="w-full">
-          <div className={`w-full bg-gradient-to-r from-[#E6F1FB] to-[#EAF3DE] dark:from-[#378ADD]/20 dark:to-[#639922]/20 rounded-full ${height}`}>
+          <div className={`w-full bg-gradient-to-r from-[#E6F1FB] to-[#EAF3DE] dark:from-blue-500/20 dark:to-green-500/20 rounded-full ${height}`}>
             <div className={`${height} bg-gradient-to-r from-[#378ADD] to-[#639922] rounded-full w-full opacity-60`}></div>
           </div>
         </div>
@@ -344,7 +360,7 @@ export default function DashboardPage() {
     
     return (
       <div className="w-full">
-        <div className={`w-full bg-[#e5e0d8] dark:bg-[#2d2824] rounded-full ${height}`}>
+        <div className={`w-full bg-[#ebe7e1] dark:bg-[#2d2824] rounded-full ${height}`}>
           <div 
             className={`${height} rounded-full transition-all duration-300 ${getUsageColor(percentage)}`}
             style={{ width: `${Math.min(percentage, 100)}%` }}
@@ -425,28 +441,14 @@ export default function DashboardPage() {
   };
 
   const formatInAddress = (ipString: string, port: number): string => {
-    if (!ipString) return '';
+    if (!ipString || !port) return '';
     
-    const items = ipString.split(',').map(item => item.trim()).filter(item => item);
-    if (items.length === 0) return '';
+    const ips = ipString.split(',').map(ip => ip.trim()).filter(ip => ip);
     
-    // 检查第一项是否已经包含端口（格式：IP:端口）
-    const firstItem = items[0];
-    const hasPort = /:\d+$/.test(firstItem);
+    if (ips.length === 0) return '';
     
-    if (hasPort) {
-      // inIp 已经包含完整的 IP:Port 组合
-      if (items.length === 1) {
-        return items[0];
-      }
-      return `${items[0]} (+${items.length - 1}个)`;
-    }
-    
-    // inIp 只包含IP，需要添加端口（兼容旧数据）
-    if (!port) return '';
-    
-    if (items.length === 1) {
-      const ip = items[0];
+    if (ips.length === 1) {
+      const ip = ips[0];
       if (ip.includes(':') && !ip.startsWith('[')) {
         return `[${ip}]:${port}`;
       } else {
@@ -454,15 +456,16 @@ export default function DashboardPage() {
       }
     }
     
-    const firstIp = items[0];
+    const firstIp = ips[0];
     let formattedFirstIp;
+    
     if (firstIp.includes(':') && !firstIp.startsWith('[')) {
       formattedFirstIp = `[${firstIp}]`;
     } else {
       formattedFirstIp = firstIp;
     }
     
-    return `${formattedFirstIp}:${port} (+${items.length - 1}个)`;
+    return `${formattedFirstIp}:${port} (+${ips.length - 1})`;
   };
 
   const formatRemoteAddress = (remoteAddr: string): string => {
@@ -492,47 +495,32 @@ export default function DashboardPage() {
   };
 
   const showAddressModal = (ipString: string, port: number, title: string) => {
-    if (!ipString) return;
+    if (!ipString || !port) return;
     
-    const items = ipString.split(',').map(item => item.trim()).filter(item => item);
+    const ips = ipString.split(',').map(ip => ip.trim()).filter(ip => ip);
     
-    if (items.length <= 1) {
-      copyToClipboard(formatInAddress(ipString, port));
+    if (ips.length <= 1) {
+              copyToClipboard(formatInAddress(ipString, port));
       return;
     }
     
-    // 检查是否已经包含端口
-    const hasPort = /:\d+$/.test(items[0]);
-    
-    let formattedList;
-    if (hasPort) {
-      // 已经包含完整的 IP:Port 组合，直接使用
-      formattedList = items.map((item, index) => ({
+    const formattedList = ips.map((ip, index) => {
+      let formattedAddress;
+      if (ip.includes(':') && !ip.startsWith('[')) {
+        formattedAddress = `[${ip}]:${port}`;
+      } else {
+        formattedAddress = `${ip}:${port}`;
+      }
+      return {
         id: index,
-        ip: item,
-        address: item,
+        ip: ip,
+        address: formattedAddress,
         copying: false
-      }));
-    } else {
-      // 只包含IP，需要添加端口
-      formattedList = items.map((ip, index) => {
-        let formattedAddress;
-        if (ip.includes(':') && !ip.startsWith('[')) {
-          formattedAddress = `[${ip}]:${port}`;
-        } else {
-          formattedAddress = `${ip}:${port}`;
-        }
-        return {
-          id: index,
-          ip: ip,
-          address: formattedAddress,
-          copying: false
-        };
-      });
-    }
+      };
+    });
     
     setAddressList(formattedList);
-    setAddressModalTitle(`${title} (${items.length}个)`);
+    setAddressModalTitle(`${title} (${ips.length}个)`);
     setAddressModalOpen(true);
   };
 
@@ -602,61 +590,89 @@ export default function DashboardPage() {
 
       if (loading) {
       return (
-        
-          <div className="px-3 lg:px-6 flex-grow pt-2 lg:pt-4">
-            <div className="flex items-center justify-center h-64">
-              <div className="flex items-center gap-3">
-                <div className="animate-spin h-5 w-5 border-2 border-[#e5e0d8] dark:border-[#2d2824] border-t-[#c96442] dark:border-t-[#c96442] rounded-full"></div>
-                <span className="text-default-600">正在加载数据...</span>
-              </div>
+          <div className="px-4 lg:px-6 flex-grow pt-3 lg:pt-4">
+            {/* 骨架屏 - H5 加载占位 */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
+              {[1,2,3,4].map(i => (
+                <div key={i} className="rounded-2xl border border-[#e5e0d8] dark:border-[#2d2824] p-3 lg:p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="h-3 w-14 h5-skeleton rounded" />
+                    <div className="h-8 w-8 h5-skeleton rounded-lg" />
+                  </div>
+                  <div className="h-6 w-20 h5-skeleton rounded" />
+                  <div className="h-1.5 w-full h5-skeleton rounded-full" />
+                </div>
+              ))}
+            </div>
+            <div className="rounded-2xl border border-[#e5e0d8] dark:border-[#2d2824] p-4 space-y-4">
+              <div className="h-5 w-32 h5-skeleton rounded" />
+              <div className="h-48 lg:h-64 w-full h5-skeleton rounded-lg" />
             </div>
           </div>
-        
       );
     }
 
       return (
-      
-        <div className="px-3 lg:px-6 py-2 lg:py-4">
+
+        <div className="px-4 lg:px-6 py-4 lg:py-5 animate-fade-in">
+
+                          {/* 公告 */}
+         {announcement && (
+           <Card className="mb-4 border border-[#FAC775] dark:border-[#5d3a00] bg-[#FAEEDA] dark:bg-[#2d1f00] shadow-none rounded-xl">
+             <CardBody className="p-3 lg:p-4">
+               <div className="flex items-start gap-3">
+                 <div className="p-1.5 rounded-lg flex-shrink-0 mt-0.5" style={{background:'var(--color-warning-bg)'}}>
+                   <svg className="w-4 h-4 icon-warning" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.022-.858-.032-1.717-.126-2.574M3.03 12h2.47" />
+                   </svg>
+                 </div>
+                 <div className="flex-1 min-w-0">
+                   <h3 className="text-sm font-semibold mb-1" style={{color:'var(--color-warning-text)'}}>公告</h3>
+                   <p className="text-sm whitespace-pre-wrap break-words" style={{color:'var(--color-warning-text)'}}>{announcement}</p>
+                 </div>
+               </div>
+             </CardBody>
+           </Card>
+         )}
 
                           {/* 响应式统计卡片 */}
-         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
-           <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none hover:shadow-sm transition-shadow">
+         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-5 lg:mb-8">
+           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
-                   <p className="text-xs lg:text-sm text-default-600 truncate">总流量</p>
+                   <p className="text-xs lg:text-sm text-[#6b6560] dark:text-[#8a8480] truncate">总流量</p>
                    <div className="p-1.5 lg:p-2 icon-bg-info rounded-lg flex-shrink-0">
                      <svg className="w-4 h-4 lg:w-5 lg:h-5 icon-info" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M4 12h16M4 17h7" />
+                       <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
                      </svg>
                    </div>
                  </div>
-                 <p className="text-base lg:text-xl font-bold text-foreground truncate">{formatFlow(userInfo.flow, 'gb')}</p>
+                 <p className="text-base lg:text-xl font-bold text-[#1a1a1a] dark:text-[#e8e2da] truncate">{formatFlow(userInfo.flow, 'gb')}</p>
                </div>
              </CardBody>
            </Card>
 
-           <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none hover:shadow-sm transition-shadow">
+           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
-                   <p className="text-xs lg:text-sm text-default-600 truncate">已用流量</p>
-                   <div className="p-1.5 lg:p-2 bg-green-100 dark:bg-green-500/20 rounded-lg flex-shrink-0">
-                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                       <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
+                   <p className="text-xs lg:text-sm text-[#6b6560] dark:text-[#8a8480] truncate">已用流量</p>
+                   <div className="p-1.5 lg:p-2 icon-bg-success rounded-lg flex-shrink-0">
+                     <svg className="w-4 h-4 lg:w-5 lg:h-5 icon-success" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
                      </svg>
                    </div>
                  </div>
-                 <p className="text-base lg:text-xl font-bold text-foreground truncate">{formatFlow(calculateUserTotalUsedFlow())}</p>
+                 <p className="text-base lg:text-xl font-bold text-[#1a1a1a] dark:text-[#e8e2da] truncate">{formatFlow(calculateUserTotalUsedFlow())}</p>
                  <div className="mt-1">
                    {renderProgressBar(calculateUsagePercentage('flow'), 'sm', userInfo.flow === 99999)}
                    <div className="flex items-center justify-between mt-1">
-                     <p className="text-xs text-default-500 truncate">
+                     <p className={`text-xs truncate ${getUsageTextColor(calculateUsagePercentage('flow'))}`}>
                        {userInfo.flow === 99999 ? '无限制' : `${calculateUsagePercentage('flow').toFixed(1)}%`}
                      </p>
                      {(userInfo.flowResetTime !== undefined && userInfo.flowResetTime !== null) && (
-                       <div className="text-xs text-default-500 flex items-center gap-1">
+                       <div className="text-xs text-[#9b9590] dark:text-[#5d5854] flex items-center gap-1">
                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                          </svg>
@@ -669,37 +685,37 @@ export default function DashboardPage() {
              </CardBody>
            </Card>
 
-           <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none hover:shadow-sm transition-shadow">
+           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
-                   <p className="text-xs lg:text-sm text-default-600 truncate">转发配额</p>
+                   <p className="text-xs lg:text-sm text-[#6b6560] dark:text-[#8a8480] truncate">转发配额</p>
                    <div className="p-1.5 lg:p-2 icon-bg-warning rounded-lg flex-shrink-0">
-                     <svg className="w-4 h-4 lg:w-5 lg:h-5 icon-warning" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h8M4 18h8" />
+                     <svg className="w-4 h-4 lg:w-5 lg:h-5 icon-warning" fill="currentColor" viewBox="0 0 20 20">
+                       <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                      </svg>
                    </div>
                  </div>
-                 <p className="text-base lg:text-xl font-bold text-foreground truncate">{formatNumber(userInfo.num || 0)}</p>
+                 <p className="text-base lg:text-xl font-bold text-[#1a1a1a] dark:text-[#e8e2da] truncate">{formatNumber(userInfo.num || 0)}</p>
                </div>
              </CardBody>
            </Card>
 
-           <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none hover:shadow-sm transition-shadow">
+           <Card className="stat-card border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors">
              <CardBody className="p-3 lg:p-4">
                <div className="flex flex-col space-y-2">
                  <div className="flex items-center justify-between">
-                   <p className="text-xs lg:text-sm text-default-600 truncate">已用转发</p>
-                   <div className="p-1.5 lg:p-2 bg-orange-100 dark:bg-orange-500/20 rounded-lg flex-shrink-0">
-                     <svg className="w-4 h-4 lg:w-5 lg:h-5 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                   <p className="text-xs lg:text-sm text-[#6b6560] dark:text-[#8a8480] truncate">已用转发</p>
+                   <div className="p-1.5 lg:p-2 icon-bg-danger rounded-lg flex-shrink-0">
+                     <svg className="w-4 h-4 lg:w-5 lg:h-5 icon-danger" fill="currentColor" viewBox="0 0 20 20">
                        <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
                      </svg>
                    </div>
                  </div>
-                 <p className="text-base lg:text-xl font-bold text-foreground truncate">{forwardList.length}</p>
+                 <p className="text-base lg:text-xl font-bold text-[#1a1a1a] dark:text-[#e8e2da] truncate">{forwardList.length}</p>
                  <div className="mt-1">
                    {renderProgressBar(calculateUsagePercentage('forwards'), 'sm', userInfo.num === 99999)}
-                   <p className="text-xs text-default-500 mt-1 truncate">
+                   <p className={`text-xs mt-1 truncate ${getUsageTextColor(calculateUsagePercentage('forwards'))}`}>
                      {userInfo.num === 99999 ? '无限制' : `${calculateUsagePercentage('forwards').toFixed(1)}%`}
                    </p>
                  </div>
@@ -709,29 +725,28 @@ export default function DashboardPage() {
          </div>
 
          {/* 24小时流量统计图表 */}
-         <Card className="mb-6 lg:mb-8 border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none">
-           <CardHeader className="pb-3">
+         <Card className="mb-5 lg:mb-8 border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
+           <CardHeader className="px-5 py-4 border-b border-[#e5e0d8] dark:border-[#2d2824]">
              <div className="flex items-center gap-2">
-               <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                 <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
-                 <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
+               <svg className="w-5 h-5 text-[#c96442] dark:text-[#d4856a]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
                </svg>
-               <h2 className="text-lg lg:text-xl font-semibold text-foreground">24小时流量统计</h2>
+               <h2 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">24小时流量统计</h2>
              </div>
            </CardHeader>
-           <CardBody className="pt-0">
+           <CardBody className="pt-0 px-4 lg:px-6 pb-4 lg:pb-6">
              {statisticsFlows.length === 0 ? (
                <div className="text-center py-12">
-                 <svg className="w-12 h-12 text-default-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <svg className="w-12 h-12 text-[#9b9590] dark:text-[#5d5854] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                  </svg>
-                 <p className="text-default-500">暂无流量统计数据</p>
+                 <p className="text-[#9b9590] dark:text-[#5d5854]">暂无流量统计数据</p>
                </div>
              ) : (
                <div className="space-y-4">
 
                                     {/* 流量趋势图 */}
-                   <div className="h-64 lg:h-80 w-full">
+                   <div className="h-48 lg:h-80 w-full">
                      <ResponsiveContainer width="100%" height="100%">
                        <LineChart data={processFlowChartData()}>
                          <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
@@ -757,9 +772,9 @@ export default function DashboardPage() {
                            content={({ active, payload, label }) => {
                              if (active && payload && payload.length) {
                                return (
-                                 <div className="bg-white dark:bg-[#231e1b] border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg shadow-lg p-3">
-                                   <p className="font-medium text-foreground">{`时间: ${label}`}</p>
-                                   <p className="text-primary">
+                                 <div className="bg-white dark:bg-[#f0ece6] dark:bg-[#2d2824] border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] p-3">
+                                   <p className="font-medium text-[#1a1a1a] dark:text-[#e8e2da]">{`时间: ${label}`}</p>
+                                   <p className="text-[#c96442] dark:text-[#d4856a]">
                                      {`流量: ${formatFlow(payload[0]?.value as number || 0)}`}
                                    </p>
                                  </div>
@@ -771,10 +786,10 @@ export default function DashboardPage() {
                          <Line
                            type="monotone"
                            dataKey="flow"
-                           stroke="#8b5cf6"
+                           stroke="#c96442"
                            strokeWidth={3}
                            dot={false}
-                           activeDot={{ r: 4, stroke: '#8b5cf6', strokeWidth: 2, fill: '#fff' }}
+                           activeDot={{ r: 4, stroke: '#c96442', strokeWidth: 2, fill: '#fff' }}
                          />
                        </LineChart>
                      </ResponsiveContainer>
@@ -786,14 +801,14 @@ export default function DashboardPage() {
 
                  {/* 隧道权限 - 管理员不显示 */}
          {!isAdmin && (
-          <Card className="mb-6 lg:mb-8 border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none">
-           <CardHeader className="pb-3">
+          <Card className="mb-6 lg:mb-8 border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
+           <CardHeader className="px-5 py-4 border-b border-[#e5e0d8] dark:border-[#2d2824]">
              <div className="flex items-center gap-2">
-               <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+               <svg className="w-5 h-5 text-[#c96442] dark:text-[#d4856a]" fill="currentColor" viewBox="0 0 20 20">
                  <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
                </svg>
-               <h2 className="text-lg lg:text-xl font-semibold text-foreground">隧道权限</h2>
-               <span className="px-2 py-1 bg-default-100 dark:bg-default-50 text-default-600 rounded-full text-xs">
+               <h2 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">隧道权限</h2>
+               <span className="px-2 py-0.5 bg-[#f0ece5] dark:bg-[#2d2824] text-[#6b6560] dark:text-[#8a8480] rounded-full text-xs font-medium">
                  {userTunnels.length}
                </span>
              </div>
@@ -801,29 +816,33 @@ export default function DashboardPage() {
            <CardBody className="pt-0">
             {userTunnels.length === 0 ? (
               <div className="text-center py-12">
-                <svg className="w-12 h-12 text-default-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-12 h-12 text-[#9b9590] dark:text-[#5d5854] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                 </svg>
-                <p className="text-default-500">暂无隧道权限</p>
+                <p className="text-[#9b9590] dark:text-[#5d5854]">暂无隧道权限</p>
               </div>
             ) : (
                              <div className="space-y-3">
                  {userTunnels.map((tunnel) => {
                    const tunnelExpStatus = getExpStatus(tunnel.expTime);
                    return (
-                     <div key={tunnel.id} className="border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg p-3 lg:p-4 hover:bg-[#faf8f5] dark:hover:bg-[#2d2824]/20 transition-colors">
+                     <div key={tunnel.id} className="border border-[#e5e0d8] dark:border-[#e5e0d8] dark:border-[#2d2824] rounded-lg p-3 lg:p-4 hover:bg-[#f9f8f6] dark:hover:bg-[#2a2521] transition-colors">
                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-3">
                          <div>
-                           <h3 className="font-semibold text-foreground">{tunnel.tunnelName} ID: {tunnel.id}</h3>
+                           <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{tunnel.tunnelName} ID: {tunnel.id}</h3>
                            <div className="flex flex-wrap items-center gap-2 mt-1">
-                             <span className={`px-2 py-1 rounded-md text-xs font-medium ${tunnel.tunnelFlow === 1 ? 'bg-[#E6F1FB] dark:bg-[#0d1e35] text-[#0C447C] dark:text-[#70aee8]' : 'bg-[#FAEEDA] dark:bg-[#2d1e08] text-[#633806] dark:text-[#d4956a]'}`}>
+                             <span className={`px-2 py-1 rounded-md text-xs font-medium border ${tunnel.tunnelFlow === 1 ? '' : ''}`}
+                               style={tunnel.tunnelFlow === 1
+                                 ? { background:'var(--color-info-bg)', color:'var(--color-info-text)', borderColor:'var(--color-info-border)' }
+                                 : { background:'var(--color-warning-bg)', color:'var(--color-warning-text)', borderColor:'var(--color-warning-border)' }
+                               }>
                                {tunnel.tunnelFlow === 1 ? '单向计费' : '双向计费'}
                              </span>
-                             <span className={`px-2 py-1 rounded-md text-xs font-medium border ${tunnelExpStatus.bg} ${tunnelExpStatus.color}`}>
+                             <span className="px-2 py-1 rounded-md text-xs font-medium border" style={tunnelExpStatus.style}>
                                {tunnelExpStatus.text}
                              </span>
                              {(tunnel.flowResetTime !== undefined && tunnel.flowResetTime !== null) && (
-                               <span className="text-xs text-default-500">
+                               <span className="text-xs text-[#9b9590] dark:text-[#5d5854]">
                                  {formatResetTime(tunnel.flowResetTime)}
                                </span>
                              )}
@@ -833,23 +852,23 @@ export default function DashboardPage() {
                        
                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                          <div>
-                           <p className="text-sm text-default-600 mb-1">流量配额</p>
-                           <p className="font-semibold text-foreground">{formatFlow(tunnel.flow, 'gb')}</p>
+                           <p className="text-sm text-[#6b6560] dark:text-[#8a8480] mb-1">流量配额</p>
+                           <p className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{formatFlow(tunnel.flow, 'gb')}</p>
                          </div>
                          <div>
-                           <p className="text-sm text-default-600 mb-1">已用流量</p>
-                           <p className="font-semibold text-foreground">{formatFlow(calculateTunnelUsedFlow(tunnel))}</p>
+                           <p className="text-sm text-[#6b6560] dark:text-[#8a8480] mb-1">已用流量</p>
+                           <p className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{formatFlow(calculateTunnelUsedFlow(tunnel))}</p>
                            <div className="mt-1">
                              {renderProgressBar(calculateTunnelFlowPercentage(tunnel), 'sm', tunnel.flow === 99999)}
                            </div>
                          </div>
                          <div>
-                           <p className="text-sm text-default-600 mb-1">转发配额</p>
-                           <p className="font-semibold text-foreground">{formatNumber(tunnel.num)}</p>
+                           <p className="text-sm text-[#6b6560] dark:text-[#8a8480] mb-1">转发配额</p>
+                           <p className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{formatNumber(tunnel.num)}</p>
                          </div>
                          <div>
-                           <p className="text-sm text-default-600 mb-1">已用转发</p>
-                           <p className="font-semibold text-foreground">{getTunnelUsedForwards(tunnel.tunnelId)}</p>
+                           <p className="text-sm text-[#6b6560] dark:text-[#8a8480] mb-1">已用转发</p>
+                           <p className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{getTunnelUsedForwards(tunnel.tunnelId)}</p>
                            <div className="mt-1">
                              {renderProgressBar(calculateTunnelForwardPercentage(tunnel), 'sm', tunnel.num === 99999)}
                            </div>
@@ -865,14 +884,14 @@ export default function DashboardPage() {
          )}
 
                  {/* 转发配置 */}
-         <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none">
-           <CardHeader className="pb-3">
+         <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
+           <CardHeader className="px-5 py-4 border-b border-[#e5e0d8] dark:border-[#2d2824]">
              <div className="flex items-center gap-2">
-               <svg className="w-5 h-5 text-[#c96442]" fill="currentColor" viewBox="0 0 20 20">
+               <svg className="w-5 h-5 text-[#c96442] dark:text-[#d4856a]" fill="currentColor" viewBox="0 0 20 20">
                  <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                </svg>
-               <h2 className="text-lg lg:text-xl font-semibold text-foreground">转发配置</h2>
-               <span className="px-2 py-1 bg-default-100 dark:bg-default-50 text-default-600 rounded-full text-xs">
+               <h2 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">转发配置</h2>
+               <span className="px-2 py-0.5 bg-[#f0ece5] dark:bg-[#2d2824] text-[#6b6560] dark:text-[#8a8480] rounded-full text-xs font-medium">
                  {forwardList.length}
                </span>
              </div>
@@ -880,39 +899,39 @@ export default function DashboardPage() {
            <CardBody className="pt-0">
             {groupedForwards().length === 0 ? (
               <div className="text-center py-12">
-                <svg className="w-12 h-12 text-default-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-12 h-12 text-[#9b9590] dark:text-[#5d5854] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
                 </svg>
-                <p className="text-default-500">暂无转发配置</p>
+                <p className="text-[#9b9590] dark:text-[#5d5854]">暂无转发配置</p>
               </div>
             ) : (
                              <div className="space-y-4">
                  {groupedForwards().map((group) => (
-                   <div key={group.tunnelName} className="border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg p-3 lg:p-4">
+                   <div key={group.tunnelName} className="border border-[#e5e0d8] dark:border-[#e5e0d8] dark:border-[#2d2824] rounded-lg p-3 lg:p-4">
                      <div className="flex items-center justify-between mb-3">
-                       <h3 className="font-semibold text-foreground">{group.tunnelName}</h3>
-                       <span className="px-2 py-1 bg-primary-100 dark:bg-primary-500/20 text-primary-700 dark:text-primary-300 rounded-md text-sm">
+                       <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{group.tunnelName}</h3>
+                       <span className="px-2 py-1 bg-primary-100 dark:bg-primary-500/20 text-[#c96442] dark:text-[#d4856a]-700 dark:text-[#c96442] dark:text-[#d4856a]-300 rounded-md text-sm">
                          {group.forwards.length} 个转发
                        </span>
                      </div>
                      
                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                        {group.forwards.map((forward) => (
-                         <div key={forward.id} className="bg-[#faf8f5] dark:bg-[#2d2824]/30 border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg p-3 hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824]/50 transition-colors">
+                         <div key={forward.id} className="bg-[#f9f8f6] dark:bg-[#2d2824]/50 border border-[#e5e0d8] dark:border-[#2d2824] rounded-xl p-3 hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors">
                           <div className="space-y-3">
                             <div>
-                              <h4 className="font-medium text-foreground text-sm mb-2 truncate">{forward.name}</h4>
+                              <h4 className="font-medium text-[#1a1a1a] dark:text-[#e8e2da] text-sm mb-2 truncate">{forward.name}</h4>
                               <div className="space-y-1">
-                                <code 
-                                  className={`block px-2 py-1 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 rounded font-mono text-xs truncate ${hasMultipleIps(forward.inIp) ? 'cursor-pointer hover:bg-green-200 dark:hover:bg-green-500/30' : ''}`}
+                                <code
+                                  className={`block px-2 py-1.5 rounded-md font-mono text-xs truncate badge-status-success ${hasMultipleIps(forward.inIp) ? 'cursor-pointer hover:opacity-80' : ''}`}
                                   onClick={() => hasMultipleIps(forward.inIp) && showAddressModal(forward.inIp, forward.inPort, '入口地址')}
                                   title={formatInAddress(forward.inIp, forward.inPort)}
                                 >
                                   {formatInAddress(forward.inIp, forward.inPort)}
                                 </code>
-                                <div className="text-center text-default-400 text-xs">↓</div>
-                                <code 
-                                  className={`block px-2 py-1 bg-[#E6F1FB] dark:bg-[#0d1e35] text-[#0C447C] dark:text-[#70aee8] rounded font-mono text-xs truncate ${hasMultipleRemoteAddresses(forward.remoteAddr) ? 'cursor-pointer hover:bg-[#B5D4F4]/50 dark:hover:bg-[#1a3d6a]/50' : ''}`}
+                                <div className="text-center text-[#9b9590] dark:text-[#5d5854] text-xs leading-none">↓</div>
+                                <code
+                                  className={`block px-2 py-1.5 rounded-md font-mono text-xs truncate badge-status-info ${hasMultipleRemoteAddresses(forward.remoteAddr) ? 'cursor-pointer hover:opacity-80' : ''}`}
                                   onClick={() => hasMultipleRemoteAddresses(forward.remoteAddr) && showRemoteAddressModal(forward.remoteAddr, '出口地址')}
                                   title={formatRemoteAddress(forward.remoteAddr)}
                                 >
@@ -924,16 +943,16 @@ export default function DashboardPage() {
                             <div className="pt-2 border-t border-[#e5e0d8] dark:border-[#2d2824]">
                               <div className="grid grid-cols-3 gap-1 text-xs">
                                 <div className="text-center">
-                                  <div className="text-default-500 mb-1">上传</div>
-                                  <div className="font-medium text-green-600 dark:text-green-400 truncate">{formatFlow(forward.inFlow || 0)}</div>
+                                  <div className="text-[#9b9590] dark:text-[#5d5854] mb-1">上传</div>
+                                  <div className="font-medium truncate" style={{color:'var(--color-success)'}}>{formatFlow(forward.inFlow || 0)}</div>
                                 </div>
                                 <div className="text-center">
-                                  <div className="text-default-500 mb-1">下载</div>
-                                  <div className="font-medium text-orange-600 dark:text-orange-400 truncate">{formatFlow(forward.outFlow || 0)}</div>
+                                  <div className="text-[#9b9590] dark:text-[#5d5854] mb-1">下载</div>
+                                  <div className="font-medium truncate" style={{color:'var(--color-warning)'}}>{formatFlow(forward.outFlow || 0)}</div>
                                 </div>
                                 <div className="text-center">
-                                  <div className="text-default-500 mb-1">计费</div>
-                                  <div className="font-medium text-primary truncate">{formatFlow(calculateForwardBillingFlow(forward))}</div>
+                                  <div className="text-[#9b9590] dark:text-[#5d5854] mb-1">计费</div>
+                                  <div className="font-medium text-[#c96442] dark:text-[#d4856a] truncate">{formatFlow(calculateForwardBillingFlow(forward))}</div>
                                 </div>
                               </div>
                             </div>
@@ -949,12 +968,12 @@ export default function DashboardPage() {
         </Card>
 
         {/* 地址列表弹窗 */}
-        <Modal isOpen={addressModalOpen} onClose={() => setAddressModalOpen(false)} size="2xl" 
+        <Modal isOpen={addressModalOpen} onClose={() => setAddressModalOpen(false)} size="2xl"
         scrollBehavior="outside"
         backdrop="blur"
         placement="center">
           <ModalContent>
-            <ModalHeader className="text-base">{addressModalTitle}</ModalHeader>
+            <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold">{addressModalTitle}</ModalHeader>
             <ModalBody className="pb-6">
               <div className="mb-4 text-right">
                 <Button size="sm" onClick={copyAllAddresses}>
@@ -964,8 +983,8 @@ export default function DashboardPage() {
               
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {addressList.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center p-3 border border-[#e5e0d8] dark:border-[#2d2824] rounded-lg">
-                    <code className="text-sm flex-1 mr-3 text-foreground">{item.address}</code>
+                  <div key={item.id} className="flex justify-between items-center p-3 border border-[#e5e0d8] dark:border-[#2d2824] dark:border-[#e5e0d8] dark:border-[#2d2824] rounded-lg">
+                    <code className="text-sm flex-1 mr-3 text-[#1a1a1a] dark:text-[#e8e2da]">{item.address}</code>
                     <Button
                       size="sm"
                       variant="light"

@@ -9,6 +9,8 @@
             f.user_id AS userId,
             f.name,
             f.tunnel_id AS tunnelId,
+            f.in_port AS inPort,
+            f.out_port AS outPort,
             f.remote_addr AS remoteAddr,
             f.status,
             f.created_time AS createdTime,
@@ -18,9 +20,13 @@
             f.strategy AS strategy,
             f.out_flow AS outFlow,
             f.inx AS inx,
+            f.interface_name AS interfaceName,
             t.name AS tunnelName,
-            t.type
-        FROM
+            t.in_ip AS inIp,
+            t.out_ip AS outIp,
+            t.type,
+            t.protocol
+        FROM 
             forward f
         LEFT JOIN 
             tunnel t ON f.tunnel_id = t.id
@@ -35,6 +41,8 @@
             f.user_id AS userId,
             f.name,
             f.tunnel_id AS tunnelId,
+            f.in_port AS inPort,
+            f.out_port AS outPort,
             f.remote_addr AS remoteAddr,
             f.status,
             f.created_time AS createdTime,
@@ -44,9 +52,13 @@
             f.out_flow AS outFlow,
             f.strategy AS strategy,
             f.inx AS inx,
+            f.interface_name AS interfaceName,
             t.name AS tunnelName,
-            t.type
-        FROM
+            t.in_ip AS inIp,
+            t.out_ip AS outIp,
+            t.type,
+            t.protocol
+        FROM 
             forward f
         LEFT JOIN 
             tunnel t ON f.tunnel_id = t.id

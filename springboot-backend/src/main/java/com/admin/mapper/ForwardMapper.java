@@ -4,7 +4,6 @@ import com.admin.entity.Forward;
 import com.admin.common.dto.ForwardWithTunnelDto;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -30,6 +29,5 @@ public interface ForwardMapper extends BaseMapper<Forward> {
      * @return 转发信息列表
      */
     List<ForwardWithTunnelDto> selectForwardsWithTunnelByUserId(@Param("userId") Integer userId);
-
 
 }

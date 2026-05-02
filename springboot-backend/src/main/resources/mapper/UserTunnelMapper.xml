@@ -19,6 +19,7 @@
             t.name as tunnelName,
             t.flow as tunnelFlow,
             t.in_ip as inIp,
+            t.out_ip as outIp,
             t.type,
             t.protocol,
             sl.name as speedLimitName,
