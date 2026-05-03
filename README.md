@@ -63,7 +63,48 @@ curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/main/
 
 ---
 
-## 升级到 Beta 版（2.x）
+## Beta 版部署（2.x）
+
+> Beta 版使用 **SQLite**，无需 MySQL，含转发链、负载均衡等新功能。  
+> 详见 [beta 分支](https://github.com/chenzai666/flux-panel/tree/beta)。
+
+### 快速部署
+
+面板端：
+```bash
+curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
+```
+
+节点端：
+```bash
+curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+```
+
+### 手动 Docker Compose 部署
+
+1. 下载配置文件（IPv4 / IPv6 二选一）：
+   ```bash
+   # IPv4
+   curl -LO https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/docker-compose-v4.yml
+   # IPv6
+   curl -LO https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/docker-compose-v6.yml
+   ```
+
+2. 创建 `.env` 文件：
+   ```env
+   JWT_SECRET=你的密钥（至少32位随机字符串）
+   BACKEND_PORT=6365
+   FRONTEND_PORT=80
+   ```
+
+3. 启动：
+   ```bash
+   docker compose -f docker-compose-v4.yml up -d
+   ```
+
+---
+
+## 从稳定版升级到 Beta 版（2.x）
 
 > 稳定版使用 **MySQL**，Beta 版使用 **SQLite**，数据库类型不同，**无法直接原地升级**。
 
