@@ -1,7 +1,7 @@
 # flux-panel 转发面板 Beta 版（2.0.x）
 
-> **当前分支为 beta 开发版**，包含转发链、负载均衡等新功能，使用 SQLite 数据库。  
-> 稳定版（1.x MySQL）请切换到 [main 分支](https://github.com/chenzai666/flux-panel/tree/main)。
+> **当前分支为 beta 开发版**，包含转发链、负载均衡等新功能，默认使用 MySQL（也支持切换 SQLite）。  
+> 稳定版（1.x）请切换到 [main 分支](https://github.com/chenzai666/flux-panel/tree/main)。
 
 ---
 
@@ -9,7 +9,7 @@
 
 - **转发链（多跳中转）**：入口节点 → 中转节点（多跳）→ 出口节点，完整的链路诊断
 - **负载均衡**：每一跳支持多个节点，策略可选 主备(fifo) / 轮询(round) / 随机(rand) / IP哈希(hash)
-- **SQLite 数据库**：无需 MySQL，部署更轻量，数据存为单文件方便迁移备份
+- **MySQL / SQLite 双模式**：默认 MySQL，也可切换 SQLite 轻量部署
 - **随机端口分配**：创建转发时可一键随机填入可用端口
 - **批量删除 / 强制删除**：隧道与转发均支持批量操作
 - **拖拽排序**：转发和隧道卡片支持拖拽调整顺序
@@ -43,6 +43,7 @@ curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/
 
 2. 创建 `.env` 文件：
    ```env
+   MYSQL_ROOT_PASSWORD=你的MySQL密码
    JWT_SECRET=你的密钥（至少32位随机字符串）
    BACKEND_PORT=6365
    FRONTEND_PORT=80
@@ -64,7 +65,7 @@ curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/
 
 ## 从稳定版（1.x）升级到 Beta 版（2.x）
 
-> 稳定版使用 **MySQL**，Beta 版使用 **SQLite**，数据库类型不同，**无法直接原地升级**，需手动迁移数据。
+> 稳定版（1.x）与 Beta 版（2.x）数据库结构不同，**无法直接原地升级**，需手动迁移数据。
 
 ### 方式一：全新部署（推荐）
 
