@@ -525,7 +525,11 @@ export default function ForwardPage() {
   };
   const selectAll = () => {
     const allIds = getSortedForwards().map(f => f.id).filter((id): id is number => id != null);
-    setSelectedIds(allIds);
+    if (selectedIds.length === allIds.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(allIds);
+    }
   };
   const confirmBatchDelete = async () => {
     if (selectedIds.length === 0) return;
@@ -1434,10 +1438,18 @@ export default function ForwardPage() {
             {/* 批量模式工具栏 */}
             {isBatchMode ? (
               <>
-                <span className="text-sm text-default-500">已选 {selectedIds.length} 项</span>
-                <Button size="sm" variant="flat" className="text-[#6b5a4e] dark:text-[#b5a99a]" onPress={selectAll}>
-                  全选
-                </Button>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.length > 0 && selectedIds.length === getSortedForwards().length}
+                    ref={el => { if (el) el.indeterminate = selectedIds.length > 0 && selectedIds.length < getSortedForwards().length; }}
+                    onChange={selectAll}
+                    className="w-4 h-4 accent-[#c96442] cursor-pointer"
+                  />
+                  <span className="text-sm text-[#6b6560] dark:text-[#8a8480]">
+                    {selectedIds.length > 0 ? `已选 ${selectedIds.length} 项` : '全选'}
+                  </span>
+                </label>
                 <Button size="sm" variant="flat" color="danger" onPress={() => setBatchDeleteModalOpen(true)} isDisabled={selectedIds.length === 0}>
                   删除所选
                 </Button>

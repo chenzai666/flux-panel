@@ -9,6 +9,7 @@ import com.admin.common.lang.R;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,6 +53,16 @@ public class NodeController extends BaseController {
     public R delete(@RequestBody Map<String, Object> params) {
         Long id = Long.valueOf(params.get("id").toString());
         return nodeService.deleteNode(id);
+    }
+
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/batch-delete")
+    public R batchDelete(@RequestBody Map<String, Object> params) {
+        @SuppressWarnings("unchecked")
+        List<Integer> rawIds = (List<Integer>) params.get("ids");
+        List<Long> ids = rawIds.stream().map(Long::valueOf).collect(java.util.stream.Collectors.toList());
+        return nodeService.batchDeleteNodes(ids);
     }
 
     @LogAnnotation

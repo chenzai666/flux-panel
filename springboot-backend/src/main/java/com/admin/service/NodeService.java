@@ -5,6 +5,7 @@ import com.admin.common.dto.NodeUpdateDto;
 import com.admin.common.lang.R;
 import com.admin.entity.Node;
 import com.baomidou.mybatisplus.extension.service.IService;
+import java.util.List;
 
 /**
  * <p>
@@ -23,6 +24,8 @@ public interface NodeService extends IService<Node> {
     R updateNode(NodeUpdateDto nodeUpdateDto);
 
     R deleteNode(Long id);
+
+    R batchDeleteNodes(List<Long> ids);
 
     R getInstallCommand(Long id);
 

@@ -12,13 +12,29 @@ import { Progress } from "@heroui/progress";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  rectSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 
-import { 
-  createNode, 
-  getNodeList, 
-  updateNode, 
+import {
+  createNode,
+  getNodeList,
+  updateNode,
   deleteNode,
+  batchDeleteNode,
   getNodeInstallCommand
 } from "@/api";
 
@@ -86,7 +102,16 @@ export default function NodePage() {
     socks: 0
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
+  // 批量操作状态
+  const [isBatchMode, setIsBatchMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [batchDeleteModalOpen, setBatchDeleteModalOpen] = useState(false);
+  const [batchDeleteLoading, setBatchDeleteLoading] = useState(false);
+
+  // 拖拽排序状态
+  const [nodeOrder, setNodeOrder] = useState<number[]>([]);
+
   // 安装命令相关状态
   const [installCommandModal, setInstallCommandModal] = useState(false);
   const [installCommand, setInstallCommand] = useState('');
@@ -112,12 +137,24 @@ export default function NodePage() {
     try {
       const res = await getNodeList();
       if (res.code === 0) {
-        setNodeList(res.data.map((node: any) => ({
+        const nodes = res.data.map((node: any) => ({
           ...node,
           connectionStatus: node.status === 1 ? 'online' : 'offline',
           systemInfo: null,
           copyLoading: false
-        })));
+        }));
+        setNodeList(nodes);
+        const saved = localStorage.getItem('node-order');
+        if (saved) {
+          try {
+            const savedIds: number[] = JSON.parse(saved);
+            const validIds = savedIds.filter((id: number) => nodes.some((n: Node) => n.id === id));
+            const missing = nodes.map((n: Node) => n.id).filter((id: number) => !validIds.includes(id));
+            setNodeOrder([...validIds, ...missing]);
+          } catch { setNodeOrder(nodes.map((n: Node) => n.id)); }
+        } else {
+          setNodeOrder(nodes.map((n: Node) => n.id));
+        }
       } else {
         toast.error(res.msg || '加载节点列表失败');
       }
@@ -126,6 +163,56 @@ export default function NodePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // 批量操作
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+  const enterBatchMode = () => { setIsBatchMode(true); setSelectedIds(new Set()); };
+  const exitBatchMode = () => { setIsBatchMode(false); setSelectedIds(new Set()); };
+  const handleSelectAll = () => {
+    if (selectedIds.size === nodeList.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(nodeList.map(n => n.id)));
+    }
+  };
+  const toggleSelect = (id: number) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+  const handleBatchDelete = async () => {
+    if (selectedIds.size === 0) return;
+    setBatchDeleteLoading(true);
+    try {
+      const res = await batchDeleteNode(Array.from(selectedIds));
+      if (res.code === 0) {
+        toast.success('批量删除成功');
+        setBatchDeleteModalOpen(false);
+        exitBatchMode();
+        loadNodes();
+      } else {
+        toast.error(res.msg || '批量删除失败');
+      }
+    } catch {
+      toast.error('批量删除失败');
+    } finally {
+      setBatchDeleteLoading(false);
+    }
+  };
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setNodeOrder(prev => {
+      const oldIndex = prev.indexOf(Number(active.id));
+      const newIndex = prev.indexOf(Number(over.id));
+      if (oldIndex === -1 || newIndex === -1) return prev;
+      const newOrder = arrayMove(prev, oldIndex, newIndex);
+      try { localStorage.setItem('node-order', JSON.stringify(newOrder)); } catch {}
+      return newOrder;
+    });
   };
 
   // 初始化WebSocket连接
@@ -611,17 +698,47 @@ export default function NodePage() {
       <div className="px-3 lg:px-6 py-8">
         {/* 页面头部 */}
         <div className="flex items-center justify-between mb-6">
-        <div className="flex-1">
-        </div>
-
-        <Button
-              size="sm"
-              className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg"
-              onPress={handleAdd}
-            >
-              新增
-            </Button>
-     
+          {isBatchMode ? (
+            <>
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={nodeList.length > 0 && selectedIds.size === nodeList.length}
+                    ref={el => { if (el) el.indeterminate = selectedIds.size > 0 && selectedIds.size < nodeList.length; }}
+                    onChange={handleSelectAll}
+                    className="w-4 h-4 accent-[#c96442] cursor-pointer"
+                  />
+                  <span className="text-sm text-[#6b6560] dark:text-[#8a8480]">
+                    {selectedIds.size > 0 ? `已选 ${selectedIds.size} 项` : '全选'}
+                  </span>
+                </label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button size="sm" color="danger" variant="flat" isDisabled={selectedIds.size === 0}
+                  onPress={() => setBatchDeleteModalOpen(true)} className="font-medium">
+                  删除 ({selectedIds.size})
+                </Button>
+                <Button size="sm" variant="light" className="text-[#6b6560]" onPress={exitBatchMode}>
+                  取消
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex-1" />
+              <div className="flex items-center gap-2">
+                {nodeList.length > 0 && (
+                  <Button size="sm" variant="flat" className="text-[#6b6560] dark:text-[#8a8480]" onPress={enterBatchMode}>
+                    批量操作
+                  </Button>
+                )}
+                <Button size="sm" className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg" onPress={handleAdd}>
+                  新增
+                </Button>
+              </div>
+            </>
+          )}
         </div>
 
         {/* 节点列表 */}
@@ -649,25 +766,42 @@ export default function NodePage() {
             </CardBody>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-            {nodeList.map((node) => (
-              <Card 
-                key={node.id} 
-                className="shadow-sm border border-divider hover:shadow-md transition-shadow duration-200"
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={nodeOrder} strategy={rectSortingStrategy}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            {(nodeOrder.length > 0 ? nodeOrder.map(id => nodeList.find(n => n.id === id)).filter((n): n is Node => n !== undefined) : nodeList).map((node) => {
+              const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: node.id });
+              const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+              return (
+              <div key={node!.id} ref={setNodeRef} style={style} {...attributes}>
+              <Card
+                className={`group shadow-sm border border-divider hover:shadow-md transition-shadow duration-200${isBatchMode && selectedIds.has(node.id) ? ' ring-2 ring-danger' : ''}`}
+                onClick={isBatchMode ? () => toggleSelect(node.id) : undefined}
+                style={{ cursor: isBatchMode ? 'pointer' : 'default' }}
               >
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start w-full">
+                    {isBatchMode && (
+                      <input type="checkbox" className="mr-2 mt-0.5 flex-shrink-0 w-4 h-4 accent-[#c96442]"
+                        checked={selectedIds.has(node.id)} onChange={() => toggleSelect(node.id)}
+                        onClick={e => e.stopPropagation()} />
+                    )}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-foreground truncate text-sm">{node.name}</h3>
+                      <h3 className="font-semibold text-foreground truncate text-sm">{node!.name}</h3>
                     </div>
                     <div className="flex items-center gap-1.5 ml-2">
-                      <Chip 
-                        color={node.connectionStatus === 'online' ? 'success' : 'danger'} 
-                        variant="flat" 
+                      {!isBatchMode && (
+                        <div className="cursor-grab active:cursor-grabbing p-1 text-default-400 hover:text-default-600 opacity-0 group-hover:opacity-100 transition-opacity touch-manipulation" {...listeners}>
+                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>
+                        </div>
+                      )}
+                      <Chip
+                        color={node!.connectionStatus === 'online' ? 'success' : 'danger'}
+                        variant="flat"
                         size="sm"
                         className="text-xs"
                       >
-                        {node.connectionStatus === 'online' ? '在线' : '离线'}
+                        {node!.connectionStatus === 'online' ? '在线' : '离线'}
                       </Chip>
                     </div>
                   </div>
@@ -808,21 +942,27 @@ export default function NodePage() {
                       >
                         编辑
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="flat"
-                        color="danger"
-                        onPress={() => handleDelete(node)}
-                        className="flex-1 min-h-8"
-                      >
-                        删除
-                      </Button>
+                      {!isBatchMode && (
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          color="danger"
+                          onPress={() => handleDelete(node)}
+                          className="flex-1 min-h-8"
+                        >
+                          删除
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </CardBody>
               </Card>
-            ))}
-          </div>
+              </div>
+              );
+            })}
+              </div>
+            </SortableContext>
+          </DndContext>
         )}
 
         {/* 新增/编辑节点对话框 */}
@@ -1056,6 +1196,27 @@ export default function NodePage() {
                     isLoading={deleteLoading}
                   >
                     {deleteLoading ? '删除中...' : '确认删除'}
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+
+        {/* 批量删除确认模态框 */}
+        <Modal isOpen={batchDeleteModalOpen} onOpenChange={setBatchDeleteModalOpen} size="sm" backdrop="blur" placement="center">
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="border-b border-[#e5e0d8] dark:border-[#2d2824] pb-4 text-[15px] font-semibold text-[#791F1F] dark:text-[#f7a0a0]">批量删除确认</ModalHeader>
+                <ModalBody className="py-4">
+                  <p className="text-[#6b6560] dark:text-[#8a8480]">确定要删除选中的 <span className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">{selectedIds.size}</span> 个节点吗？</p>
+                  <p className="text-xs text-default-400">此操作不可恢复，关联的隧道也会一并删除。</p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button variant="light" onPress={onClose}>取消</Button>
+                  <Button color="danger" onPress={handleBatchDelete} isLoading={batchDeleteLoading}>
+                    {batchDeleteLoading ? '删除中...' : `确认删除 ${selectedIds.size} 个`}
                   </Button>
                 </ModalFooter>
               </>

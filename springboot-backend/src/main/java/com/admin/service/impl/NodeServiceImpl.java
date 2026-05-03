@@ -116,6 +116,13 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, Node> implements No
         return R.ok();
     }
 
+    @Override
+    public R batchDeleteNodes(List<Long> ids) {
+        for (Long id : ids) {
+            deleteNode(id);
+        }
+        return R.ok("批量删除成功");
+    }
 
     @Override
     public R getInstallCommand(Long id) {
