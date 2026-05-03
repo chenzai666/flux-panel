@@ -714,7 +714,7 @@ export default function TunnelPage() {
                     </>
                   )}
 
-                  <Alert color="primary" variant="flat" title="TCP,UDP监听地址"
+                  <Alert color="default" variant="flat" title="TCP,UDP监听地址"
                     description="V6或者双栈填写[::],V4填写0.0.0.0。不懂的就去看文档网站内的说明" className="mt-4" />
                   <Alert color="primary" variant="flat" title="出口网卡名或IP"
                     description="用于多IP服务器指定使用那个IP和出口服务器通讯，不懂的默认为空就行" className="mt-4" />
@@ -793,7 +793,7 @@ export default function TunnelPage() {
                 {currentDiagnosisTunnel && (
                   <div className="flex items-center gap-2">
                     <span className="text-small text-[#9b9590] dark:text-[#5d5854]">{currentDiagnosisTunnel.name}</span>
-                    <Chip color={currentDiagnosisTunnel.type === 1 ? 'primary' : 'secondary'} variant="flat" size="sm">
+                    <Chip color="default" variant="flat" size="sm" classNames={{base: "bg-[#EDE5D8] border border-[#C8B89A]", content: "text-[#5C4535]"}}>
                       {currentDiagnosisTunnel.type === 1 ? '端口转发' : '隧道转发'}
                     </Chip>
                   </div>
