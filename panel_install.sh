@@ -7,9 +7,9 @@ export LC_ALL=C
 
 
 
-# 全局下载地址配置（latest release 自动指向最新版，发版后无需手动更新脚本）
-DOCKER_COMPOSEV4_URL="https://github.com/chenzai666/flux-panel/releases/latest/download/docker-compose-v4.yml"
-DOCKER_COMPOSEV6_URL="https://github.com/chenzai666/flux-panel/releases/latest/download/docker-compose-v6.yml"
+BETA_VERSION="2.0.9-beta"
+DOCKER_COMPOSEV4_URL="https://github.com/chenzai666/flux-panel/releases/download/${BETA_VERSION}/docker-compose-v4.yml"
+DOCKER_COMPOSEV6_URL="https://github.com/chenzai666/flux-panel/releases/download/${BETA_VERSION}/docker-compose-v6.yml"
 
 COUNTRY=$(curl -s https://ipinfo.io/country)
 if [ "$COUNTRY" = "CN" ]; then
