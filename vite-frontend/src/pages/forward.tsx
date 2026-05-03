@@ -523,6 +523,10 @@ export default function ForwardPage() {
   const toggleSelect = (id: number) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   };
+  const selectAll = () => {
+    const allIds = getSortedForwards().map(f => f.id).filter((id): id is number => id != null);
+    setSelectedIds(allIds);
+  };
   const confirmBatchDelete = async () => {
     if (selectedIds.length === 0) return;
     setBatchDeleteLoading(true);
@@ -1431,6 +1435,9 @@ export default function ForwardPage() {
             {isBatchMode ? (
               <>
                 <span className="text-sm text-default-500">已选 {selectedIds.length} 项</span>
+                <Button size="sm" variant="flat" className="text-[#6b5a4e] dark:text-[#b5a99a]" onPress={selectAll}>
+                  全选
+                </Button>
                 <Button size="sm" variant="flat" color="danger" onPress={() => setBatchDeleteModalOpen(true)} isDisabled={selectedIds.length === 0}>
                   删除所选
                 </Button>
