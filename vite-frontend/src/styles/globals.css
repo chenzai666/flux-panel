@@ -119,6 +119,11 @@
   color: var(--color-danger-text);
   border: 0.5px solid var(--color-danger-border);
 }
+.badge-status-default {
+  background: #EDE5D8;
+  color: #5C4535;
+  border: 0.5px solid #C8B89A;
+}
 .badge-status-info {
   background: var(--color-info-bg);
   color: var(--color-info-text);
