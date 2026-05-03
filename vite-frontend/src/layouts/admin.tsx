@@ -243,7 +243,7 @@ export default function AdminLayout({
   );
 
   return (
-    <div className={`flex ${isMobile ? 'min-h-screen' : 'h-screen'} bg-[#f3f0eb] dark:bg-[#1a1614]`}>
+    <div className={`flex ${isMobile ? 'min-h-screen' : 'h-screen'} bg-[#F5F0E8] dark:bg-[#1a1614]`}>
       {/* 移动端遮罩层 */}
       {isMobile && mobileMenuVisible && (
         <div
@@ -257,7 +257,7 @@ export default function AdminLayout({
         ${isMobile ? 'fixed' : 'relative'}
         ${isMobile && !mobileMenuVisible ? '-translate-x-full' : 'translate-x-0'}
         ${isMobile ? 'w-[260px]' : 'w-[220px]'}
-        bg-[#E8E6DC] dark:bg-[#231e1b]
+        bg-[#F5F0E8] dark:bg-[#231e1b]
         border-r border-[#ebe7e1] dark:border-[#2d2824]
         z-50
         transition-transform duration-300 ease-in-out
@@ -267,8 +267,8 @@ export default function AdminLayout({
       `}>
         {/* Logo */}
         <div className="px-4 py-5 border-b border-[#ebe7e1] dark:border-[#2d2824] flex items-center gap-2.5">
-          <div className="w-[28px] h-[28px] rounded-lg bg-[#1a1a1a] dark:bg-[#e8e2da] flex items-center justify-center flex-shrink-0">
-            <Logo size={14} className="text-white dark:text-[#1a1a1a]" />
+          <div className="w-[28px] h-[28px] rounded-lg bg-[#D97757] dark:bg-[#D97757] flex items-center justify-center flex-shrink-0">
+            <Logo size={14} className="text-white dark:text-white" />
           </div>
           <div className="min-w-0">
             <div className="text-[15px] font-medium text-[#1a1a1a] dark:text-[#e8e2da] leading-tight truncate tracking-[-0.01em]">{siteConfig.name}</div>
@@ -329,8 +329,8 @@ export default function AdminLayout({
         <div className="border-t border-[#ebe7e1] dark:border-[#2d2824] p-2.5">
           <Dropdown placement="top-start">
             <DropdownTrigger>
-              <button className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors text-left">
-                <div className="w-[28px] h-[28px] rounded-lg bg-[#f3f0eb] dark:bg-[#2d2824] border border-[#e5e0d8] dark:border-[#3d3834] flex items-center justify-center text-[12px] font-medium text-[#1a1a1a] dark:text-[#e8e2da] flex-shrink-0">
+              <button className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#F5EEE4] dark:hover:bg-[#2d2824] transition-colors text-left">
+                <div className="w-[28px] h-[28px] rounded-lg bg-[#F5F0E8] dark:bg-[#2d2824] border border-[#e5e0d8] dark:border-[#3d3834] flex items-center justify-center text-[12px] font-medium text-[#1a1a1a] dark:text-[#e8e2da] flex-shrink-0">
                   {username.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -375,11 +375,11 @@ export default function AdminLayout({
       {/* 主内容区域 */}
       <div className={`flex flex-col flex-1 ${isMobile ? 'min-h-0' : 'h-full overflow-hidden'}`}>
         {/* 顶部导航栏 */}
-        <header className="bg-[#E8E6DC] dark:bg-[#231e1b] border-b border-[#ebe7e1] dark:border-[#2d2824] h-[54px] flex items-center px-6 gap-3 flex-shrink-0 relative z-10">
+        <header className="bg-[#F5F0E8] dark:bg-[#231e1b] border-b border-[#ebe7e1] dark:border-[#2d2824] h-[54px] flex items-center px-6 gap-3 flex-shrink-0 relative z-10">
           {isMobile && (
             <button
               onClick={toggleMobileMenu}
-              className="p-1.5 rounded-lg text-[#6b6560] dark:text-[#8a8480] hover:bg-[#f3f0eb] dark:hover:bg-[#2d2824] transition-colors"
+              className="p-1.5 rounded-lg text-[#6b6560] dark:text-[#8a8480] hover:bg-[#F5EEE4] dark:hover:bg-[#2d2824] transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -392,7 +392,7 @@ export default function AdminLayout({
         </header>
 
         {/* 主内容 */}
-        <main className={`flex-1 bg-[#f3f0eb] dark:bg-[#1a1614] ${isMobile ? '' : 'overflow-y-auto'}`}>
+        <main className={`flex-1 bg-[#F5F0E8] dark:bg-[#1a1614] ${isMobile ? '' : 'overflow-y-auto'}`}>
           {children}
         </main>
       </div>
