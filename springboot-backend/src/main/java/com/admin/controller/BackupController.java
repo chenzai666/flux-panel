@@ -83,15 +83,15 @@ public class BackupController extends BaseController {
     }
 
     private void clearAllData() {
-        forwardPortService.remove(new QueryWrapper<>().gt("id", 0));
-        forwardService.remove(new QueryWrapper<>().gt("id", 0));
-        chainTunnelService.remove(new QueryWrapper<>().gt("id", 0));
-        speedLimitService.remove(new QueryWrapper<>().gt("id", 0));
-        userTunnelService.remove(new QueryWrapper<>().gt("id", 0));
-        tunnelService.remove(new QueryWrapper<>().gt("id", 0));
+        forwardPortService.remove(new QueryWrapper<ForwardPort>().gt("id", 0));
+        forwardService.remove(new QueryWrapper<Forward>().gt("id", 0));
+        chainTunnelService.remove(new QueryWrapper<ChainTunnel>().gt("id", 0));
+        speedLimitService.remove(new QueryWrapper<SpeedLimit>().gt("id", 0));
+        userTunnelService.remove(new QueryWrapper<UserTunnel>().gt("id", 0));
+        tunnelService.remove(new QueryWrapper<Tunnel>().gt("id", 0));
         // Skip admin users (roleId=0) to prevent lockout
         userService.remove(new QueryWrapper<User>().ne("role_id", 0));
-        nodeService.remove(new QueryWrapper<>().gt("id", 0));
+        nodeService.remove(new QueryWrapper<Node>().gt("id", 0));
     }
 
     private R importBetaFormat(JSONObject data) {
