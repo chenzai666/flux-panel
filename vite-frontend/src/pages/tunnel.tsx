@@ -144,7 +144,7 @@ function SortableTunnelCard({
     return n ? n.name : `节点${id}`;
   };
 
-  const statusCls = tunnel.status === 1 ? 'badge-status-success' : 'badge-status-info';
+  const statusCls = tunnel.status === 1 ? 'badge-status-success' : 'badge-status-default';
   const statusText = tunnel.status === 1 ? '启用' : '禁用';
   const typeText = tunnel.type === 1 ? '端口转发' : '隧道转发';
   const flowText = tunnel.flow === 1 ? '单向' : '双向';
@@ -174,7 +174,7 @@ function SortableTunnelCard({
                 <h3 className="font-semibold text-[#1a1a1a] dark:text-[#e8e2da] truncate text-sm">{tunnel.name}</h3>
               </div>
               <div className="flex items-center gap-1.5 mt-1">
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border badge-status-info">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border badge-status-default">
                   {typeText}
                 </span>
                 <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border ${statusCls}`}>
