@@ -394,9 +394,9 @@ export default function ForwardPage() {
     
     // 排序：先按用户名，再按隧道名
     const result = Array.from(userMap.values());
-    result.sort((a, b) => a.userName.localeCompare(b.userName));
+    result.sort((a, b) => (a.userName ?? '').localeCompare(b.userName ?? ''));
     result.forEach(userGroup => {
-      userGroup.tunnelGroups.sort((a, b) => a.tunnelName.localeCompare(b.tunnelName));
+      userGroup.tunnelGroups.sort((a, b) => (a.tunnelName ?? '').localeCompare(b.tunnelName ?? ''));
     });
     
     return result;
