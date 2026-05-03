@@ -257,7 +257,7 @@ export default function AdminLayout({
         ${isMobile ? 'fixed' : 'relative'}
         ${isMobile && !mobileMenuVisible ? '-translate-x-full' : 'translate-x-0'}
         ${isMobile ? 'w-[260px]' : 'w-[220px]'}
-        bg-white dark:bg-[#231e1b]
+        bg-[#E8E6DC] dark:bg-[#231e1b]
         border-r border-[#ebe7e1] dark:border-[#2d2824]
         z-50
         transition-transform duration-300 ease-in-out
@@ -375,7 +375,7 @@ export default function AdminLayout({
       {/* 主内容区域 */}
       <div className={`flex flex-col flex-1 ${isMobile ? 'min-h-0' : 'h-full overflow-hidden'}`}>
         {/* 顶部导航栏 */}
-        <header className="bg-white dark:bg-[#231e1b] border-b border-[#ebe7e1] dark:border-[#2d2824] h-[54px] flex items-center px-6 gap-3 flex-shrink-0 relative z-10">
+        <header className="bg-[#E8E6DC] dark:bg-[#231e1b] border-b border-[#ebe7e1] dark:border-[#2d2824] h-[54px] flex items-center px-6 gap-3 flex-shrink-0 relative z-10">
           {isMobile && (
             <button
               onClick={toggleMobileMenu}
