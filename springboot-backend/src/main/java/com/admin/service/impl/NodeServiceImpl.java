@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -108,10 +109,12 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, Node> implements No
             return R.err("节点不存在");
         }
 
-        List<ChainTunnel> list = chainTunnelService.list(new QueryWrapper<ChainTunnel>().eq("node_id", id).groupBy("tunnel_id"));
-        for (ChainTunnel tunnel : list) {
-            tunnelService.deleteTunnel(tunnel.getTunnelId());
-        }
+        chainTunnelService.list(new QueryWrapper<ChainTunnel>().eq("node_id", id))
+                .stream()
+                .map(ChainTunnel::getTunnelId)
+                .distinct()
+                .collect(Collectors.toList())
+                .forEach(tunnelId -> tunnelService.deleteTunnel(tunnelId));
         this.removeById(id);
         return R.ok();
     }
