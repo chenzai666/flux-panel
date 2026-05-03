@@ -1,34 +1,34 @@
-# flux-panel 转发面板 Beta 版（2.0.x）
+# flux-panel 转发面板（稳定版 1.x）
 
-> **当前分支为 beta 开发版**，包含转发链、负载均衡等新功能，使用 SQLite 数据库。  
-> 稳定版（1.x MySQL）请切换到 [main 分支](https://github.com/chenzai666/flux-panel/tree/main)。
+> **当前分支为稳定版（main）**，使用 MySQL 数据库。  
+> Beta 版（2.x SQLite，含转发链/负载均衡等新功能）请切换到 [beta 分支](https://github.com/chenzai666/flux-panel/tree/beta)。
 
 ---
 
-## 新功能（相比稳定版 1.x）
+## 功能特性
 
-- **转发链（多跳中转）**：入口节点 → 中转节点（多跳）→ 出口节点，完整的链路诊断
-- **负载均衡**：每一跳支持多个节点，策略可选 主备(fifo) / 轮询(round) / 随机(rand) / IP哈希(hash)
-- **SQLite 数据库**：无需 MySQL，部署更轻量，数据存为单文件方便迁移备份
-- **随机端口分配**：创建转发时可一键随机填入可用端口
-- **批量删除 / 强制删除**：隧道与转发均支持批量操作
-- **拖拽排序**：转发和隧道卡片支持拖拽调整顺序
-- **链路诊断**：逐跳 TCP Ping，直观展示每段链路连通状态
+- 支持按**隧道账号级别**管理流量转发数量，可用于用户/隧道配额控制
+- 支持 **TCP** 和 **UDP** 协议的转发
+- 支持**端口转发**与**隧道转发（双节点中转）**两种模式
+- 可针对**指定用户的指定隧道**进行限速设置
+- 支持配置**单向或双向流量计费**，灵活适配不同计费模型
+- **批量删除**：隧道与转发均支持批量操作
+- **链路诊断**：TCP Ping 检测节点连通状态
 
 ---
 
 ## 部署
 
-### 快速部署（beta 版）
+### 快速部署（推荐）
 
 面板端：
 ```bash
-curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
+curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/main/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
 ```
 
 节点端：
 ```bash
-curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
 ### 手动 Docker Compose 部署
@@ -36,13 +36,14 @@ curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/
 1. 下载配置文件（IPv4 / IPv6 二选一）：
    ```bash
    # IPv4
-   curl -LO https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/docker-compose-v4.yml
+   curl -LO https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/main/docker-compose-v4.yml
    # IPv6
-   curl -LO https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/docker-compose-v6.yml
+   curl -LO https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/main/docker-compose-v6.yml
    ```
 
 2. 创建 `.env` 文件：
    ```env
+   MYSQL_ROOT_PASSWORD=你的MySQL密码
    JWT_SECRET=你的密钥（至少32位随机字符串）
    BACKEND_PORT=6365
    FRONTEND_PORT=80
@@ -62,39 +63,24 @@ curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/
 
 ---
 
-## 从稳定版（1.x）升级到 Beta 版（2.x）
+## 升级到 Beta 版（2.x）
 
-> 稳定版使用 **MySQL**，Beta 版使用 **SQLite**，数据库类型不同，**无法直接原地升级**，需手动迁移数据。
+> 稳定版使用 **MySQL**，Beta 版使用 **SQLite**，数据库类型不同，**无法直接原地升级**。
 
 ### 方式一：全新部署（推荐）
 
 转发规则不多时，直接新部署 Beta 版，在面板中重新创建节点、隧道、用户和转发即可。
 
-### 方式二：通过导出/导入迁移转发规则
+### 方式二：备份导入迁移
 
-1. 在**稳定版**面板 → 转发管理 → 点击「导出」，选择对应隧道，复制导出文本  
-   （格式：`目标地址|转发名称|入口端口`，每行一个）
-
-2. 在 **Beta 版**中重新创建对应的隧道和节点
-
-3. 在 Beta 版面板 → 转发管理 → 点击「导入」，选择对应隧道，粘贴数据导入
-
-> 用户账号、节点配置需在 Beta 版中重新创建，无法从稳定版直接迁移。  
-> 隧道结构发生根本性变化（新增 chain_tunnel 表），数据库层面无法直接迁移隧道数据。
+1. 在**稳定版**面板 → 系统设置 → 点击「导出备份」，保存备份文件
+2. 新部署 Beta 版后，在面板 → 系统设置 → 点击「导入备份」，选择稳定版备份文件自动迁移
 
 ---
 
 ## 项目说明
 
 本项目基于 [go-gost/gost](https://github.com/go-gost/gost) 和 [go-gost/x](https://github.com/go-gost/x) 两个开源库，实现了转发面板。
-
-### 特性
-
-- 支持按**隧道账号级别**管理流量转发数量，可用于用户/隧道配额控制
-- 支持 **TCP** 和 **UDP** 协议的转发
-- 支持**端口转发**与**隧道转发（多跳链路）**两种模式
-- 可针对**指定用户的指定隧道**进行限速设置
-- 支持配置**单向或双向流量计费**，灵活适配不同计费模型
 
 ---
 
