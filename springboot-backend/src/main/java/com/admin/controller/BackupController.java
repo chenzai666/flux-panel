@@ -90,7 +90,7 @@ public class BackupController extends BaseController {
         userTunnelService.remove(new QueryWrapper<UserTunnel>().gt("id", 0));
         tunnelService.remove(new QueryWrapper<Tunnel>().gt("id", 0));
         // Skip admin users (roleId=0) to prevent lockout
-        userService.remove(new QueryWrapper<User>().ne("role_id", 0));
+        userService.remove(new QueryWrapper<User>().gt("id", 0).ne("role_id", 0));
         nodeService.remove(new QueryWrapper<Node>().gt("id", 0));
     }
 
