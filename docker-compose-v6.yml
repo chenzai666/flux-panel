@@ -30,6 +30,8 @@ services:
       DB_URL: jdbc:mysql://flux-mysql:3306/${DB_NAME}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
       DB_USERNAME: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
       DB_INIT_MODE: always
       # --- SQLite 模式（备用）---
       # 删除上面所有 DB_* 变量，取消注释下面一行，并删除 depends_on mysql 条件
