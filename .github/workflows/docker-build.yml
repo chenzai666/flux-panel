@@ -208,6 +208,7 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             --push \
+            --build-arg APP_VERSION=${VERSION} \
             -t bats666/springboot-backend:latest \
             -t bats666/springboot-backend:${VERSION} \
             ./springboot-backend
