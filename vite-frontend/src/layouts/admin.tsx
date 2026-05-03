@@ -289,12 +289,12 @@ export default function AdminLayout({
                   onClick={() => handleMenuClick(item.path)}
                   className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-left transition-all duration-100 mb-[1px]
                     ${isActive
-                      ? 'bg-[#f3f0eb] dark:bg-[#2d2824] text-[#1a1a1a] dark:text-[#e8e2da] font-medium'
-                      : 'text-[#6b6560] dark:text-[#8a8480] hover:bg-[#f9f8f6] dark:hover:bg-[#2d2824]/60 hover:text-[#1a1a1a] dark:hover:text-[#e8e2da]'
+                      ? 'bg-[#F0DFCC] dark:bg-[#c96442]/15 text-[#1a1a1a] dark:text-[#e8e2da] font-medium'
+                      : 'text-[#6b6560] dark:text-[#8a8480] hover:bg-[#F5EEE4] dark:hover:bg-[#2d2824] hover:text-[#1a1a1a] dark:hover:text-[#e8e2da]'
                     }`}
                 >
                   <div className="w-4 h-4 flex-shrink-0 opacity-70">{item.icon}</div>
-                  <span className="text-[13.5px]">{item.label}</span>
+                  <span className="text-sm">{item.label}</span>
                 </button>
               );
             })}
@@ -312,12 +312,12 @@ export default function AdminLayout({
                     onClick={() => handleMenuClick(item.path)}
                     className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-left transition-all duration-100 mb-[1px]
                       ${isActive
-                        ? 'bg-[#f3f0eb] dark:bg-[#2d2824] text-[#1a1a1a] dark:text-[#e8e2da] font-medium'
-                        : 'text-[#6b6560] dark:text-[#8a8480] hover:bg-[#f9f8f6] dark:hover:bg-[#2d2824]/60 hover:text-[#1a1a1a] dark:hover:text-[#e8e2da]'
+                        ? 'bg-[#F0DFCC] dark:bg-[#c96442]/15 text-[#1a1a1a] dark:text-[#e8e2da] font-medium'
+                        : 'text-[#6b6560] dark:text-[#8a8480] hover:bg-[#F5EEE4] dark:hover:bg-[#2d2824] hover:text-[#1a1a1a] dark:hover:text-[#e8e2da]'
                       }`}
                   >
                     <div className="w-4 h-4 flex-shrink-0 opacity-70">{item.icon}</div>
-                    <span className="text-[13.5px]">{item.label}</span>
+                    <span className="text-sm">{item.label}</span>
                   </button>
                 );
               })}
