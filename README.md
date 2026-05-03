@@ -65,7 +65,7 @@ curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/main/
 
 ## Beta 版部署（2.x）
 
-> Beta 版使用 **SQLite**，无需 MySQL，含转发链、负载均衡等新功能。  
+> Beta 版同样使用 **MySQL**，新增转发链、负载均衡等功能，也支持切换 SQLite。  
 > 详见 [beta 分支](https://github.com/chenzai666/flux-panel/tree/beta)。
 
 ### 快速部署
@@ -92,6 +92,7 @@ curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/beta/
 
 2. 创建 `.env` 文件：
    ```env
+   MYSQL_ROOT_PASSWORD=你的MySQL密码
    JWT_SECRET=你的密钥（至少32位随机字符串）
    BACKEND_PORT=6365
    FRONTEND_PORT=80
