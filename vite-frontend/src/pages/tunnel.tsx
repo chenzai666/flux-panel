@@ -790,7 +790,7 @@ export default function TunnelPage() {
                     {isEdit ? '编辑隧道' : '新增隧道'}
                   </div>
                   {isEdit && (
-                    <div className="text-xs text-[#9b9590] dark:text-[#5d5854] mt-0.5">编辑时只能修改隧道名称、流量计算和流量倍率</div>
+                    <div className="text-xs text-[#9b9590] dark:text-[#5d5854] mt-0.5">编辑节点配置时，若存在转发将无法修改节点</div>
                   )}
                 </div>
               </ModalHeader>
@@ -881,7 +881,7 @@ export default function TunnelPage() {
                           setForm(prev => ({ ...prev, inNodeId: newInNodeId }));
                         }}
                         isInvalid={!!errors.inNodeId} errorMessage={errors.inNodeId}
-                        variant="bordered" isDisabled={isEdit}
+                        variant="bordered"
                       >
                         {nodes.map(node => (
                           <SelectItem key={node.id} textValue={node.name}>
@@ -925,7 +925,6 @@ export default function TunnelPage() {
                                 ]
                               }));
                             }}
-                            isDisabled={isEdit}
                             startContent={
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -949,7 +948,6 @@ export default function TunnelPage() {
                                     <Button
                                       size="sm" color="danger" variant="light" isIconOnly
                                       onPress={() => removeChainNode(groupIndex)}
-                                      isDisabled={isEdit}
                                     >
                                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -982,7 +980,7 @@ export default function TunnelPage() {
                                           addedIds.forEach(nodeId => addNodeToChain(groupIndex, nodeId));
                                           removedIds.forEach(nodeId => removeNodeFromChain(groupIndex, nodeId));
                                         }}
-                                        variant="bordered" size="sm" isDisabled={isEdit}
+                                        variant="bordered" size="sm"
                                       >
                                         {nodes.map(node => (
                                           <SelectItem key={node.id} textValue={node.name}>
@@ -1018,7 +1016,7 @@ export default function TunnelPage() {
                                         const k = Array.from(keys)[0] as string;
                                         if (k) updateChainProtocol(groupIndex, k);
                                       }}
-                                      variant="bordered" size="sm" isDisabled={isEdit}
+                                      variant="bordered" size="sm"
                                     >
                                       <SelectItem key="tls">TLS</SelectItem>
                                       <SelectItem key="wss">WSS</SelectItem>
@@ -1036,7 +1034,7 @@ export default function TunnelPage() {
                                         const k = Array.from(keys)[0] as string;
                                         if (k) updateChainStrategy(groupIndex, k);
                                       }}
-                                      variant="bordered" size="sm" isDisabled={isEdit}
+                                      variant="bordered" size="sm"
                                     >
                                       <SelectItem key="fifo">主备</SelectItem>
                                       <SelectItem key="round">轮询</SelectItem>
@@ -1092,7 +1090,7 @@ export default function TunnelPage() {
                                   setForm(prev => ({ ...prev, outNodeId: newOutNodeId }));
                                 }}
                                 isInvalid={!!errors.outNodeId} errorMessage={errors.outNodeId}
-                                variant="bordered" isDisabled={isEdit}
+                                variant="bordered"
                               >
                                 {nodes.map(node => (
                                   <SelectItem key={node.id} textValue={node.name}>
@@ -1135,7 +1133,7 @@ export default function TunnelPage() {
                                   });
                                 }
                               }}
-                              variant="bordered" isDisabled={isEdit}
+                              variant="bordered"
                             >
                               <SelectItem key="tls">TLS</SelectItem>
                               <SelectItem key="wss">WSS</SelectItem>
@@ -1165,7 +1163,7 @@ export default function TunnelPage() {
                                   });
                                 }
                               }}
-                              variant="bordered" isDisabled={isEdit}
+                              variant="bordered"
                             >
                               <SelectItem key="fifo">主备</SelectItem>
                               <SelectItem key="round">轮询</SelectItem>

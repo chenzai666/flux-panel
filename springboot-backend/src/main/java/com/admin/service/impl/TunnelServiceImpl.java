@@ -319,22 +319,118 @@ public class TunnelServiceImpl extends ServiceImpl<TunnelMapper, Tunnel> impleme
 
 
     @Override
-    public R updateTunnel(TunnelUpdateDto tunnelUpdateDto) {
-        Tunnel existingTunnel = this.getById(tunnelUpdateDto.getId());
+    public R updateTunnel(TunnelUpdateDto dto) {
+        Tunnel existingTunnel = this.getById(dto.getId());
         if (existingTunnel == null) return R.err("隧道不存在");
-        Tunnel tunnel = new Tunnel();
-        tunnel.setId(tunnelUpdateDto.getId());
-        tunnel.setName(tunnelUpdateDto.getName());
-        tunnel.setFlow(tunnelUpdateDto.getFlow());
-        tunnel.setTrafficRatio(tunnelUpdateDto.getTrafficRatio());
-        tunnel.setInIp(tunnelUpdateDto.getInIp());
 
-        if (StringUtils.isEmpty(tunnel.getInIp())){
+        boolean hasTopology = dto.getInNodeId() != null && !dto.getInNodeId().isEmpty();
+
+        if (hasTopology) {
+            // 有转发时拒绝修改节点配置
+            long forwardCount = forwardService.count(new QueryWrapper<Forward>().eq("tunnel_id", dto.getId()));
+            if (forwardCount > 0) {
+                return R.err("该隧道存在 " + forwardCount + " 个转发，请先删除所有转发后再修改节点配置");
+            }
+
+            List<ChainTunnel> newInNodes = dto.getInNodeId();
+            List<ChainTunnel> newOutNodes = dto.getOutNodeId() == null ? new ArrayList<>() : dto.getOutNodeId();
+            List<List<ChainTunnel>> newChainNodes = dto.getChainNodes() == null ? new ArrayList<>() : dto.getChainNodes();
+
+            // 校验节点不重复且全部存在且在线
+            List<Long> nodeIds = new ArrayList<>();
+            for (ChainTunnel ct : newInNodes) nodeIds.add(ct.getNodeId());
+            for (ChainTunnel ct : newOutNodes) nodeIds.add(ct.getNodeId());
+            for (List<ChainTunnel> group : newChainNodes)
+                for (ChainTunnel ct : group) nodeIds.add(ct.getNodeId());
+            if (new HashSet<>(nodeIds).size() != nodeIds.size()) return R.err("节点重复");
+            List<Node> nodeList = nodeService.list(new QueryWrapper<Node>().in("id", nodeIds));
+            if (nodeList.size() != nodeIds.size()) return R.err("部分节点不存在");
+            for (Node n : nodeList) if (n.getStatus() != 1) return R.err("部分节点不在线");
+            Map<Long, Node> nodes = nodeList.stream().collect(Collectors.toMap(Node::getId, n -> n));
+
+            // 拆除旧 gost 配置（type=2 隧道转发）
+            if (existingTunnel.getType() == 2) {
+                List<ChainTunnel> oldChains = chainTunnelService.list(
+                        new QueryWrapper<ChainTunnel>().eq("tunnel_id", dto.getId()));
+                for (ChainTunnel ct : oldChains) {
+                    if (ct.getChainType() == 1) {
+                        GostUtil.DeleteChains(ct.getNodeId(), "chains_" + dto.getId());
+                    } else if (ct.getChainType() == 2) {
+                        GostUtil.DeleteChains(ct.getNodeId(), "chains_" + dto.getId());
+                        JSONArray s = new JSONArray(); s.add(dto.getId() + "_tls");
+                        GostUtil.DeleteService(ct.getNodeId(), s);
+                    } else {
+                        JSONArray s = new JSONArray(); s.add(dto.getId() + "_tls");
+                        GostUtil.DeleteService(ct.getNodeId(), s);
+                    }
+                }
+            }
+
+            // 删除旧 ChainTunnel 记录，写入新记录
+            chainTunnelService.remove(new QueryWrapper<ChainTunnel>().eq("tunnel_id", dto.getId()));
+
+            List<ChainTunnel> toSave = new ArrayList<>(newInNodes);
+            int inx = 1;
+            for (List<ChainTunnel> group : newChainNodes) {
+                for (ChainTunnel ct : group) {
+                    ct.setPort(getNodePort(ct.getNodeId()));
+                    ct.setInx(inx);
+                    toSave.add(ct);
+                }
+                inx++;
+            }
+            for (ChainTunnel ct : newOutNodes) {
+                ct.setPort(getNodePort(ct.getNodeId()));
+                toSave.add(ct);
+            }
+            for (ChainTunnel ct : toSave) ct.setTunnelId(dto.getId());
+            chainTunnelService.saveBatch(toSave);
+
+            // 重建 gost 配置（type=2）
+            if (existingTunnel.getType() == 2) {
+                for (ChainTunnel in : newInNodes) {
+                    GostDto r = newChainNodes.isEmpty()
+                            ? GostUtil.AddChains(in.getNodeId(), newOutNodes, nodes)
+                            : GostUtil.AddChains(in.getNodeId(), newChainNodes.get(0), nodes);
+                    if (!Objects.equals(r.getMsg(), "OK")) return R.err(r.getMsg());
+                }
+                for (int i = 0; i < newChainNodes.size(); i++) {
+                    for (ChainTunnel ct : newChainNodes.get(i)) {
+                        GostDto r = (i + 1 >= newChainNodes.size())
+                                ? GostUtil.AddChains(ct.getNodeId(), newOutNodes, nodes)
+                                : GostUtil.AddChains(ct.getNodeId(), newChainNodes.get(i + 1), nodes);
+                        if (!Objects.equals(r.getMsg(), "OK")) return R.err(r.getMsg());
+                        GostDto rs = GostUtil.AddChainService(ct.getNodeId(), ct, nodes);
+                        if (!Objects.equals(rs.getMsg(), "OK")) return R.err(rs.getMsg());
+                    }
+                }
+                for (ChainTunnel out : newOutNodes) {
+                    GostDto r = GostUtil.AddChainService(out.getNodeId(), out, nodes);
+                    if (!Objects.equals(r.getMsg(), "OK")) return R.err(r.getMsg());
+                }
+            }
+
+            // 重算 inIp
+            StringBuilder inIp = new StringBuilder();
+            for (ChainTunnel ct : newInNodes) inIp.append(nodes.get(ct.getNodeId()).getServerIp()).append(",");
+            inIp.deleteCharAt(inIp.length() - 1);
+            dto.setInIp(inIp.toString());
+        }
+
+        Tunnel tunnel = new Tunnel();
+        tunnel.setId(dto.getId());
+        tunnel.setName(dto.getName());
+        tunnel.setFlow(dto.getFlow());
+        tunnel.setTrafficRatio(dto.getTrafficRatio());
+        tunnel.setInIp(dto.getInIp());
+
+        if (!hasTopology && StringUtils.isEmpty(tunnel.getInIp())) {
             StringBuilder in_ip = new StringBuilder();
-            List<ChainTunnel> chainTunnels = chainTunnelService.list(new QueryWrapper<ChainTunnel>().eq("tunnel_id", tunnel.getId()).eq("chain_type", 1));
-            for (ChainTunnel chainTunnel : chainTunnels) {
-                Node node = nodeService.getById(chainTunnel.getNodeId());
-                if (node == null)return R.err("隧道节点数据错误，部分节点不存在");
+            List<ChainTunnel> chainTunnels = chainTunnelService.list(
+                    new QueryWrapper<ChainTunnel>().eq("tunnel_id", tunnel.getId()).eq("chain_type", 1));
+            for (ChainTunnel ct : chainTunnels) {
+                Node node = nodeService.getById(ct.getNodeId());
+                if (node == null) return R.err("隧道节点数据错误，部分节点不存在");
                 in_ip.append(node.getServerIp()).append(",");
             }
             in_ip.deleteCharAt(in_ip.length() - 1);
