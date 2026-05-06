@@ -239,22 +239,29 @@ jobs:
           mv ./artifacts/amd64/gost-amd64 ./artifacts/gost-amd64
           mv ./artifacts/arm64/gost-arm64 ./artifacts/gost-arm64
 
+      - name: Update docker-compose image versions
+        run: |
+          VERSION="${{ needs.check-version.outputs.version }}"
+          sed -i "s|bats666/springboot-backend-beta:[^ ]*|bats666/springboot-backend-beta:${VERSION}|g" ./docker-compose-v4.yml ./docker-compose-v6.yml
+          sed -i "s|bats666/vite-frontend-beta:[^ ]*|bats666/vite-frontend-beta:${VERSION}|g" ./docker-compose-v4.yml ./docker-compose-v6.yml
+          echo "docker-compose image versions updated to ${VERSION}"
+
       - name: Create Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${{ needs.check-version.outputs.version }}"
-          
+
           # 创建并推送 tag
           git push origin --delete "${VERSION}" 2>/dev/null || true
           git tag "${VERSION}" ${{ github.sha }}
           git push origin "${VERSION}"
-          
+
           # 获取 commit 信息
           COMMIT_MSG=$(git log -1 --pretty=format:"%s")
           COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
           COMMIT_DATE=$(git log -1 --pretty=format:"%ai")
-          
+
           # 创建 release
           gh release create "${VERSION}" \
             --title "Release ${VERSION}" \
