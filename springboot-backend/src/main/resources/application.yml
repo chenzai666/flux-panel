@@ -48,7 +48,7 @@ log-dir: ${LOG_DIR}
 
 node:
   installer-version: ${NODE_INSTALLER_VERSION:2.0.9-beta}
-  installer-repo: bqlpfy/flux-panel
+  installer-repo: chenzai666/flux-panel
 
 
 captcha:
