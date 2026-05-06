@@ -1,5 +1,8 @@
 #!/bin/bash
 
+RELEASE_VERSION="2.0.9-beta"
+RELEASE_REPO="chenzai666/flux-panel"
+
 # 获取系统架构
 get_architecture() {
     ARCH=$(uname -m)
@@ -19,7 +22,7 @@ get_architecture() {
 # 构建下载地址
 build_download_url() {
     local ARCH=$(get_architecture)
-    echo "https://github.com/chenzai666/flux-panel/releases/download/2.0.9-beta/gost-${ARCH}"
+    echo "https://github.com/${RELEASE_REPO}/releases/download/${RELEASE_VERSION}/gost-${ARCH}"
 }
 
 # 下载地址

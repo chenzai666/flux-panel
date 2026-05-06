@@ -7,9 +7,12 @@ export LC_ALL=C
 
 
 
-BETA_VERSION="2.0.9-beta"
-DOCKER_COMPOSEV4_URL="https://github.com/chenzai666/flux-panel/releases/download/${BETA_VERSION}/docker-compose-v4.yml"
-DOCKER_COMPOSEV6_URL="https://github.com/chenzai666/flux-panel/releases/download/${BETA_VERSION}/docker-compose-v6.yml"
+RELEASE_VERSION="2.0.9-beta"
+RELEASE_REPO="chenzai666/flux-panel"
+
+# 全局下载地址配置
+DOCKER_COMPOSEV4_URL="https://github.com/${RELEASE_REPO}/releases/download/${RELEASE_VERSION}/docker-compose-v4.yml"
+DOCKER_COMPOSEV6_URL="https://github.com/${RELEASE_REPO}/releases/download/${RELEASE_VERSION}/docker-compose-v6.yml"
 
 COUNTRY=$(curl -s https://ipinfo.io/country)
 if [ "$COUNTRY" = "CN" ]; then

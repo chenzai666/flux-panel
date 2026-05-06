@@ -46,6 +46,10 @@ mybatis-plus:
 jwt-secret: ${JWT_SECRET}
 log-dir: ${LOG_DIR}
 
+node:
+  installer-version: ${NODE_INSTALLER_VERSION:2.0.9-beta}
+  installer-repo: bqlpfy/flux-panel
+
 
 captcha:
   init-default-resource: true
