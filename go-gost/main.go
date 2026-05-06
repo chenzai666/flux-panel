@@ -99,27 +99,30 @@ func init() {
 	flag.Parse()
 
 	if printVersion {
-		fmt.Fprintf(os.Stdout, "gost %s (%s %s/%s)\n",
-			version, runtime.Version(), runtime.GOOS, runtime.GOARCH)
+		fmt.Fprintf(os.Stdout, "flux-agent %s (gost %s %s %s/%s)\n",
+			panelVersion, version, runtime.Version(), runtime.GOOS, runtime.GOARCH)
 		os.Exit(0)
 	}
 }
+
+// panelVersion is injected at build time via -ldflags "-X main.panelVersion=x.y.z"
+var panelVersion = "dev"
 
 func main() {
 	// 加载配置文件
 	config, err := LoadConfig("config.json")
 	if err != nil {
-		fmt.Println("❌ 配置加载失败: %v\n", err)
+		fmt.Printf("❌ 配置加载失败: %v\n", err)
 		fmt.Println("请确保当前目录存在 config.json 文件")
 		os.Exit(1)
 	}
 
-	fmt.Println("✅ 配置加载成功 - addr: %s", config.Addr)
+	fmt.Printf("✅ 配置加载成功 - addr: %s\n", config.Addr)
 
 	log := xlogger.NewLogger()
 	logger.SetDefault(log)
 
-	wsReporter := socket.StartWebSocketReporterWithConfig(config.Addr, config.Secret, config.Http, config.Tls, config.Socks, "2.0.2")
+	wsReporter := socket.StartWebSocketReporterWithConfig(config.Addr, config.Secret, config.Http, config.Tls, config.Socks, panelVersion)
 	defer wsReporter.Stop()
 	service.SetHTTPReportURL(config.Addr, config.Secret)
 
@@ -129,5 +132,5 @@ func main() {
 	}
 }
 
-// GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o gost
+// GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X main.panelVersion=2.0.9-beta" -o gost
 // upx --best --lzma gost
