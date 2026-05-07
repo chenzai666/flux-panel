@@ -9,7 +9,7 @@ import { isWebViewFunc } from '@/utils/panel';
 import { useNavigate } from "react-router-dom";
 
 import { Logo } from "@/components/icons";
-import { siteConfig, getCachedConfig } from "@/config/site";
+import { siteConfig, appNameReady, getCachedConfig } from "@/config/site";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -24,13 +24,20 @@ export const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    // 异步检查是否有更新的配置
+    // 直接 await 模块级 Promise，若已完成则同步回调，无延迟
+    appNameReady.then(name => {
+      if (name && name !== appName) {
+        setAppName(name);
+        siteConfig.name = name;
+      }
+    });
+
+    // 异步检查是否有更新的配置（登录后可能有新值）
     const checkForUpdates = async () => {
       try {
         const cachedAppName = await getCachedConfig('app_name');
         if (cachedAppName && cachedAppName !== appName) {
           setAppName(cachedAppName);
-          // 同步更新siteConfig
           siteConfig.name = cachedAppName;
         }
       } catch (error) {
@@ -38,7 +45,6 @@ export const Navbar = () => {
       }
     };
 
-    // 延迟执行，避免阻塞初始渲染
     const timer = setTimeout(checkForUpdates, 100);
 
     // 监听配置更新事件

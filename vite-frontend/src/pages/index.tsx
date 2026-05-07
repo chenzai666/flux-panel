@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { isWebViewFunc } from '@/utils/panel';
-import { siteConfig, getCachedConfig } from '@/config/site';
+import { siteConfig, appNameReady } from '@/config/site';
 import { Logo } from '@/components/icons';
 import { login, LoginData, checkCaptcha } from "@/api";
 import "@/utils/tac.css";
@@ -64,11 +64,11 @@ export default function IndexPage() {
   useEffect(() => {
     setIsWebView(isWebViewFunc());
   }, []);
-  // 异步加载软件名称
+  // appNameReady 在模块加载时就已开始请求，此处直接 await 同一个 Promise
   useEffect(() => {
-    getCachedConfig('app_name').then(name => {
+    appNameReady.then(name => {
       if (name) setAppName(name);
-    }).catch(() => {});
+    });
   }, []);
   // 验证表单
   const validateForm = (): boolean => {

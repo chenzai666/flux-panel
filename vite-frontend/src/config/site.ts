@@ -147,10 +147,19 @@ export const clearConfigCache = (keys?: string[]) => {
   }
 };
 
-// 在页面加载时异步更新配置（如果有更新的话）
-if (typeof window !== 'undefined') {
-  // 延迟执行，避免阻塞初始渲染
-  setTimeout(() => {
-    updateSiteConfig();
-  }, 200);
-}
+// 模块加载时立即开始获取应用名称（/config/get 是公开接口，无需登录）
+// 导出 Promise 供组件直接 await，避免重复发起请求
+export const appNameReady: Promise<string> = typeof window !== 'undefined'
+  ? (() => {
+      const cached = localStorage.getItem(CACHE_PREFIX + 'app_name');
+      if (cached) return Promise.resolve(cached);
+      return getConfigByName('app_name').then(res => {
+        const name = res?.data?.value ?? '';
+        if (name) {
+          localStorage.setItem(CACHE_PREFIX + 'app_name', name);
+          siteConfig.name = name;
+        }
+        return name;
+      }).catch(() => '');
+    })()
+  : Promise.resolve('');
