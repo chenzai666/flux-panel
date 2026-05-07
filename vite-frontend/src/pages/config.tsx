@@ -488,52 +488,15 @@ export default function ConfigPage() {
           <CardHeader className="px-5 py-4 border-b border-[#e5e0d8] dark:border-[#2d2824]">
             <div className="flex justify-between items-center w-full">
               <h2 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">基本设置</h2>
-              <div className="flex gap-2">
-                {/* 隐藏的文件选择 input */}
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  accept=".json"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-                <Button
-                  variant="flat"
-                  color="primary"
-                  startContent={
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
-                  }
-                  onPress={handleExport}
-                  isLoading={exporting}
-                >
-                  导出备份
-                </Button>
-                <Button
-                  variant="flat"
-                  color="primary"
-                  startContent={
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                  }
-                  onPress={() => fileInputRef.current?.click()}
-                  isLoading={importing}
-                >
-                  导入备份
-                </Button>
-
-<Button
-                  className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
-                  startContent={<SaveIcon className="w-4 h-4" />}
-                  onClick={handleSave}
-                  isLoading={saving}
-                  disabled={!hasChanges}
-                >
-                  {saving ? '保存中...' : '保存配置'}
-                </Button>
-              </div>
+              <Button
+                className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
+                startContent={<SaveIcon className="w-4 h-4" />}
+                onClick={handleSave}
+                isLoading={saving}
+                disabled={!hasChanges}
+              >
+                {saving ? '保存中...' : '保存配置'}
+              </Button>
             </div>
           </CardHeader>
 
@@ -585,6 +548,63 @@ export default function ConfigPage() {
             </span>
           </div>
         )}
+
+        {/* 备份管理 */}
+        <Card className="mt-5 border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
+          <CardHeader className="px-5 py-4 border-b border-[#e5e0d8] dark:border-[#2d2824]">
+            <h2 className="text-[15px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">备份管理</h2>
+          </CardHeader>
+          <CardBody className="px-5 py-5">
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept=".json"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 p-4 rounded-xl border border-[#e5e0d8] dark:border-[#2d2824] bg-[#faf8f5] dark:bg-[#2d2824]/30">
+                <p className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da] mb-1">导出备份</p>
+                <p className="text-xs text-[#9b9590] dark:text-[#5d5854] mb-3">
+                  将节点、隧道、转发、用户等所有数据导出为 JSON 文件
+                </p>
+                <Button
+                  size="sm"
+                  className="bg-[#c96442] text-white hover:bg-[#b5583a] rounded-lg font-medium"
+                  isLoading={exporting}
+                  onPress={handleExport}
+                  startContent={!exporting && (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                  )}
+                >
+                  {exporting ? '导出中...' : '导出备份'}
+                </Button>
+              </div>
+              <div className="flex-1 p-4 rounded-xl border border-[#e5e0d8] dark:border-[#2d2824] bg-[#faf8f5] dark:bg-[#2d2824]/30">
+                <p className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da] mb-1">导入备份</p>
+                <p className="text-xs text-[#9b9590] dark:text-[#5d5854] mb-3">
+                  从 JSON 文件恢复数据。<span className="text-[#c96442]">导入会追加到现有数据，请谨慎操作。</span>
+                </p>
+                <Button
+                  size="sm"
+                  variant="flat"
+                  className="text-[#c96442] bg-[#c96442]/10 hover:bg-[#c96442]/20 rounded-lg font-medium"
+                  isLoading={importing}
+                  onPress={() => fileInputRef.current?.click()}
+                  startContent={!importing && (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  )}
+                >
+                  {importing ? '导入中...' : '选择文件导入'}
+                </Button>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
 
         {/* 备份导入确认弹窗 */}
         <Modal 
