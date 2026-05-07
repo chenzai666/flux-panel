@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { isWebViewFunc } from '@/utils/panel';
-import { siteConfig } from '@/config/site';
+import { siteConfig, getCachedConfig } from '@/config/site';
 import { Logo } from '@/components/icons';
 import { login, LoginData, checkCaptcha } from "@/api";
 import "@/utils/tac.css";
@@ -50,6 +50,7 @@ export default function IndexPage() {
   const tacInstanceRef = useRef<any>(null);
   const captchaContainerRef = useRef<HTMLDivElement>(null);
   const [isWebView, setIsWebView] = useState(false);
+  const [appName, setAppName] = useState(siteConfig.name);
   // 清理验证码实例
   useEffect(() => {
     return () => {
@@ -62,6 +63,12 @@ export default function IndexPage() {
   // 检测是否在WebView中运行
   useEffect(() => {
     setIsWebView(isWebViewFunc());
+  }, []);
+  // 异步加载软件名称
+  useEffect(() => {
+    getCachedConfig('app_name').then(name => {
+      if (name) setAppName(name);
+    }).catch(() => {});
   }, []);
   // 验证表单
   const validateForm = (): boolean => {
@@ -257,8 +264,8 @@ export default function IndexPage() {
           <div className="w-12 h-12 rounded-2xl bg-[#c96442] flex items-center justify-center shadow-md">
             <Logo size={22} className="text-white" />
           </div>
-          <h1 className="text-[22px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da] tracking-tight">
-            {siteConfig.name}
+          <h1 className="text-[22px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da] tracking-tight min-h-[1.5em]">
+            {appName}
           </h1>
         </div>
 

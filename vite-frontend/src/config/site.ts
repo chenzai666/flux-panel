@@ -13,7 +13,7 @@ const APP_VERSION = __APP_VERSION__;
 const getInitialConfig = () => {
   if (typeof window === 'undefined') {
     return {
-      name: "flux",
+      name: "",
       version: VERSION,
       app_version: APP_VERSION,
     };
@@ -28,7 +28,7 @@ const getInitialConfig = () => {
       };
     }
   return {
-    name: "flux",
+    name: "",
     version: VERSION,
     app_version: APP_VERSION,
   };
