@@ -255,9 +255,12 @@ export default function IndexPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f3f0eb] dark:bg-[#1a1614] flex flex-col">
+    <div className="min-h-screen bg-[#f5f0ea] dark:bg-[#1a1614] flex flex-col relative overflow-hidden">
+      {/* 背景光晕装饰 */}
+      <div className="pointer-events-none absolute -top-20 -left-20 w-96 h-96 rounded-full bg-[#c96442]/20 dark:bg-[#c96442]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-[#c9a882]/20 dark:bg-[#c96442]/8 blur-3xl" />
       {/* 主体：三段式垂直居中 */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12 relative z-10">
 
         {/* Logo + 品牌名 */}
         <div className="flex flex-col items-center gap-3 mb-8">
