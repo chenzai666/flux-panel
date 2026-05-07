@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import { isWebViewFunc } from '@/utils/panel';
 import { siteConfig, appNameReady } from '@/config/site';
+import { Logo } from '@/components/icons';
 import DefaultLayout from "@/layouts/default";
 import { login, LoginData, checkCaptcha } from "@/api";
 import "@/utils/tac.css";
@@ -261,9 +262,14 @@ export default function IndexPage() {
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-4 sm:py-8 md:py-10 pb-20 min-h-[calc(100dvh-120px)] sm:min-h-[calc(100dvh-200px)]">
         <div className="w-full max-w-md px-4 sm:px-0">
-          {appName && (
-            <h1 className="text-center text-2xl font-bold text-[#1a1a1a] dark:text-[#e8e2da] mb-4">{appName}</h1>
-          )}
+          <div className="flex flex-col items-center gap-3 mb-2">
+            <div className="w-12 h-12 rounded-2xl bg-[#c96442] flex items-center justify-center shadow-md">
+              <Logo size={22} className="text-white" />
+            </div>
+            <h1 className="text-[22px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da] tracking-tight min-h-[1.5em]">
+              {appName}
+            </h1>
+          </div>
           <Card className="w-full">
             <CardHeader className="pb-0 pt-6 px-6 flex-col items-center">
               <p className="text-small text-default-500 mt-2">请输入您的账号信息</p>
