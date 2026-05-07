@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { isWebViewFunc } from '@/utils/panel';
-import { siteConfig } from '@/config/site';
+import { siteConfig, appNameReady } from '@/config/site';
 import { title } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
 import { login, LoginData, checkCaptcha } from "@/api";
@@ -54,6 +54,7 @@ export default function IndexPage() {
   const tacInstanceRef = useRef<any>(null);
   const captchaContainerRef = useRef<HTMLDivElement>(null);
   const [isWebView, setIsWebView] = useState(false);
+  const [appName, setAppName] = useState(siteConfig.name);
   // 清理验证码实例
   useEffect(() => {
     return () => {
@@ -66,6 +67,12 @@ export default function IndexPage() {
   // 检测是否在WebView中运行
   useEffect(() => {
     setIsWebView(isWebViewFunc());
+  }, []);
+  // appNameReady 在模块加载时就已开始请求，直接 await 同一个 Promise
+  useEffect(() => {
+    appNameReady.then(name => {
+      if (name) setAppName(name);
+    });
   }, []);
   // 验证表单
   const validateForm = (): boolean => {
@@ -255,9 +262,11 @@ export default function IndexPage() {
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-4 sm:py-8 md:py-10 pb-20 min-h-[calc(100dvh-120px)] sm:min-h-[calc(100dvh-200px)]">
         <div className="w-full max-w-md px-4 sm:px-0">
+          {appName && (
+            <h1 className="text-center text-2xl font-bold text-[#1a1a1a] dark:text-[#e8e2da] mb-4">{appName}</h1>
+          )}
           <Card className="w-full">
             <CardHeader className="pb-0 pt-6 px-6 flex-col items-center">
-              <h1 className={title({ size: "sm" })}>登陆</h1>
               <p className="text-small text-default-500 mt-2">请输入您的账号信息</p>
             </CardHeader>
             <CardBody className="px-6 py-6">

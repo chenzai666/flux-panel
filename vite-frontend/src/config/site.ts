@@ -10,7 +10,7 @@ const APP_VERSION = "1.0.3";
 const getInitialConfig = () => {
   if (typeof window === 'undefined') {
     return {
-      name: "flux",
+      name: "",
       version: VERSION,
       app_version: APP_VERSION,
     };
@@ -25,7 +25,7 @@ const getInitialConfig = () => {
       };
     }
   return {
-    name: "flux",
+    name: "",
     version: VERSION,
     app_version: APP_VERSION,
   };
@@ -144,10 +144,18 @@ export const clearConfigCache = (keys?: string[]) => {
   }
 };
 
-// 在页面加载时异步更新配置（如果有更新的话）
-if (typeof window !== 'undefined') {
-  // 延迟执行，避免阻塞初始渲染
-  setTimeout(() => {
-    updateSiteConfig();
-  }, 200);
-}
+// 模块加载时立即开始获取应用名称（/config/get 是公开接口，无需登录）
+export const appNameReady: Promise<string> = typeof window !== 'undefined'
+  ? (() => {
+      const cached = localStorage.getItem(CACHE_PREFIX + 'app_name');
+      if (cached) return Promise.resolve(cached);
+      return getConfigByName('app_name').then(res => {
+        const name = res?.data?.value ?? '';
+        if (name) {
+          localStorage.setItem(CACHE_PREFIX + 'app_name', name);
+          siteConfig.name = name;
+        }
+        return name;
+      }).catch(() => '');
+    })()
+  : Promise.resolve('');
