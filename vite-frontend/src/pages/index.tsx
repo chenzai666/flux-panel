@@ -7,7 +7,6 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import { isWebViewFunc } from '@/utils/panel';
 import { siteConfig, appNameReady } from '@/config/site';
-import { title } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
 import { login, LoginData, checkCaptcha } from "@/api";
 import "@/utils/tac.css";
