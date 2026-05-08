@@ -58,6 +58,15 @@
   --color-accent:       #c96442;
   --color-accent-hover: #b5583a;
   --color-accent-light: #fdf0eb;
+
+  /* 登录页 surface / brand 变量 */
+  --surface-bg:           #f7f4ef;
+  --surface-paper:        #fffdfa;
+  --surface-border:       #d9d0c4;
+  --text-primary:         #1f1b16;
+  --text-secondary:       #6a6156;
+  --brand-accent:         #c26b2b;
+  --brand-accent-hover:   #b5583a;
 }
 
 /* 暗色主题 */
@@ -97,6 +106,14 @@
   --color-accent:       #d4856a;
   --color-accent-hover: #c87860;
   --color-accent-light: #2d2420;
+
+  --surface-bg:           #1a1614;
+  --surface-paper:        #231e1b;
+  --surface-border:       #3d3834;
+  --text-primary:         #e8e2da;
+  --text-secondary:       #8a8480;
+  --brand-accent:         #d4856a;
+  --brand-accent-hover:   #c87860;
 }
 
 /* =============================================
@@ -287,6 +304,17 @@ body {
   border-radius: 12px !important;
 }
 
+/* 登录面板 */
+.claude-panel {
+  border: 1px solid var(--surface-border);
+  background: var(--surface-paper);
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(52, 41, 31, 0.08);
+}
+.dark .claude-panel {
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.25);
+}
+
 /* 卡片圆角 */
 .claude-card {
   border-radius: 12px;
@@ -350,11 +378,17 @@ body {
 .bg-primary   { background: var(--color-background-primary); }
 .bg-secondary { background: var(--color-background-secondary); }
 .bg-tertiary  { background: var(--color-background-tertiary); }
+.bg-surface   { background: var(--surface-bg); }
+.bg-brand     { background: var(--brand-accent); }
 
 /* 文字层级 */
 .text-body-primary   { color: var(--color-text-primary); }
 .text-body-secondary { color: var(--color-text-secondary); }
 .text-body-tertiary  { color: var(--color-text-tertiary); }
+.text-surface-primary   { color: var(--text-primary); }
+.text-surface-secondary { color: var(--text-secondary); }
+.brand-muted  { color: var(--text-secondary); }
+.text-brand   { color: var(--brand-accent); }
 
 /* 边框 */
 .border-var-primary   { border-color: var(--color-border-primary); }

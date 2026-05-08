@@ -255,38 +255,31 @@ export default function IndexPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f0ea] dark:bg-[#1a1614] flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-surface flex flex-col relative overflow-hidden">
       {/* 背景光晕装饰 */}
-      <div className="pointer-events-none absolute -top-20 -left-20 w-96 h-96 rounded-full bg-[#c96442]/20 dark:bg-[#c96442]/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-[#c9a882]/20 dark:bg-[#c96442]/8 blur-3xl" />
-      {/* 主体：三段式垂直居中 */}
+      <div className="pointer-events-none absolute -top-20 -left-20 w-96 h-96 rounded-full bg-[#c26b2b]/20 dark:bg-[#c26b2b]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-[#9c8361]/20 dark:bg-[#c26b2b]/8 blur-3xl" />
+
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-12 relative z-10">
 
-        {/* Logo + 品牌名 */}
-        <div className="flex flex-col items-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-[#c96442] flex items-center justify-center shadow-md">
-            <Logo size={22} className="text-white" />
-          </div>
-          <h1 className="text-[22px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da] tracking-tight min-h-[1.5em]">
-            {appName}
-          </h1>
-        </div>
-
-        {/* 登录卡片 */}
-        <div className="w-full max-w-sm">
-          <div className="bg-white dark:bg-[#231e1b] border border-[#dbd5cc] dark:border-[#2d2824] rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden">
-            <div className="px-7 pt-7 pb-2">
-              <h2 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da] mb-1">
-                登录到您的账户
-              </h2>
-              <p className="text-[13px] text-[#9b9590] dark:text-[#5d5854]">
-                请输入用户名和密码继续
-              </p>
+        {/* 登录面板 */}
+        <div className="w-full max-w-md">
+          <div className="claude-panel w-full">
+            {/* Logo + 标题 */}
+            <div className="pb-0 pt-6 px-7 flex flex-col items-center">
+              <div className="w-12 h-12 rounded-2xl bg-brand flex items-center justify-center shadow-md mb-3">
+                <Logo size={22} className="text-white" />
+              </div>
+              <h1 className="text-3xl lg:text-4xl font-semibold tracking-tight text-surface-primary min-h-[1.5em]">
+                {appName}
+              </h1>
+              <p className="text-sm brand-muted mt-2">请输入用户名和密码继续</p>
             </div>
 
+            {/* 表单 */}
             <div className="px-7 pb-7 pt-5 flex flex-col gap-3.5">
               <div className="flex flex-col gap-1.5">
-                <label className="text-[12px] font-medium text-[#6b6560] dark:text-[#8a8480] uppercase tracking-wide">
+                <label className="text-[12px] font-medium brand-muted uppercase tracking-wide">
                   用户名
                 </label>
                 <input
@@ -299,7 +292,7 @@ export default function IndexPage() {
                   className={`w-full px-3.5 py-2.5 text-[14px] rounded-xl border bg-white dark:bg-[#1a1614] text-[#1a1a1a] dark:text-[#e8e2da] placeholder-[#c4bdb6] dark:placeholder-[#4d4844] outline-none transition-all
                     ${errors.username
                       ? 'border-[#E24B4A] focus:ring-2 focus:ring-[#E24B4A]/20'
-                      : 'border-[#dbd5cc] dark:border-[#3d3834] focus:border-[#c96442] focus:ring-2 focus:ring-[#c96442]/15'
+                      : 'border-[#dbd5cc] dark:border-[#3d3834] focus:border-[#c26b2b] focus:ring-2 focus:ring-[#c26b2b]/15'
                     }
                     disabled:opacity-50`}
                 />
@@ -309,7 +302,7 @@ export default function IndexPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[12px] font-medium text-[#6b6560] dark:text-[#8a8480] uppercase tracking-wide">
+                <label className="text-[12px] font-medium brand-muted uppercase tracking-wide">
                   密码
                 </label>
                 <input
@@ -322,7 +315,7 @@ export default function IndexPage() {
                   className={`w-full px-3.5 py-2.5 text-[14px] rounded-xl border bg-white dark:bg-[#1a1614] text-[#1a1a1a] dark:text-[#e8e2da] placeholder-[#c4bdb6] dark:placeholder-[#4d4844] outline-none transition-all
                     ${errors.password
                       ? 'border-[#E24B4A] focus:ring-2 focus:ring-[#E24B4A]/20'
-                      : 'border-[#dbd5cc] dark:border-[#3d3834] focus:border-[#c96442] focus:ring-2 focus:ring-[#c96442]/15'
+                      : 'border-[#dbd5cc] dark:border-[#3d3834] focus:border-[#c26b2b] focus:ring-2 focus:ring-[#c26b2b]/15'
                     }
                     disabled:opacity-50`}
                 />
@@ -334,7 +327,7 @@ export default function IndexPage() {
               <button
                 onClick={handleLogin}
                 disabled={loading}
-                className="mt-1 w-full py-2.5 px-4 bg-[#c96442] hover:bg-[#b5583a] active:bg-[#a34e34] text-white text-[14px] font-semibold rounded-xl transition-all duration-150 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="mt-1 w-full py-2.5 px-4 bg-[#c26b2b] hover:bg-[#b5583a] active:bg-[#a34e34] text-white text-[14px] font-semibold rounded-xl transition-all duration-150 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -352,13 +345,13 @@ export default function IndexPage() {
 
         {/* 底部版权 */}
         <div className="mt-8 text-center space-y-1">
-          <p className="text-[12px] text-[#b8b0a8] dark:text-[#3d3834]">
+          <p className="text-[12px] brand-muted">
             Powered by{' '}
             <a
               href="https://github.com/chenzai666/flux-panel"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#9b9590] dark:text-[#4d4844] hover:text-[#c96442] dark:hover:text-[#c96442] transition-colors"
+              className="text-brand hover:opacity-80 transition-opacity"
             >
               flux-panel
             </a>
