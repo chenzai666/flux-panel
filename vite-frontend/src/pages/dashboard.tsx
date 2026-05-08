@@ -708,7 +708,7 @@ export default function DashboardPage() {
                    <p className="text-xs lg:text-sm text-default-600 truncate">转发配额</p>
                    <div className="p-1.5 lg:p-2 icon-bg-warning rounded-lg flex-shrink-0">
                      <svg className="w-4 h-4 lg:w-5 lg:h-5 icon-warning" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h8M4 18h8" />
+                       <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
                      </svg>
                    </div>
                  </div>
