@@ -277,26 +277,57 @@ export default function AdminLayout({
 
         {/* 导航 */}
         <nav className="flex-1 px-4 py-6 overflow-y-auto">
-          <ul className="space-y-1">
-            {filteredMenuItems.map(item => {
-              const isActive = location.pathname === item.path;
-              return (
-                <li key={item.path}>
-                  <button
-                    onClick={() => handleMenuClick(item.path)}
-                    className={`w-full flex items-center gap-3 min-h-[44px] px-4 py-3 rounded-lg text-left text-sm font-medium transition-colors duration-100
-                      ${isActive
-                        ? 'bg-[#f0dfcc] text-[#7a461f] dark:bg-[#c96442]/15 dark:text-[#e8c9a0]'
-                        : 'text-[#4d4339] dark:text-[#8a8480] hover:bg-[#f5eee4] dark:hover:bg-[#2d2824] hover:text-[#4d4339] dark:hover:text-[#e8e2da]'
-                      }`}
-                  >
-                    <span className="flex-shrink-0">{item.icon}</span>
-                    <span>{item.label}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          {/* 概览 */}
+          <div className="mb-1">
+            <div className="px-4 pb-1.5 text-[11px] font-medium text-[#9b9590] dark:text-[#5d5854] uppercase tracking-[0.05em]">概览</div>
+            <ul className="space-y-1">
+              {filteredMenuItems.filter(item => item.path === '/dashboard').map(item => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <li key={item.path}>
+                    <button
+                      onClick={() => handleMenuClick(item.path)}
+                      className={`w-full flex items-center gap-3 min-h-[44px] px-4 py-3 rounded-lg text-left text-sm font-medium transition-colors duration-100
+                        ${isActive
+                          ? 'bg-[#f0dfcc] text-[#7a461f] dark:bg-[#c96442]/15 dark:text-[#e8c9a0]'
+                          : 'text-[#4d4339] dark:text-[#8a8480] hover:bg-[#f5eee4] dark:hover:bg-[#2d2824] hover:text-[#4d4339] dark:hover:text-[#e8e2da]'
+                        }`}
+                    >
+                      <span className="flex-shrink-0">{item.icon}</span>
+                      <span>{item.label}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {/* 管理 */}
+          {filteredMenuItems.filter(item => item.path !== '/dashboard').length > 0 && (
+            <div className="mt-4">
+              <div className="px-4 pb-1.5 text-[11px] font-medium text-[#9b9590] dark:text-[#5d5854] uppercase tracking-[0.05em]">管理</div>
+              <ul className="space-y-1">
+                {filteredMenuItems.filter(item => item.path !== '/dashboard').map(item => {
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <li key={item.path}>
+                      <button
+                        onClick={() => handleMenuClick(item.path)}
+                        className={`w-full flex items-center gap-3 min-h-[44px] px-4 py-3 rounded-lg text-left text-sm font-medium transition-colors duration-100
+                          ${isActive
+                            ? 'bg-[#f0dfcc] text-[#7a461f] dark:bg-[#c96442]/15 dark:text-[#e8c9a0]'
+                            : 'text-[#4d4339] dark:text-[#8a8480] hover:bg-[#f5eee4] dark:hover:bg-[#2d2824] hover:text-[#4d4339] dark:hover:text-[#e8e2da]'
+                          }`}
+                      >
+                        <span className="flex-shrink-0">{item.icon}</span>
+                        <span>{item.label}</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
         </nav>
 
         {/* 用户 footer */}
