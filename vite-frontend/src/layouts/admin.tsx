@@ -266,7 +266,7 @@ export default function AdminLayout({
         ${isMobile ? 'top-0 left-0' : ''}
       `}>
         {/* Logo */}
-        <div className="px-4 py-5 border-b border-[#ebe7e1] dark:border-[#2d2824] flex items-center gap-2.5">
+        <div className="px-4 h-[54px] border-b border-[#ebe7e1] dark:border-[#2d2824] flex items-center gap-2.5">
           <div className="w-[28px] h-[28px] rounded-lg bg-[#D97757] dark:bg-[#D97757] flex items-center justify-center flex-shrink-0">
             <Logo size={14} className="text-white dark:text-white" />
           </div>
@@ -386,9 +386,6 @@ export default function AdminLayout({
               </svg>
             </button>
           )}
-          <h2 className="text-[15px] font-medium text-[#1a1a1a] dark:text-[#e8e2da]">
-            {filteredMenuItems.find(item => item.path === location.pathname)?.label || ''}
-          </h2>
         </header>
 
         {/* 主内容 */}
