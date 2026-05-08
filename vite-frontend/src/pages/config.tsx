@@ -9,7 +9,6 @@ import { Switch } from "@heroui/switch";
 import { Select, SelectItem } from "@heroui/select";
 import toast from 'react-hot-toast';
 import { updateConfigs, exportBackup, importBackup } from '@/api';
-import { SettingsIcon } from '@/components/icons';
 
 import { isAdmin } from '@/utils/auth';
 import { getCachedConfigs, clearConfigCache, updateSiteConfig } from '@/config/site';
