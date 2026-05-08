@@ -1431,7 +1431,6 @@ export default function ForwardPage() {
       <div className="px-4 lg:px-6 py-4 lg:py-5">
         {/* 页面头部 */}
         <div className="flex items-center justify-between mb-5">
-          <h1 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">转发管理</h1>
           <div className="flex items-center gap-2">
             {/* 批量删除按钮 */}
             {selectedIds.size > 0 && (
