@@ -577,8 +577,17 @@ body {
 }
 
 /* =============================================
-   侧边栏 — 永久深色专用样式
+   侧边栏
    ============================================= */
+
+.app-sidebar {
+  background: linear-gradient(180deg, #fffdfa 0%, #f8f2e9 100%);
+  box-shadow: 0 10px 30px rgba(59, 43, 26, 0.07);
+}
+.dark .app-sidebar {
+  background: #231e1b;
+  box-shadow: none;
+}
 
 /* 侧边栏导航 active indicator 动画 */
 .sidebar-nav-active {
