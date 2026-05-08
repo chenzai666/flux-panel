@@ -224,7 +224,7 @@ export default function LimitPage() {
     
       <div className="px-4 lg:px-6 py-4 lg:py-5">
         {/* 页面头部 */}
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-end mb-5">
           <Button
             size="sm"
             className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
