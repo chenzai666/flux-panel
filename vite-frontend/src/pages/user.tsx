@@ -532,7 +532,7 @@ export default function UserPage() {
       {/* 页面头部 */}
       <div className="flex flex-col gap-4 mb-5">
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-          <div className="flex items-center gap-2 flex-1 max-w-sm justify-end">
+          <div className="flex items-center gap-2 flex-1 max-w-sm">
             <Input
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
@@ -552,14 +552,14 @@ export default function UserPage() {
             >
               <SearchIcon className="w-4 h-4" />
             </Button>
-            <Button
-              size="sm"
-              className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
-              onPress={handleAdd}
-            >
-              新增用户
-            </Button>
           </div>
+          <Button
+            size="sm"
+            className="bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
+            onPress={handleAdd}
+          >
+            新增用户
+          </Button>
         </div>
       </div>
 
