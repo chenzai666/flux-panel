@@ -7,7 +7,6 @@ import axios from 'axios';
 import { isWebViewFunc } from '@/utils/panel';
 import { siteConfig, appNameReady } from '@/config/site';
 import { Logo } from '@/components/icons';
-import DefaultLayout from "@/layouts/default";
 import { login, LoginData, checkCaptcha } from "@/api";
 import "@/utils/tac.css";
 import "@/utils/tac.min.js";
@@ -258,20 +257,30 @@ export default function IndexPage() {
   };
 
   return (
-    <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-4 py-4 sm:py-8 md:py-10 pb-20 min-h-[calc(100dvh-120px)] sm:min-h-[calc(100dvh-200px)]">
-        <div className="w-full max-w-md px-4 sm:px-0">
+    <div className="min-h-screen bg-surface flex flex-col relative overflow-hidden">
+      {/* 背景光晕装饰 */}
+      <div className="pointer-events-none absolute top-0 left-0 w-96 h-96 rounded-full bg-[#c26b2b]/20 dark:bg-[#c26b2b]/10 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 right-0 w-80 h-80 rounded-full bg-[#9c8361]/20 dark:bg-[#c26b2b]/8 blur-3xl" />
+
+      {/* 顶部导航栏 */}
+      <div className="relative z-10 border-b" style={{ borderColor: 'var(--surface-border)' }}>
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6 h-12 flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-brand flex items-center justify-center">
+            <Logo size={14} className="text-white" />
+          </div>
+          <span className="text-[15px] font-semibold text-surface-primary min-h-[1.2em]">{appName}</span>
+        </div>
+      </div>
+
+      {/* 登录表单区 */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-10 relative z-10">
+        <div className="w-full max-w-md">
           <div className="claude-panel w-full">
-            <div className="pb-0 pt-6 px-6 flex flex-col items-center">
-              <div className="w-12 h-12 rounded-2xl bg-brand flex items-center justify-center shadow-md mb-3">
-                <Logo size={22} className="text-white" />
-              </div>
-              <h1 className="text-3xl lg:text-4xl font-semibold tracking-tight text-surface-primary min-h-[1.5em]">
-                {appName}
-              </h1>
-              <p className="text-sm brand-muted mt-2">请输入您的账号信息</p>
+            <div className="pt-8 pb-4 px-6 text-center">
+              <h1 className="text-[26px] font-semibold text-surface-primary tracking-tight">登录</h1>
+              <p className="text-sm brand-muted mt-1.5">请输入您的账号信息</p>
             </div>
-            <div className="px-6 py-6">
+            <div className="px-6 pb-6 pt-2">
               <div className="flex flex-col gap-4">
                 <Input
                   label="用户名"
@@ -310,7 +319,7 @@ export default function IndexPage() {
         </div>
 
         {/* 版权信息 */}
-        <div className="fixed inset-x-0 bottom-4 text-center py-4">
+        <div className="mt-8 text-center space-y-1">
           <p className="text-xs brand-muted">
             Powered by{' '}
             <a
@@ -322,31 +331,31 @@ export default function IndexPage() {
               flux-panel
             </a>
           </p>
-          <p className="text-xs brand-muted mt-1">
+          <p className="text-xs brand-muted">
             v{isWebView ? siteConfig.app_version : siteConfig.version}
           </p>
         </div>
+      </div>
 
-        {/* 验证码弹层 */}
-        {showCaptcha && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm captcha-backdrop-enter" />
-            <div className="mb-4">
-              <div
-                id="captcha-container"
-                ref={captchaContainerRef}
-                className="w-full flex justify-center"
-                style={{
-                  filter: document.documentElement.classList.contains('dark') ||
-                         document.documentElement.getAttribute('data-theme') === 'dark' ||
-                         window.matchMedia('(prefers-color-scheme: dark)').matches
-                         ? 'brightness(0.8) contrast(0.9)' : 'none'
-                }}
-              />
-            </div>
+      {/* 验证码弹层 */}
+      {showCaptcha && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm captcha-backdrop-enter" />
+          <div className="mb-4">
+            <div
+              id="captcha-container"
+              ref={captchaContainerRef}
+              className="w-full flex justify-center"
+              style={{
+                filter: document.documentElement.classList.contains('dark') ||
+                       document.documentElement.getAttribute('data-theme') === 'dark' ||
+                       window.matchMedia('(prefers-color-scheme: dark)').matches
+                       ? 'brightness(0.8) contrast(0.9)' : 'none'
+              }}
+            />
           </div>
-        )}
-      </section>
-    </DefaultLayout>
+        </div>
+      )}
+    </div>
   );
 }
