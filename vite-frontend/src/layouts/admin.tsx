@@ -243,7 +243,7 @@ export default function AdminLayout({
   );
 
   return (
-    <div className={`flex ${isMobile ? 'min-h-screen' : 'h-screen'} bg-[#F5F0E8] dark:bg-[#1a1614]`}>
+    <div className={`flex ${isMobile ? 'min-h-screen' : 'h-screen'} bg-[#f7f4ef] dark:bg-[#1a1614]`}>
       {/* 移动端遮罩层 */}
       {isMobile && mobileMenuVisible && (
         <div
@@ -252,13 +252,13 @@ export default function AdminLayout({
         />
       )}
 
-      {/* 侧边栏 — 浅色，对齐参考设计 */}
+      {/* 侧边栏 */}
       <aside className={`
+        app-sidebar
         ${isMobile ? 'fixed' : 'relative'}
         ${isMobile && !mobileMenuVisible ? '-translate-x-full' : 'translate-x-0'}
-        ${isMobile ? 'w-[260px]' : 'w-[220px]'}
-        bg-[#F5F0E8] dark:bg-[#231e1b]
-        border-r border-[#ebe7e1] dark:border-[#2d2824]
+        w-72
+        border-r border-[#d9d0c4] dark:border-[#2d2824]
         z-50
         transition-transform duration-300 ease-in-out
         flex flex-col
@@ -266,78 +266,52 @@ export default function AdminLayout({
         ${isMobile ? 'top-0 left-0' : ''}
       `}>
         {/* Logo */}
-        <div className="px-4 h-[54px] border-b border-[#ebe7e1] dark:border-[#2d2824] flex items-center gap-2.5">
-          <div className="w-[28px] h-[28px] rounded-lg bg-[#D97757] dark:bg-[#D97757] flex items-center justify-center flex-shrink-0">
-            <Logo size={14} className="text-white dark:text-white" />
+        <div className="px-3 h-[54px] border-b border-[#d9d0c4] dark:border-[#2d2824] flex items-center gap-2.5">
+          <div className="w-[28px] h-[28px] rounded-lg bg-[#c26b2b] flex items-center justify-center flex-shrink-0">
+            <Logo size={14} className="text-white" />
           </div>
           <div className="min-w-0">
-            <div className="text-[15px] font-medium text-[#1a1a1a] dark:text-[#e8e2da] leading-tight truncate tracking-[-0.01em]">{siteConfig.name}</div>
-            <div className="text-[11px] text-[#9b9590] dark:text-[#5d5854] leading-tight mt-[1px]">v{siteConfig.version}</div>
+            <div className="text-[15px] font-semibold text-[#1f1b16] dark:text-[#e8e2da] leading-tight truncate">{siteConfig.name}</div>
           </div>
         </div>
 
         {/* 导航 */}
-        <nav className="flex-1 overflow-y-auto">
-          {/* 概览 */}
-          <div className="px-2.5 pt-4 pb-2">
-            <div className="px-2 pb-[6px] text-[11px] font-medium text-[#9b9590] dark:text-[#5d5854] uppercase tracking-[0.04em]">概览</div>
-            {filteredMenuItems.filter(item => item.path === '/dashboard').map(item => {
+        <nav className="flex-1 px-4 py-6 overflow-y-auto">
+          <ul className="space-y-1">
+            {filteredMenuItems.map(item => {
               const isActive = location.pathname === item.path;
               return (
-                <button
-                  key={item.path}
-                  onClick={() => handleMenuClick(item.path)}
-                  className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-left transition-all duration-100 mb-[1px]
-                    ${isActive
-                      ? 'bg-[#F0DFCC] dark:bg-[#c96442]/15 text-[#1a1a1a] dark:text-[#e8e2da] font-medium'
-                      : 'text-[#6b6560] dark:text-[#8a8480] hover:bg-[#F5EEE4] dark:hover:bg-[#2d2824] hover:text-[#1a1a1a] dark:hover:text-[#e8e2da]'
-                    }`}
-                >
-                  <div className="w-4 h-4 flex-shrink-0 opacity-70">{item.icon}</div>
-                  <span className="text-sm">{item.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* 管理 */}
-          {filteredMenuItems.filter(item => item.path !== '/dashboard').length > 0 && (
-            <div className="px-2.5 pt-3 pb-2">
-              <div className="px-2 pb-[6px] text-[11px] font-medium text-[#9b9590] dark:text-[#5d5854] uppercase tracking-[0.04em]">管理</div>
-              {filteredMenuItems.filter(item => item.path !== '/dashboard').map(item => {
-                const isActive = location.pathname === item.path;
-                return (
+                <li key={item.path}>
                   <button
-                    key={item.path}
                     onClick={() => handleMenuClick(item.path)}
-                    className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg text-left transition-all duration-100 mb-[1px]
+                    className={`w-full flex items-center gap-3 min-h-[44px] px-4 py-3 rounded-lg text-left text-sm font-medium transition-colors duration-100
                       ${isActive
-                        ? 'bg-[#F0DFCC] dark:bg-[#c96442]/15 text-[#1a1a1a] dark:text-[#e8e2da] font-medium'
-                        : 'text-[#6b6560] dark:text-[#8a8480] hover:bg-[#F5EEE4] dark:hover:bg-[#2d2824] hover:text-[#1a1a1a] dark:hover:text-[#e8e2da]'
+                        ? 'bg-[#f0dfcc] text-[#7a461f] dark:bg-[#c96442]/15 dark:text-[#e8c9a0]'
+                        : 'text-[#4d4339] dark:text-[#8a8480] hover:bg-[#f5eee4] dark:hover:bg-[#2d2824] hover:text-[#4d4339] dark:hover:text-[#e8e2da]'
                       }`}
                   >
-                    <div className="w-4 h-4 flex-shrink-0 opacity-70">{item.icon}</div>
-                    <span className="text-sm">{item.label}</span>
+                    <span className="flex-shrink-0">{item.icon}</span>
+                    <span>{item.label}</span>
                   </button>
-                );
-              })}
-            </div>
-          )}
+                </li>
+              );
+            })}
+          </ul>
         </nav>
 
-        {/* 用户 footer — 点击弹出菜单 */}
-        <div className="border-t border-[#ebe7e1] dark:border-[#2d2824] p-2.5">
+        {/* 用户 footer */}
+        <div className="border-t border-[#d9d0c4] dark:border-[#2d2824] p-3">
           <Dropdown placement="top-start">
             <DropdownTrigger>
-              <button className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#F5EEE4] dark:hover:bg-[#2d2824] transition-colors text-left">
-                <div className="w-[28px] h-[28px] rounded-lg bg-[#F5F0E8] dark:bg-[#2d2824] border border-[#e5e0d8] dark:border-[#3d3834] flex items-center justify-center text-[12px] font-medium text-[#1a1a1a] dark:text-[#e8e2da] flex-shrink-0">
+              <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[#f5eee4] dark:hover:bg-[#2d2824] transition-colors text-left">
+                <div className="w-[30px] h-[30px] rounded-lg bg-[#f0dfcc] dark:bg-[#2d2824] border border-[#d9d0c4] dark:border-[#3d3834] flex items-center justify-center text-[13px] font-semibold text-[#7a461f] dark:text-[#e8e2da] flex-shrink-0">
                   {username.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[13px] font-medium text-[#1a1a1a] dark:text-[#e8e2da] leading-tight truncate">{username}</div>
-                  <div className="text-[11px] text-[#9b9590] dark:text-[#5d5854] leading-tight">{isAdmin ? '超级管理员' : '普通用户'}</div>
+                  <div className="text-[13px] font-medium text-[#1f1b16] dark:text-[#e8e2da] leading-tight truncate">{username}</div>
+                  <div className="text-[11px] text-[#6a6156] dark:text-[#5d5854] leading-tight">{isAdmin ? '超级管理员' : '普通用户'}</div>
                 </div>
-                <svg className="w-3.5 h-3.5 text-[#9b9590] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <svg className="w-3.5 h-3.5 text-[#6a6156] dark:text-[#5d5854] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                 </svg>
               </button>
@@ -375,7 +349,7 @@ export default function AdminLayout({
       {/* 主内容区域 */}
       <div className={`flex flex-col flex-1 ${isMobile ? 'min-h-0' : 'h-full overflow-hidden'}`}>
         {/* 顶部导航栏 */}
-        <header className="bg-[#F5F0E8] dark:bg-[#231e1b] border-b border-[#ebe7e1] dark:border-[#2d2824] h-[54px] flex items-center px-6 gap-3 flex-shrink-0 relative z-10">
+        <header className="bg-[#f8f2e9] dark:bg-[#231e1b] border-b border-[#d9d0c4] dark:border-[#2d2824] h-[54px] flex items-center px-6 gap-3 flex-shrink-0 relative z-10">
           {isMobile && (
             <button
               onClick={toggleMobileMenu}
@@ -389,7 +363,7 @@ export default function AdminLayout({
         </header>
 
         {/* 主内容 */}
-        <main className={`flex-1 bg-[#F5F0E8] dark:bg-[#1a1614] ${isMobile ? '' : 'overflow-y-auto'}`}>
+        <main className={`flex-1 bg-[#f7f4ef] dark:bg-[#1a1614] ${isMobile ? '' : 'overflow-y-auto'}`}>
           {children}
         </main>
       </div>
