@@ -257,23 +257,27 @@ export default function IndexPage() {
   return (
     <div className="min-h-screen bg-surface flex flex-col relative overflow-hidden">
       {/* 背景光晕装饰 */}
-      <div className="pointer-events-none absolute -top-20 -left-20 w-96 h-96 rounded-full bg-[#c26b2b]/20 dark:bg-[#c26b2b]/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-[#9c8361]/20 dark:bg-[#c26b2b]/8 blur-3xl" />
+      <div className="pointer-events-none absolute top-0 left-0 w-96 h-96 rounded-full bg-[#c26b2b]/20 dark:bg-[#c26b2b]/10 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 right-0 w-80 h-80 rounded-full bg-[#9c8361]/20 dark:bg-[#c26b2b]/8 blur-3xl" />
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12 relative z-10">
+      {/* 顶部导航栏 */}
+      <div className="relative z-10 border-b" style={{ borderColor: 'var(--surface-border)' }}>
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6 h-12 flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-brand flex items-center justify-center">
+            <Logo size={14} className="text-white" />
+          </div>
+          <span className="text-[15px] font-semibold text-surface-primary min-h-[1.2em]">{appName}</span>
+        </div>
+      </div>
+
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-10 relative z-10">
 
         {/* 登录面板 */}
         <div className="w-full max-w-md">
           <div className="claude-panel w-full">
-            {/* Logo + 标题 */}
-            <div className="pb-0 pt-6 px-7 flex flex-col items-center">
-              <div className="w-12 h-12 rounded-2xl bg-brand flex items-center justify-center shadow-md mb-3">
-                <Logo size={22} className="text-white" />
-              </div>
-              <h1 className="text-3xl lg:text-4xl font-semibold tracking-tight text-surface-primary min-h-[1.5em]">
-                {appName}
-              </h1>
-              <p className="text-sm brand-muted mt-2">请输入用户名和密码继续</p>
+            <div className="pt-8 pb-4 px-7 text-center">
+              <h1 className="text-[26px] font-semibold text-surface-primary tracking-tight">登录</h1>
+              <p className="text-sm brand-muted mt-1.5">请输入用户名和密码继续</p>
             </div>
 
             {/* 表单 */}
