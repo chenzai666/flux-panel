@@ -532,7 +532,6 @@ export default function UserPage() {
       {/* 页面头部 */}
       <div className="flex flex-col gap-4 mb-5">
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-          <h1 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">用户管理</h1>
           <div className="flex items-center gap-2 flex-1 max-w-sm justify-end">
             <Input
               value={searchKeyword}
