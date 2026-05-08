@@ -728,6 +728,7 @@ export default function TunnelPage() {
           </>
         ) : (
           <>
+            <div className="flex-1" />
             <div className="flex items-center gap-2">
               {tunnels.length > 0 && (
                 <Button size="sm" variant="flat" className="text-[#6b6560] dark:text-[#8a8480]" onPress={enterBatchMode}>
