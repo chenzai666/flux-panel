@@ -381,7 +381,7 @@ export default function AdminLayout({
       {/* 主内容区域 */}
       <div className={`flex flex-col flex-1 ${isMobile ? 'min-h-0' : 'h-full overflow-hidden'}`}>
         {/* 顶部导航栏 */}
-        <header className="bg-[#f8f2e9] dark:bg-[#231e1b] border-b border-[#d9d0c4] dark:border-[#2d2824] h-[54px] flex items-center px-6 gap-3 flex-shrink-0 relative z-10">
+        <header className="bg-[#f7f4ef] dark:bg-[#1a1614] border-b border-[#d9d0c4] dark:border-[#2d2824] h-[54px] flex items-center px-6 gap-3 flex-shrink-0 relative z-10">
           {isMobile && (
             <button
               onClick={toggleMobileMenu}
