@@ -1,6 +1,5 @@
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
-import { Card, CardBody, CardHeader } from "@heroui/card";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
@@ -262,19 +261,17 @@ export default function IndexPage() {
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-4 sm:py-8 md:py-10 pb-20 min-h-[calc(100dvh-120px)] sm:min-h-[calc(100dvh-200px)]">
         <div className="w-full max-w-md px-4 sm:px-0">
-          <div className="flex flex-col items-center gap-3 mb-2">
-            <div className="w-12 h-12 rounded-2xl bg-[#c96442] flex items-center justify-center shadow-md">
-              <Logo size={22} className="text-white" />
+          <div className="claude-panel w-full">
+            <div className="pb-0 pt-6 px-6 flex flex-col items-center">
+              <div className="w-12 h-12 rounded-2xl bg-brand flex items-center justify-center shadow-md mb-3">
+                <Logo size={22} className="text-white" />
+              </div>
+              <h1 className="text-3xl lg:text-4xl font-semibold tracking-tight text-surface-primary min-h-[1.5em]">
+                {appName}
+              </h1>
+              <p className="text-sm brand-muted mt-2">请输入您的账号信息</p>
             </div>
-            <h1 className="text-[22px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da] tracking-tight min-h-[1.5em]">
-              {appName}
-            </h1>
-          </div>
-          <Card className="w-full">
-            <CardHeader className="pb-0 pt-6 px-6 flex-col items-center">
-              <p className="text-small text-default-500 mt-2">请输入您的账号信息</p>
-            </CardHeader>
-            <CardBody className="px-6 py-6">
+            <div className="px-6 py-6">
               <div className="flex flex-col gap-4">
                 <Input
                   label="用户名"
@@ -287,7 +284,6 @@ export default function IndexPage() {
                   isInvalid={!!errors.username}
                   errorMessage={errors.username}
                 />
-                
                 <Input
                   label="密码"
                   placeholder="请输入密码"
@@ -299,63 +295,55 @@ export default function IndexPage() {
                   isDisabled={loading}
                   isInvalid={!!errors.password}
                 />
-
-                
                 <Button
                   size="lg"
                   onClick={handleLogin}
                   isLoading={loading}
                   disabled={loading}
-                  className="mt-2 bg-[#c96442] text-white hover:bg-[#b5583a] font-medium rounded-lg"
+                  className="mt-2 bg-[#c26b2b] text-white hover:bg-[#b5583a] font-medium rounded-lg"
                 >
                   {loading ? (showCaptcha ? "验证中..." : "登录中...") : "登录"}
                 </Button>
               </div>
-            </CardBody>
-          </Card>
+            </div>
+          </div>
         </div>
 
-
-      {/* 版权信息 - 固定在底部，不占据布局空间 */}
-      
-               <div className="fixed inset-x-0 bottom-4 text-center py-4">
-               <p className="text-xs text-[#9c8678] dark:text-[#7a6b60]">
-                 Powered by{' '}
-                 <a
-                   href="https://github.com/bqlpfy/flux-panel"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   className="text-[#c96442] dark:text-[#c96442]/80 hover:text-[#b5583a] transition-colors"
-                 >
-                   flux-panel
-                 </a>
-               </p>
-               <p className="text-xs text-[#9c8678] dark:text-[#7a6b60] mt-1">
-                 v{ isWebView ? siteConfig.app_version : siteConfig.version}
-               </p>
-             </div>
-      
-   
+        {/* 版权信息 */}
+        <div className="fixed inset-x-0 bottom-4 text-center py-4">
+          <p className="text-xs brand-muted">
+            Powered by{' '}
+            <a
+              href="https://github.com/bqlpfy/flux-panel"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand hover:opacity-80 transition-opacity"
+            >
+              flux-panel
+            </a>
+          </p>
+          <p className="text-xs brand-muted mt-1">
+            v{isWebView ? siteConfig.app_version : siteConfig.version}
+          </p>
+        </div>
 
         {/* 验证码弹层 */}
         {showCaptcha && (
           <div className="fixed inset-0 z-50 flex items-center justify-center">
-            {/* 背景遮罩层 - 模糊效果，暗黑模式下更深 */}
             <div className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm captcha-backdrop-enter" />
-           {/* 验证码容器 */}
-           <div className="mb-4">
-                <div 
-                  id="captcha-container" 
-                  ref={captchaContainerRef}
-                  className="w-full flex justify-center"
-                  style={{
-                    filter: document.documentElement.classList.contains('dark') || 
-                           document.documentElement.getAttribute('data-theme') === 'dark' ||
-                           window.matchMedia('(prefers-color-scheme: dark)').matches 
-                           ? 'brightness(0.8) contrast(0.9)' : 'none'
-                  }}
-                />
-              </div>
+            <div className="mb-4">
+              <div
+                id="captcha-container"
+                ref={captchaContainerRef}
+                className="w-full flex justify-center"
+                style={{
+                  filter: document.documentElement.classList.contains('dark') ||
+                         document.documentElement.getAttribute('data-theme') === 'dark' ||
+                         window.matchMedia('(prefers-color-scheme: dark)').matches
+                         ? 'brightness(0.8) contrast(0.9)' : 'none'
+                }}
+              />
+            </div>
           </div>
         )}
       </section>
