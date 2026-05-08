@@ -479,10 +479,7 @@ export default function ConfigPage() {
   return (
     
       <div className="px-4 lg:px-6 py-4 lg:py-5 max-w-4xl mx-auto">
-        {/* 页面标题 */}
-        <div className="flex items-center justify-between mb-5">
-          <h1 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">网站配置</h1>
-        </div>
+        <div className="mb-5">
 
         <Card className="border border-[#e5e0d8] dark:border-[#2d2824] bg-white dark:bg-[#231e1b] shadow-none rounded-xl">
           <CardHeader className="px-5 py-4 border-b border-[#e5e0d8] dark:border-[#2d2824]">

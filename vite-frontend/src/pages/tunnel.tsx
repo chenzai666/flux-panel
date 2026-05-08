@@ -557,7 +557,6 @@ export default function TunnelPage() {
           </>
         ) : (
           <>
-            <h1 className="text-[17px] font-semibold text-[#1a1a1a] dark:text-[#e8e2da]">隧道管理</h1>
             <div className="flex items-center gap-2">
               {tunnels.length > 0 && (
                 <Button size="sm" variant="flat" className="text-[#6b6560] dark:text-[#8a8480]" onPress={enterBatchMode}>
