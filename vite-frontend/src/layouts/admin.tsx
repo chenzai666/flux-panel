@@ -272,6 +272,7 @@ export default function AdminLayout({
           </div>
           <div className="min-w-0">
             <div className="text-[15px] font-semibold text-[#1f1b16] dark:text-[#e8e2da] leading-tight truncate">{siteConfig.name}</div>
+            <div className="text-[11px] text-[#9b9590] dark:text-[#5d5854] leading-tight mt-[1px]">v{siteConfig.version}</div>
           </div>
         </div>
 
