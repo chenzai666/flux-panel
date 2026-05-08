@@ -411,16 +411,8 @@ export default function ConfigPage() {
   return (
     
       <div className="p-6 max-w-4xl mx-auto">
-        {/* 页面标题 */}
-        <div className="flex items-center gap-3 mb-6">
-          <SettingsIcon className="w-8 h-8 text-primary" />
-          <div>
-            <h1 className="text-2xl font-bold">网站配置</h1>
-            <p className="text-[#6b5a4e] dark:text-[#9c8678]">
-              管理网站的基本信息和显示设置
-            </p>
-          </div>
-        </div>
+        {/* 页面描述 */}
+        <p className="text-sm text-[#6b5a4e] dark:text-[#9c8678] mb-6">管理网站的基本信息和显示设置</p>
 
         <Card className="shadow-md">
           <CardHeader className="pb-4">

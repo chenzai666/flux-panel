@@ -385,13 +385,16 @@ export default function AdminLayout({
           {isMobile && (
             <button
               onClick={toggleMobileMenu}
-              className="p-1.5 rounded-lg text-[#6b6560] dark:text-[#8a8480] hover:bg-[#F5EEE4] dark:hover:bg-[#2d2824] transition-colors"
+              className="p-1.5 rounded-lg text-[#6b6560] dark:text-[#8a8480] hover:bg-[#f5eee4] dark:hover:bg-[#2d2824] transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
               </svg>
             </button>
           )}
+          <h2 className="text-[15px] font-semibold text-[#1f1b16] dark:text-[#e8e2da]">
+            {filteredMenuItems.find(item => item.path === location.pathname)?.label || ''}
+          </h2>
         </header>
 
         {/* 主内容 */}

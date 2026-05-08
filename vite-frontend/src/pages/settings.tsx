@@ -92,7 +92,6 @@ export const SettingsPage = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </Button>
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">面板设置</h1>
           </div>
         </div>
       </div>
