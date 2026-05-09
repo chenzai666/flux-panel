@@ -198,6 +198,10 @@ install_panel() {
   echo "📡 选择配置文件：$(basename "$DOCKER_COMPOSE_URL")"
   curl -L -o docker-compose.yml "$DOCKER_COMPOSE_URL"
 
+  echo "🧩 统一镜像源为 Docker Hub 最新镜像..."
+  sed -i 's|bats666/springboot-backend:latest|chenzai666/flux-panel-backend:latest|g' docker-compose.yml
+  sed -i 's|bats666/vite-frontend:latest|chenzai666/flux-panel-frontend:latest|g' docker-compose.yml
+
   # 检查 gost.sql 是否已存在
   if [[ -f "gost.sql" ]]; then
     echo "⏭️ 跳过下载: gost.sql (使用当前位置的文件)"
@@ -244,6 +248,10 @@ update_panel() {
   DOCKER_COMPOSE_URL=$(get_docker_compose_url)
   echo "📡 选择配置文件：$(basename "$DOCKER_COMPOSE_URL")"
   curl -L -o docker-compose.yml "$DOCKER_COMPOSE_URL"
+
+  echo "🧩 统一镜像源为 Docker Hub 最新镜像..."
+  sed -i 's|bats666/springboot-backend:latest|chenzai666/flux-panel-backend:latest|g' docker-compose.yml
+  sed -i 's|bats666/vite-frontend:latest|chenzai666/flux-panel-frontend:latest|g' docker-compose.yml
   echo "✅ 下载完成"
 
   # 自动检测并配置 IPv6 支持

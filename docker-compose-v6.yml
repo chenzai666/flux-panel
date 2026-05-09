@@ -26,7 +26,7 @@ services:
       retries: 10
 
   backend:
-    image: bats666/springboot-backend:latest
+    image: chenzai666/flux-panel-backend:latest
     container_name: springboot-backend
     restart: unless-stopped
     environment:
@@ -34,6 +34,7 @@ services:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+      DB_URL: jdbc:mysql://mysql:3306/${DB_NAME}?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
       JWT_SECRET: ${JWT_SECRET}
       LOG_DIR: /app/logs
       JAVA_OPTS: "-Xms256m -Xmx512m -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai"
@@ -54,7 +55,7 @@ services:
       start_period: 90s
 
   frontend:
-    image: bats666/vite-frontend:latest
+    image: chenzai666/flux-panel-frontend:latest
     container_name: vite-frontend
     restart: unless-stopped
     ports:

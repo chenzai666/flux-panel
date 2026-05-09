@@ -35,6 +35,40 @@ curl -L https://raw.githubusercontent.com/bqlpfy/flux-panel/refs/heads/main/inst
 
 ```
 
+#### 使用 Docker Hub 最新镜像部署（推荐）
+
+1) 拉取或更新 `docker-compose-v4.yml`，镜像如下：
+- 后端：`chenzai666/flux-panel-backend:latest`
+- 前端：`chenzai666/flux-panel-frontend:latest`
+
+2) 准备环境变量（示例）：
+
+```bash
+cat > .env << 'EOF'
+DB_NAME=gost
+DB_USER=gost
+DB_PASSWORD=your_db_password
+JWT_SECRET=your_jwt_secret
+BACKEND_PORT=6365
+FRONTEND_PORT=8080
+EOF
+```
+
+3) 启动服务：
+
+```bash
+docker compose -f docker-compose-v4.yml up -d
+```
+
+4) 若你是从旧版本升级，请补充排序字段（仅执行一次）：
+
+```sql
+ALTER TABLE node ADD COLUMN inx int(10) NOT NULL DEFAULT 0;
+ALTER TABLE tunnel ADD COLUMN inx int(10) NOT NULL DEFAULT 0;
+```
+
+说明：新版本节点监控/隧道管理的拖拽排序依赖 `inx` 字段；未升级数据库时，排序保存会失败。
+
 面板端(开发版)：
 ```bash
 curl -L https://raw.githubusercontent.com/bqlpfy/flux-panel/refs/heads/beta/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
