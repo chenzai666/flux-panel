@@ -4,13 +4,17 @@ export const title = tv({
   base: "tracking-tight inline font-semibold",
   variants: {
     color: {
-      violet: "from-[#c26b2b] to-[#9f4f1b]",
-      yellow: "from-[#d38b42] to-[#f3b87a]",
-      blue: "from-[#5f7d8c] to-[#2f5569]",
-      cyan: "from-[#7f9f92] to-[#5f8073]",
-      green: "from-[#8ea76a] to-[#6f8a4b]",
-      pink: "from-[#b67a5f] to-[#9d5f44]",
-      foreground: "from-[#2a241d] to-[#6f6254]",
+      neutral:
+        "from-[var(--color-text-secondary)] to-[var(--color-text-primary)]",
+      info: "from-[var(--color-semantic-info-text)] to-[var(--color-text-primary)]",
+      success:
+        "from-[var(--color-semantic-success-text)] to-[var(--color-text-primary)]",
+      warning:
+        "from-[var(--color-semantic-warning-text)] to-[var(--color-text-primary)]",
+      danger:
+        "from-[var(--color-semantic-danger-text)] to-[var(--color-text-primary)]",
+      foreground:
+        "from-[var(--color-text-primary)] to-[var(--color-text-secondary)]",
     },
     size: {
       sm: "text-3xl lg:text-4xl",
@@ -26,15 +30,7 @@ export const title = tv({
   },
   compoundVariants: [
     {
-      color: [
-        "violet",
-        "yellow",
-        "blue",
-        "cyan",
-        "green",
-        "pink",
-        "foreground",
-      ],
+      color: ["neutral", "info", "success", "warning", "danger", "foreground"],
       class: "bg-clip-text text-transparent bg-gradient-to-b",
     },
   ],

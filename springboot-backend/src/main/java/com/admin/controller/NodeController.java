@@ -56,10 +56,25 @@ public class NodeController extends BaseController {
 
     @LogAnnotation
     @RequireRole
+    @PostMapping("/force-delete")
+    public R forceDelete(@RequestBody Map<String, Object> params) {
+        Long id = Long.valueOf(params.get("id").toString());
+        return nodeService.forceDeleteNode(id);
+    }
+
+    @LogAnnotation
+    @RequireRole
     @PostMapping("/install")
     public R getInstallCommand(@RequestBody Map<String, Object> params) {
         Long id = Long.valueOf(params.get("id").toString());
         return nodeService.getInstallCommand(id);
+    }
+
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/update-order")
+    public R updateNodeOrder(@RequestBody Map<String, Object> params) {
+        return nodeService.updateNodeOrder(params);
     }
 
 }

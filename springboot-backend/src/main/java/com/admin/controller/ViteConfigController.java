@@ -4,6 +4,8 @@ package com.admin.controller;
 import com.admin.common.annotation.RequireRole;
 import com.admin.common.aop.LogAnnotation;
 import com.admin.common.lang.R;
+import com.admin.service.BackupService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -20,6 +22,9 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping("/api/v1/config")
 public class ViteConfigController extends BaseController {
+
+    @Autowired
+    private BackupService backupService;
 
     /**
      * 获取所有网站配置
@@ -64,6 +69,52 @@ public class ViteConfigController extends BaseController {
         String name = params.get("name").toString();
         String value = params.get("value").toString();
         return viteConfigService.updateConfig(name, value);
+    }
+
+    /**
+     * 导出所有配置
+     * 需要管理员权限
+     */
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/export")
+    public R exportConfigs() {
+        return viteConfigService.exportConfigs();
+    }
+
+    /**
+     * 导入配置
+     * 需要管理员权限
+     */
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/import")
+    public R importConfigs(@RequestBody Map<String, String> params) {
+        String configsJson = params.get("configs");
+        return viteConfigService.importConfigs(configsJson);
+    }
+
+    /**
+     * 导出完整备份（包含所有数据）
+     * 需要管理员权限
+     */
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/backup/export")
+    public R exportBackup() {
+        return backupService.exportAll();
+    }
+
+    /**
+     * 导入完整备份（包含所有数据）
+     * 需要管理员权限
+     */
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/backup/import")
+    public R importBackup(@RequestBody Map<String, String> params) {
+        String backupJson = params.get("backup");
+        return backupService.importAll(backupJson);
     }
 
 }

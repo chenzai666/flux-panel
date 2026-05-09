@@ -7,6 +7,8 @@ import com.admin.common.lang.R;
 import com.admin.entity.Tunnel;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Map;
+
 /**
  * <p>
  * 隧道服务类
@@ -45,6 +47,13 @@ public interface TunnelService extends IService<Tunnel> {
     R deleteTunnel(Long id);
 
     /**
+     * 强制删除隧道（跳过使用检查）
+     * @param id 隧道ID
+     * @return 结果
+     */
+    R forceDeleteTunnel(Long id);
+
+    /**
      * 获取用户可用的隧道列表
      * @return 结果
      */
@@ -56,4 +65,6 @@ public interface TunnelService extends IService<Tunnel> {
      * @return 诊断结果
      */
     R diagnoseTunnel(Long tunnelId);
+
+    R updateTunnelOrder(Map<String, Object> params);
 }

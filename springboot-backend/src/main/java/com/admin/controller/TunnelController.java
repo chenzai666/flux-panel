@@ -65,6 +65,14 @@ public class TunnelController extends BaseController {
         return tunnelService.deleteTunnel(id);
     }
 
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/force-delete")
+    public R forceDelete(@RequestBody Map<String, Object> params) {
+        Long id = Long.valueOf(params.get("id").toString());
+        return tunnelService.forceDeleteTunnel(id);
+    }
+
     // ============ 用户隧道权限管理相关方法 ============
     
     /**
@@ -135,6 +143,13 @@ public class TunnelController extends BaseController {
     public R diagnoseTunnel(@RequestBody Map<String, Object> params) {
         Long tunnelId = Long.valueOf(params.get("tunnelId").toString());
         return tunnelService.diagnoseTunnel(tunnelId);
+    }
+
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/update-order")
+    public R updateTunnelOrder(@RequestBody Map<String, Object> params) {
+        return tunnelService.updateTunnelOrder(params);
     }
 
 }

@@ -44,4 +44,17 @@ public interface ViteConfigService extends IService<ViteConfig> {
      */
     R updateConfig(String name, String value);
 
+    /**
+     * 导出所有配置为JSON格式
+     * @return 包含所有配置的JSON列表
+     */
+    R exportConfigs();
+
+    /**
+     * 从JSON导入配置
+     * @param configsJson 配置JSON字符串
+     * @return 导入结果
+     */
+    R importConfigs(String configsJson);
+
 }

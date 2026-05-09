@@ -1,6 +1,32 @@
 @import "tailwindcss";
 
 :root {
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f7f7f5;
+  --color-background-tertiary: #f3f2ef;
+  --color-text-primary: #141413;
+  --color-text-secondary: #5f5e5a;
+  --color-text-tertiary: #8b8983;
+  --color-border-tertiary: rgba(20, 20, 19, 0.15);
+  --color-border-secondary: rgba(20, 20, 19, 0.3);
+
+  --color-semantic-success-bg: #EAF3DE;
+  --color-semantic-success-text: #27500A;
+  --color-semantic-success-border: #C0DD97;
+  --color-semantic-warning-bg: #FAEEDA;
+  --color-semantic-warning-text: #633806;
+  --color-semantic-warning-border: #FAC775;
+  --color-semantic-danger-bg: #FCEBEB;
+  --color-semantic-danger-text: #791F1F;
+  --color-semantic-danger-border: #F7C1C1;
+  --color-semantic-info-bg: #E6F1FB;
+  --color-semantic-info-text: #0C447C;
+  --color-semantic-info-border: #B5D4F4;
+
+  --color-progress-success: #639922;
+  --color-progress-warning: #BA7517;
+  --color-progress-danger: #E24B4A;
+
   --surface-bg: #f7f4ef;
   --surface-paper: #fffdfa;
   --surface-muted: #eee7dc;
@@ -11,6 +37,30 @@
   --brand-accent-soft: #f0dfcc;
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.dark {
+  --color-background-primary: #1f1f1d;
+  --color-background-secondary: #2a2926;
+  --color-background-tertiary: #191816;
+  --color-text-primary: #f2f1ee;
+  --color-text-secondary: #c3c1bc;
+  --color-text-tertiary: #9f9c95;
+  --color-border-tertiary: rgba(242, 241, 238, 0.15);
+  --color-border-secondary: rgba(242, 241, 238, 0.3);
+
+  --color-semantic-success-bg: #1a2e14;
+  --color-semantic-success-text: #a3d977;
+  --color-semantic-success-border: #4a7040;
+  --color-semantic-warning-bg: #2d1f00;
+  --color-semantic-warning-text: #FAC775;
+  --color-semantic-warning-border: #5d3a00;
+  --color-semantic-danger-bg: #2d1414;
+  --color-semantic-danger-text: #f79797;
+  --color-semantic-danger-border: #6b3535;
+  --color-semantic-info-bg: #0d1f33;
+  --color-semantic-info-text: #7ab8f5;
+  --color-semantic-info-border: #2d5075;
 }
 
 html,

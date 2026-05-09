@@ -6,6 +6,9 @@ import com.admin.service.ViteConfigService;
 import com.admin.common.lang.R;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -128,6 +131,56 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
             return R.ok(SUCCESS_UPDATE_MSG);
         } catch (Exception e) {
             return R.err(ERROR_UPDATE_MSG + ": " + e.getMessage());
+        }
+    }
+
+    @Override
+    public R exportConfigs() {
+        try {
+            List<ViteConfig> configList = this.list();
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> backup = new HashMap<>();
+            backup.put("version", "1.5.7");
+            backup.put("exportTime", System.currentTimeMillis());
+            backup.put("vite_config", configList);
+            String json = mapper.writeValueAsString(backup);
+            return R.ok(json);
+        } catch (Exception e) {
+            return R.err("导出配置失败: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public R importConfigs(String configsJson) {
+        if (!StringUtils.hasText(configsJson)) {
+            return R.err("导入配置不能为空");
+        }
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            List<ViteConfig> importedConfigs;
+
+            JsonNode root = mapper.readTree(configsJson);
+            if (root.isArray()) {
+                importedConfigs = mapper.convertValue(root, new TypeReference<List<ViteConfig>>() {});
+            } else if (root.has("vite_config")) {
+                importedConfigs = mapper.convertValue(root.get("vite_config"), new TypeReference<List<ViteConfig>>() {});
+            } else {
+                return R.err("导入配置格式错误");
+            }
+
+            int successCount = 0;
+            int failCount = 0;
+            for (ViteConfig config : importedConfigs) {
+                if (StringUtils.hasText(config.getName())) {
+                    updateOrCreateConfig(config.getName(), config.getValue());
+                    successCount++;
+                } else {
+                    failCount++;
+                }
+            }
+            return R.ok("导入成功: " + successCount + " 项" + (failCount > 0 ? "，失败: " + failCount + " 项" : ""));
+        } catch (Exception e) {
+            return R.err("导入配置失败: " + e.getMessage());
         }
     }
 

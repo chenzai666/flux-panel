@@ -259,10 +259,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             // 3. 删除用户
             boolean result = this.removeById(id);
             return result ? R.ok(SUCCESS_DELETE_MSG) : R.err(ERROR_DELETE_FAILED);
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             return R.err("删除用户时发生错误：" + e.getMessage());
+        }
+    }
+
+    @Override
+    public R forceDeleteUser(Long id) {
+        User user = this.getById(id);
+        if (user == null) {
+            return R.err("用户不存在");
+        }
+        try {
+            deleteUserRelatedData(id);
+            statisticsFlowService.remove(new QueryWrapper<StatisticsFlow>().eq("user_id", id));
+            boolean result = this.removeById(id);
+            return result ? R.ok("用户强制删除成功") : R.err(ERROR_DELETE_FAILED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.err("强制删除用户时发生错误：" + e.getMessage());
         }
     }
 

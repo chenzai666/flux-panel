@@ -66,7 +66,8 @@ CREATE TABLE `node` (
   `socks` int(10) NOT NULL DEFAULT '0',
   `created_time` bigint(20) NOT NULL,
   `updated_time` bigint(20) DEFAULT NULL,
-  `status` int(10) NOT NULL
+  `status` int(10) NOT NULL,
+  `inx` int(10) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -123,7 +124,8 @@ CREATE TABLE `tunnel` (
   `interface_name` varchar(200) DEFAULT NULL,
   `created_time` bigint(20) NOT NULL,
   `updated_time` bigint(20) NOT NULL,
-  `status` int(10) NOT NULL
+  `status` int(10) NOT NULL,
+  `inx` int(10) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------

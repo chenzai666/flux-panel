@@ -60,6 +60,14 @@ public class UserController extends BaseController {
     }
 
     @LogAnnotation
+    @RequireRole
+    @PostMapping("/force-delete")
+    public R forceDelete(@RequestBody Map<String, Object> params) {
+        Long id = Long.valueOf(params.get("id").toString());
+        return userService.forceDeleteUser(id);
+    }
+
+    @LogAnnotation
     @PostMapping("/package")
     public R getUserPackageInfo() {
         return userService.getUserPackageInfo();

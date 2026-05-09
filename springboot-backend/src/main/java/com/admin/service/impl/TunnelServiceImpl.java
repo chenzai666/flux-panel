@@ -246,6 +246,15 @@ public class TunnelServiceImpl extends ServiceImpl<TunnelMapper, Tunnel> impleme
         return result ? R.ok(SUCCESS_DELETE_MSG) : R.err(ERROR_DELETE_MSG);
     }
 
+    @Override
+    public R forceDeleteTunnel(Long id) {
+        if (!isTunnelExists(id)) {
+            return R.err(ERROR_TUNNEL_NOT_FOUND);
+        }
+        boolean result = this.removeById(id);
+        return result ? R.ok("隧道强制删除成功") : R.err(ERROR_DELETE_MSG);
+    }
+
     /**
      * 获取用户可用的隧道列表
      * 管理员可以看到所有启用的隧道，普通用户只能看到有权限的启用隧道
@@ -262,6 +271,37 @@ public class TunnelServiceImpl extends ServiceImpl<TunnelMapper, Tunnel> impleme
         // 转换为DTO并返回
         List<TunnelListDto> tunnelDtos = convertToTunnelListDtos(tunnelEntities);
         return R.ok(tunnelDtos);
+    }
+
+    @Override
+    public R updateTunnelOrder(Map<String, Object> params) {
+        try {
+            if (!params.containsKey("tunnels")) {
+                return R.err("缺少tunnels参数");
+            }
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> tunnelsList = (List<Map<String, Object>>) params.get("tunnels");
+            if (tunnelsList == null || tunnelsList.isEmpty()) {
+                return R.err("tunnels参数不能为空");
+            }
+
+            List<Tunnel> tunnelsToUpdate = new ArrayList<>();
+            for (Map<String, Object> tunnelData : tunnelsList) {
+                Long id = Long.valueOf(tunnelData.get("id").toString());
+                Integer inx = Integer.valueOf(tunnelData.get("inx").toString());
+
+                Tunnel tunnel = new Tunnel();
+                tunnel.setId(id);
+                tunnel.setInx(inx);
+                tunnelsToUpdate.add(tunnel);
+            }
+
+            boolean success = this.updateBatchById(tunnelsToUpdate);
+            return success ? R.ok("排序更新成功") : R.err("排序更新失败");
+        } catch (Exception e) {
+            return R.err("更新排序时发生错误: " + e.getMessage());
+        }
     }
 
     // ========== 私有辅助方法 ==========

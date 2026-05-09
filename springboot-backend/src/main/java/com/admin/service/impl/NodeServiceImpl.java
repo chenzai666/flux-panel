@@ -24,7 +24,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -198,6 +200,16 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, Node> implements No
         return result ? R.ok(SUCCESS_DELETE_MSG) : R.err(ERROR_DELETE_MSG);
     }
 
+    @Override
+    public R forceDeleteNode(Long id) {
+        Node node = this.getById(id);
+        if (node == null) {
+            return R.err(ERROR_NODE_NOT_FOUND);
+        }
+        boolean result = this.removeById(id);
+        return result ? R.ok("节点强制删除成功") : R.err(ERROR_DELETE_MSG);
+    }
+
     /**
      * 根据ID获取节点信息
      * 
@@ -348,6 +360,37 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, Node> implements No
 
         // 2. 构建安装命令
         return buildInstallCommand(node);
+    }
+
+    @Override
+    public R updateNodeOrder(Map<String, Object> params) {
+        try {
+            if (!params.containsKey("nodes")) {
+                return R.err("缺少nodes参数");
+            }
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> nodesList = (List<Map<String, Object>>) params.get("nodes");
+            if (nodesList == null || nodesList.isEmpty()) {
+                return R.err("nodes参数不能为空");
+            }
+
+            List<Node> nodesToUpdate = new ArrayList<>();
+            for (Map<String, Object> nodeData : nodesList) {
+                Long id = Long.valueOf(nodeData.get("id").toString());
+                Integer inx = Integer.valueOf(nodeData.get("inx").toString());
+
+                Node node = new Node();
+                node.setId(id);
+                node.setInx(inx);
+                nodesToUpdate.add(node);
+            }
+
+            boolean success = this.updateBatchById(nodesToUpdate);
+            return success ? R.ok("排序更新成功") : R.err("排序更新失败");
+        } catch (Exception e) {
+            return R.err("更新排序时发生错误: " + e.getMessage());
+        }
     }
 
     /**
