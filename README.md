@@ -27,11 +27,11 @@
 #### 快速部署
 面板端(稳定版)：
 ```bash
-curl -L https://raw.githubusercontent.com/bqlpfy/flux-panel/refs/heads/main/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
+curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/main/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
 ```
 节点端(稳定版)：
 ```bash
-curl -L https://raw.githubusercontent.com/bqlpfy/flux-panel/refs/heads/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
+curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 
 ```
 
@@ -40,6 +40,11 @@ curl -L https://raw.githubusercontent.com/bqlpfy/flux-panel/refs/heads/main/inst
 1) 拉取或更新 `docker-compose-v4.yml`，镜像如下：
 - 后端：`chenzai666/flux-panel-backend:latest`
 - 前端：`chenzai666/flux-panel-frontend:latest`
+
+```bash
+curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/main/docker-compose-v4.yml -o docker-compose-v4.yml
+curl -L https://raw.githubusercontent.com/chenzai666/flux-panel/refs/heads/main/gost.sql -o gost.sql
+```
 
 2) 准备环境变量（示例）：
 
@@ -68,16 +73,6 @@ ALTER TABLE tunnel ADD COLUMN inx int(10) NOT NULL DEFAULT 0;
 ```
 
 说明：新版本节点监控/隧道管理的拖拽排序依赖 `inx` 字段；未升级数据库时，排序保存会失败。
-
-面板端(开发版)：
-```bash
-curl -L https://raw.githubusercontent.com/bqlpfy/flux-panel/refs/heads/beta/panel_install.sh -o panel_install.sh && chmod +x panel_install.sh && ./panel_install.sh
-```
-节点端(开发版)：
-```bash
-curl -L https://raw.githubusercontent.com/bqlpfy/flux-panel/refs/heads/beta/install.sh -o install.sh && chmod +x install.sh && ./install.sh
-
-```
 
 #### 默认管理员账号
 
