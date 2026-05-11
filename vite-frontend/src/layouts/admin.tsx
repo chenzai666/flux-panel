@@ -243,7 +243,7 @@ export default function AdminLayout({
   );
 
   return (
-    <div className={`flex ${isMobile ? 'min-h-screen' : 'h-screen'} bg-[#f7f4ef] dark:bg-[#1a1614]`}>
+    <div className={`flex ${isMobile ? 'min-h-screen' : 'h-screen'} bg-[#f8f8f6] dark:bg-[#1a1614]`}>
       {/* 移动端遮罩层 */}
       {isMobile && mobileMenuVisible && (
         <div
@@ -381,7 +381,7 @@ export default function AdminLayout({
       {/* 主内容区域 */}
       <div className={`flex flex-col flex-1 ${isMobile ? 'min-h-0' : 'h-full overflow-hidden'}`}>
         {/* 顶部导航栏 */}
-        <header className="bg-[#f7f4ef] dark:bg-[#1a1614] border-b border-[#d9d0c4] dark:border-[#2d2824] h-[54px] flex items-center px-6 gap-3 flex-shrink-0 relative z-10">
+        <header className="bg-[#f8f8f6] dark:bg-[#1a1614] border-b border-[#d9d0c4] dark:border-[#2d2824] h-[54px] flex items-center px-6 gap-3 flex-shrink-0 relative z-10">
           {isMobile && (
             <button
               onClick={toggleMobileMenu}
@@ -398,7 +398,7 @@ export default function AdminLayout({
         </header>
 
         {/* 主内容 */}
-        <main className={`flex-1 bg-[#f7f4ef] dark:bg-[#1a1614] ${isMobile ? '' : 'overflow-y-auto'}`}>
+        <main className={`flex-1 bg-[#f8f8f6] dark:bg-[#1a1614] ${isMobile ? '' : 'overflow-y-auto'}`}>
           {children}
         </main>
       </div>
