@@ -7,7 +7,7 @@
 :root {
   /* 背景层级：主面板白色，次级用极浅暖灰，三级用浅暖灰 */
   --color-background-primary:   #ffffff;
-  --color-background-secondary: #f9f8f6;
+  --color-background-secondary: #f8f8f6;
   --color-background-tertiary:  #f3f0eb;
 
   /* 边框：0.5px 细线，三个层级 */
@@ -60,7 +60,7 @@
   --color-accent-light: #fdf0eb;
 
   /* 登录页 surface / brand 变量 */
-  --surface-bg:           #f7f4ef;
+  --surface-bg:           #f8f8f6;
   --surface-paper:        #fffdfa;
   --surface-border:       #d9d0c4;
   --text-primary:         #1f1b16;
