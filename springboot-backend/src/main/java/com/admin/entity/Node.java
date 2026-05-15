@@ -38,4 +38,6 @@ public class Node extends BaseEntity {
 
     private Integer socks;
 
+    private Integer sortOrder;
+
 }

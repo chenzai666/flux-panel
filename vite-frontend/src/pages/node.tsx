@@ -33,7 +33,8 @@ import {
   getNodeList,
   updateNode,
   deleteNode,
-  getNodeInstallCommand
+  getNodeInstallCommand,
+  saveNodeSort
 } from "@/api";
 import { siteConfig } from "@/config/site";
 
@@ -348,7 +349,7 @@ export default function NodePage() {
           systemInfo: null,
           copyLoading: false
         }));
-        setNodeList(applySavedOrder(mapped));
+        setNodeList(mapped);
       } else {
         toast.error(res.msg || '加载节点列表失败');
       }
@@ -441,15 +442,15 @@ export default function NodePage() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (over && active.id !== over.id) {
-      setNodeList(prev => {
-        const oldIndex = prev.findIndex(n => n.id === active.id);
-        const newIndex = prev.findIndex(n => n.id === over.id);
-        const next = arrayMove(prev, oldIndex, newIndex);
-        localStorage.setItem(NODE_ORDER_KEY, JSON.stringify(next.map(n => n.id)));
-        return next;
-      });
-    }
+    if (!over || active.id === over.id) return;
+    setNodeList(prev => {
+      const oldIndex = prev.findIndex(n => n.id === active.id);
+      const newIndex = prev.findIndex(n => n.id === over.id);
+      const next = arrayMove(prev, oldIndex, newIndex);
+      const sortList = next.map((n, idx) => ({ id: n.id, sortOrder: idx }));
+      saveNodeSort(sortList).catch(() => toast.error('排序保存失败'));
+      return next;
+    });
   };
 
   const handleToggleSelect = (id: number) => {

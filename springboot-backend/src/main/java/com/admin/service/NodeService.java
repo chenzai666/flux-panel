@@ -6,6 +6,9 @@ import com.admin.common.lang.R;
 import com.admin.entity.Node;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
  *  服务类
@@ -27,5 +30,7 @@ public interface NodeService extends IService<Node> {
     Node getNodeById(Long id);
 
     R getInstallCommand(Long id);
+
+    R saveNodeSort(List<Map<String, Object>> sortList);
 
 }

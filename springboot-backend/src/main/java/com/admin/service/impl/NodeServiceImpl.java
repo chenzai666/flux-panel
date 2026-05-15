@@ -24,7 +24,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -108,7 +110,7 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, Node> implements No
      */
     @Override
     public R getAllNodes() {
-        List<Node> nodeList = this.list();
+        List<Node> nodeList = this.list(new QueryWrapper<Node>().orderByAsc("sort_order").orderByAsc("id"));
         hideNodeSecrets(nodeList);
         return R.ok(nodeList);
     }
@@ -235,6 +237,7 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, Node> implements No
         // 设置默认属性
         node.setSecret(IdUtil.simpleUUID());
         node.setStatus(NODE_STATUS_ACTIVE);
+        node.setSortOrder((int) this.count());
         
         // 设置时间戳
         long currentTime = System.currentTimeMillis();
@@ -432,8 +435,30 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, Node> implements No
     }
 
     /**
+     * 保存节点排序
+     *
+     * @param sortList 排序数据列表
+     * @return 保存结果响应
+     */
+    @Override
+    public R saveNodeSort(List<Map<String, Object>> sortList) {
+        if (sortList == null || sortList.isEmpty()) return R.err("排序数据为空");
+        List<Node> updates = new ArrayList<>();
+        for (Map<String, Object> item : sortList) {
+            Long id = Long.valueOf(item.get("id").toString());
+            Integer sortOrder = Integer.valueOf(item.get("sortOrder").toString());
+            Node node = new Node();
+            node.setId(id);
+            node.setSortOrder(sortOrder);
+            updates.add(node);
+        }
+        this.updateBatchById(updates);
+        return R.ok();
+    }
+
+    /**
      * 验证端口范围的有效性
-     * 
+     *
      * @param portSta 起始端口
      * @param portEnd 结束端口
      * @throws RuntimeException 当端口范围无效时抛出异常
