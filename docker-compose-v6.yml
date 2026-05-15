@@ -1,39 +1,21 @@
 services:
-  mysql:
-    image: mysql:5.7
-    container_name: flux-mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - gost-network
-    healthcheck:
-      test: ["CMD", "sh", "-c", "mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD 2>/dev/null"]
-      interval: 10s
-      timeout: 5s
-      retries: 6
-      start_period: 30s
-
   backend:
     image: bats666/springboot-backend-beta:latest
     container_name: springboot-backend
     restart: unless-stopped
     environment:
-      # --- MySQL 模式（默认）---
-      DB_TYPE: mysql
-      DB_DRIVER: com.mysql.cj.jdbc.Driver
-      DB_URL: jdbc:mysql://flux-mysql:3306/${DB_NAME}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-      DB_USERNAME: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      # --- SQLite 模式（默认）---
+      DB_TYPE: sqlite
+      DB_DRIVER: org.sqlite.JDBC
+      DB_URL: jdbc:sqlite:/app/data/flux.db
       DB_INIT_MODE: always
-      # --- SQLite 模式（备用）---
-      # 删除上面所有 DB_* 变量，取消注释下面一行，并删除 depends_on mysql 条件
-      # DB_PATH: /app/data/gost.db
+      # --- MySQL 模式（可选）---
+      # 删除上方所有 DB_* 变量，取消注释以下变量，并添加 depends_on mysql 条件
+      # DB_TYPE: mysql
+      # DB_DRIVER: com.mysql.cj.jdbc.Driver
+      # DB_URL: jdbc:mysql://flux-mysql:3306/${DB_NAME}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+      # DB_USERNAME: ${DB_USER}
+      # DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       LOG_DIR: /app/logs
       JAVA_OPTS: "-Xms256m -Xmx512m -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai"
@@ -41,9 +23,7 @@ services:
       - "${BACKEND_PORT}:6365"
     volumes:
       - backend_logs:/app/logs
-    depends_on:
-      mysql:
-        condition: service_healthy
+      - sqlite_data:/app/data
     networks:
       - gost-network
     stop_grace_period: 30s
@@ -67,14 +47,38 @@ services:
     networks:
       - gost-network
 
+  # --- MySQL 服务（可选，使用 MySQL 模式时取消注释）---
+  # mysql:
+  #   image: mysql:5.7
+  #   container_name: flux-mysql
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+  #     MYSQL_DATABASE: ${DB_NAME}
+  #     MYSQL_USER: ${DB_USER}
+  #     MYSQL_PASSWORD: ${DB_PASSWORD}
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+  #   networks:
+  #     - gost-network
+  #   healthcheck:
+  #     test: ["CMD", "sh", "-c", "mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD 2>/dev/null"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 6
+  #     start_period: 30s
+
 
 volumes:
-  mysql_data:
-    name: mysql_data
-    driver: local
   backend_logs:
     name: backend_logs
     driver: local
+  sqlite_data:
+    name: sqlite_data
+    driver: local
+  # mysql_data:
+  #   name: mysql_data
+  #   driver: local
 
 
 networks:
