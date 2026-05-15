@@ -352,7 +352,7 @@ export default function NodePage() {
       if (oldIndex === -1 || newIndex === -1) return prev;
       const newOrder = arrayMove(prev, oldIndex, newIndex);
       const sortList = newOrder.map((id, idx) => ({ id, sortOrder: idx }));
-      saveNodeSort(sortList).catch(() => toast.error('排序保存失败'));
+      saveNodeSort(sortList).then(res => { if (res.code !== 0) toast.error(res.msg || '排序保存失败'); }).catch(() => toast.error('排序保存失败'));
       return newOrder;
     });
   };
