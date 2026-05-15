@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.regex.Pattern;
@@ -61,13 +62,15 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, Node> implements No
         node.setCreatedTime(currentTime);
         node.setUpdatedTime(currentTime);
         node.setInterfaceName(nodeDto.getInterfaceName());
+        long maxSort = this.count();
+        node.setSortOrder((int) maxSort);
         this.save(node);
         return R.ok();
     }
 
     @Override
     public R getAllNodes() {
-        List<Node> nodeList = this.list(new QueryWrapper<Node>().orderByDesc("status"));
+        List<Node> nodeList = this.list(new QueryWrapper<Node>().orderByAsc("sort_order").orderByAsc("id"));
         nodeList.forEach(node -> node.setSecret(null));
         return R.ok(nodeList);
     }
@@ -171,6 +174,22 @@ public class NodeServiceImpl extends ServiceImpl<NodeMapper, Node> implements No
         return node;
     }
 
+
+    @Override
+    public R saveNodeSort(List<Map<String, Object>> sortList) {
+        if (sortList == null || sortList.isEmpty()) return R.err("排序数据为空");
+        List<Node> updates = new java.util.ArrayList<>();
+        for (Map<String, Object> item : sortList) {
+            Long id = Long.valueOf(item.get("id").toString());
+            Integer sortOrder = Integer.valueOf(item.get("sortOrder").toString());
+            Node node = new Node();
+            node.setId(id);
+            node.setSortOrder(sortOrder);
+            updates.add(node);
+        }
+        this.updateBatchById(updates);
+        return R.ok();
+    }
 
     private void validatePortRange(String port) {
         Pattern PORT_PATTERN = Pattern.compile(   "([0-9]{1,5})(-([0-9]{1,5}))?");

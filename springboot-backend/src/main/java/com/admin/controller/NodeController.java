@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * <p>
@@ -71,6 +72,13 @@ public class NodeController extends BaseController {
     public R getInstallCommand(@RequestBody Map<String, Object> params) {
         Long id = Long.valueOf(params.get("id").toString());
         return nodeService.getInstallCommand(id);
+    }
+
+    @LogAnnotation
+    @RequireRole
+    @PostMapping("/sort")
+    public R sort(@RequestBody List<Map<String, Object>> sortList) {
+        return nodeService.saveNodeSort(sortList);
     }
 
 }

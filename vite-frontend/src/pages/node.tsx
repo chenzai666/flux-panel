@@ -35,7 +35,8 @@ import {
   updateNode,
   deleteNode,
   batchDeleteNode,
-  getNodeInstallCommand
+  getNodeInstallCommand,
+  saveNodeSort
 } from "@/api";
 
 interface Node {
@@ -294,17 +295,7 @@ export default function NodePage() {
           copyLoading: false
         }));
         setNodeList(nodes);
-        const saved = localStorage.getItem('node-order');
-        if (saved) {
-          try {
-            const savedIds: number[] = JSON.parse(saved);
-            const validIds = savedIds.filter((id: number) => nodes.some((n: Node) => n.id === id));
-            const missing = nodes.map((n: Node) => n.id).filter((id: number) => !validIds.includes(id));
-            setNodeOrder([...validIds, ...missing]);
-          } catch { setNodeOrder(nodes.map((n: Node) => n.id)); }
-        } else {
-          setNodeOrder(nodes.map((n: Node) => n.id));
-        }
+        setNodeOrder(nodes.map((n: Node) => n.id));
       } else {
         toast.error(res.msg || '加载节点列表失败');
       }
@@ -360,7 +351,8 @@ export default function NodePage() {
       const newIndex = prev.indexOf(Number(over.id));
       if (oldIndex === -1 || newIndex === -1) return prev;
       const newOrder = arrayMove(prev, oldIndex, newIndex);
-      try { localStorage.setItem('node-order', JSON.stringify(newOrder)); } catch {}
+      const sortList = newOrder.map((id, idx) => ({ id, sortOrder: idx }));
+      saveNodeSort(sortList).catch(() => toast.error('排序保存失败'));
       return newOrder;
     });
   };

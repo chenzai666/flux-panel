@@ -3,6 +3,7 @@ package com.admin.service;
 import com.admin.common.dto.NodeDto;
 import com.admin.common.dto.NodeUpdateDto;
 import com.admin.common.lang.R;
+import java.util.Map;
 import com.admin.entity.Node;
 import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
@@ -28,5 +29,7 @@ public interface NodeService extends IService<Node> {
     R batchDeleteNodes(List<Long> ids);
 
     R getInstallCommand(Long id);
+
+    R saveNodeSort(List<Map<String, Object>> sortList);
 
 }
