@@ -33,7 +33,7 @@ public class UserTunnel implements Serializable {
 
     private Integer tunnelId;
 
-    private Long flow;
+    private Double flow;
 
     private Long inFlow;
 

@@ -168,7 +168,7 @@ public class TunnelAutoSwitchService {
     }
 
     private boolean isExhausted(UserTunnel ut) {
-        Long limit = ut.getFlow();
+        Double limit = ut.getFlow();
         if (limit == null || limit <= 0) return false;
         long used = (ut.getInFlow() != null ? ut.getInFlow() : 0L)
                   + (ut.getOutFlow() != null ? ut.getOutFlow() : 0L);

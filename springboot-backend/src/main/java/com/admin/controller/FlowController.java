@@ -282,7 +282,7 @@ public class FlowController extends BaseController {
         if (userTunnel == null) return;
         long flow = (userTunnel.getInFlow() != null ? userTunnel.getInFlow() : 0L)
                   + (userTunnel.getOutFlow() != null ? userTunnel.getOutFlow() : 0L);
-        Long flowLimit = userTunnel.getFlow();
+        Double flowLimit = userTunnel.getFlow();
         if (flowLimit != null && flowLimit > 0 && flow >= flowLimit * BYTES_TO_GB) {
             // 流量耗尽：若该用户开启了自动切换则迁移到下一隧道，否则直接暂停
             User user = userService.getById(userId);

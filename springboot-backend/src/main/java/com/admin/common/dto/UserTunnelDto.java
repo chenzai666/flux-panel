@@ -14,8 +14,7 @@ public class UserTunnelDto {
     private Integer tunnelId;
     
     @NotNull(message = "流量限制不能为空")
-    @Min(value = 0, message = "流量限制不能小于0")
-    private Long flow;
+    private Double flow;
     
     @NotNull(message = "转发数量不能为空")
     @Min(value = 0, message = "转发数量不能小于0")
