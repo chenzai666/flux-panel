@@ -85,7 +85,7 @@ public class TunnelAutoSwitchService {
                     .orElse(null);
 
             if (target != null) {
-                if (forwardService.switchTunnel(forward.getId(), target.getTunnelId()).getCode() == 0) {
+                if (forwardService.switchTunnel(forward.getId(), target.tunnelId).getCode() == 0) {
                     target.useSlot();
                     switched++;
                     log.info("[自动切换] 转发[{}]「{}」→ 隧道「{}」", forward.getId(), forward.getName(), target.tunnelName);
