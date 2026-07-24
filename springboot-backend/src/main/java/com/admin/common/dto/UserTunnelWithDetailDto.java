@@ -31,7 +31,7 @@ public class UserTunnelWithDetailDto {
     /**
      * 流量限制
      */
-    private Integer flow;
+    private Double flow;
     
     /**
      * 转发数量限制
