@@ -33,6 +33,46 @@ public class DatabaseMigrationConfig implements ApplicationRunner {
             addColumnIfMissing(conn, "node", "sort_order", "INTEGER NOT NULL DEFAULT 0");
             // 用户隧道自动切换开关（默认关闭）
             addColumnIfMissing(conn, "user", "auto_switch", "INTEGER NOT NULL DEFAULT 0");
+            // user_tunnel.flow 从 INTEGER 迁移到 REAL，支持小数流量（如 0.5GB）
+            migrateUserTunnelFlowToReal(conn);
+        }
+    }
+
+    private void migrateUserTunnelFlowToReal(Connection conn) {
+        try {
+            DatabaseMetaData meta = conn.getMetaData();
+            try (ResultSet rs = meta.getColumns(null, null, "user_tunnel", "flow")) {
+                if (rs.next()) {
+                    String typeName = rs.getString("TYPE_NAME");
+                    if (!"REAL".equalsIgnoreCase(typeName) && !"DOUBLE".equalsIgnoreCase(typeName) && !"FLOAT".equalsIgnoreCase(typeName)) {
+                        try (Statement stmt = conn.createStatement()) {
+                            stmt.execute("BEGIN TRANSACTION");
+                            stmt.execute("ALTER TABLE user_tunnel RENAME TO user_tunnel_bak");
+                            stmt.execute("CREATE TABLE user_tunnel (" +
+                                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                                    "user_id INTEGER NOT NULL," +
+                                    "tunnel_id INTEGER NOT NULL," +
+                                    "speed_id INTEGER," +
+                                    "num INTEGER NOT NULL DEFAULT 0," +
+                                    "flow REAL NOT NULL DEFAULT 0," +
+                                    "in_flow INTEGER NOT NULL DEFAULT 0," +
+                                    "out_flow INTEGER NOT NULL DEFAULT 0," +
+                                    "flow_reset_time INTEGER NOT NULL DEFAULT 0," +
+                                    "exp_time INTEGER NOT NULL DEFAULT 0," +
+                                    "status INTEGER NOT NULL DEFAULT 1)");
+                            stmt.execute("INSERT INTO user_tunnel SELECT * FROM user_tunnel_bak");
+                            stmt.execute("DROP TABLE user_tunnel_bak");
+                            stmt.execute("COMMIT");
+                            log.info("迁移：user_tunnel.flow 列已从 INTEGER 转换为 REAL");
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            try (Statement rollback = conn.createStatement()) {
+                rollback.execute("ROLLBACK");
+            } catch (Exception ignored) {}
+            log.warn("迁移 user_tunnel.flow 跳过：{}", e.getMessage());
         }
     }
 
