@@ -918,11 +918,12 @@ export default function UserPage() {
                       type="number"
                       value={tunnelForm.flow.toString()}
                       onChange={(e) => {
-                        const value = Math.min(Math.max(Number(e.target.value) || 0, 1), 99999);
+                        const value = Math.min(Math.max(Number(e.target.value) || 0, 0.5), 99999);
                         setTunnelForm(prev => ({ ...prev, flow: value }));
                       }}
-                      min="1"
+                      min="0.5"
                       max="99999"
+                      step="0.5"
                     />
                     
                     <Input
@@ -1119,11 +1120,12 @@ export default function UserPage() {
                     type="number"
                     value={editTunnelForm.flow.toString()}
                     onChange={(e) => {
-                      const value = Math.min(Math.max(Number(e.target.value) || 0, 1), 99999);
+                      const value = Math.min(Math.max(Number(e.target.value) || 0, 0.5), 99999);
                       setEditTunnelForm(prev => prev ? { ...prev, flow: value } : null);
                     }}
-                    min="1"
+                    min="0.5"
                     max="99999"
+                    step="0.5"
                   />
                   
                   <Input
