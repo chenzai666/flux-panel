@@ -92,4 +92,9 @@ public interface ForwardService extends IService<Forward> {
     void updateForwardA(Forward forward);
 
     void syncAllToGost();
+
+    /**
+     * 系统内部：将指定转发切换到新隧道（跳过权限校验，供后台自动切换使用）
+     */
+    R switchTunnel(Long forwardId, Integer newTunnelId);
 }

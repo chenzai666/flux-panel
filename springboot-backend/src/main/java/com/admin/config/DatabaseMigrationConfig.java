@@ -31,6 +31,8 @@ public class DatabaseMigrationConfig implements ApplicationRunner {
         try (Connection conn = dataSource.getConnection()) {
             // 旧版本 node 表没有 sort_order 字段，自动补全
             addColumnIfMissing(conn, "node", "sort_order", "INTEGER NOT NULL DEFAULT 0");
+            // 用户隧道自动切换开关（默认关闭）
+            addColumnIfMissing(conn, "user", "auto_switch", "INTEGER NOT NULL DEFAULT 0");
         }
     }
 

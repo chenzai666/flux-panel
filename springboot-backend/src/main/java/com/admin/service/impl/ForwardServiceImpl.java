@@ -1433,6 +1433,34 @@ public class ForwardServiceImpl extends ServiceImpl<ForwardMapper, Forward> impl
     }
 
 
+    @Override
+    public R switchTunnel(Long forwardId, Integer newTunnelId) {
+        Forward existForward = this.getById(forwardId);
+        if (existForward == null) return R.err("转发不存在");
+
+        Tunnel newTunnel = validateTunnel(newTunnelId);
+        if (newTunnel == null) return R.err("目标隧道不存在");
+
+        UserTunnel newUserTunnel = getUserTunnel(existForward.getUserId(), newTunnelId);
+        if (newUserTunnel == null) return R.err("用户无该隧道权限");
+
+        NodeInfo nodeInfo = getRequiredNodes(newTunnel);
+        if (nodeInfo.isHasError()) return R.err(nodeInfo.getErrorMessage());
+
+        Forward updatedForward = new Forward();
+        org.springframework.beans.BeanUtils.copyProperties(existForward, updatedForward);
+        updatedForward.setTunnelId(newTunnelId);
+
+        R result = updateGostServicesWithTunnelChange(
+                existForward, updatedForward, newTunnel,
+                newUserTunnel.getSpeedId(), nodeInfo, newUserTunnel);
+        if (result.getCode() != 0) return result;
+
+        updatedForward.setStatus(FORWARD_STATUS_ACTIVE);
+        this.updateById(updatedForward);
+        return R.ok();
+    }
+
     public void updateForwardA(Forward forward) {
         Tunnel tunnel = validateTunnel(forward.getTunnelId());
         if (tunnel == null) {

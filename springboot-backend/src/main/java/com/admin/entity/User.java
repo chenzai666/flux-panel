@@ -59,5 +59,7 @@ public class User extends BaseEntity {
 
     private Long flowResetTime;
 
+    /** 隧道自动切换开关（0=关闭，1=开启），管理员按需为指定用户启用 */
+    private Integer autoSwitch;
 
 }

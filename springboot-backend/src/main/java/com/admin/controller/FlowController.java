@@ -5,6 +5,7 @@ import com.admin.common.dto.FlowDto;
 import com.admin.common.dto.GostConfigDto;
 import com.admin.common.lang.R;
 import com.admin.common.task.CheckGostConfigAsync;
+import com.admin.common.task.TunnelAutoSwitchService;
 import com.admin.common.utils.AESCrypto;
 import com.admin.common.utils.GostUtil;
 import com.admin.entity.*;
@@ -64,6 +65,9 @@ public class FlowController extends BaseController {
 
     @Resource
     CheckGostConfigAsync checkGostConfigAsync;
+
+    @Resource
+    TunnelAutoSwitchService tunnelAutoSwitchService;
 
     /**
      * 加密消息包装器
@@ -276,8 +280,16 @@ public class FlowController extends BaseController {
 
         UserTunnel userTunnel = userTunnelService.getById(userTunnelId);
         if (userTunnel == null) return;
-        long flow = userTunnel.getInFlow() + userTunnel.getOutFlow();
-        if (flow >= userTunnel.getFlow() *  BYTES_TO_GB) {
+        long flow = (userTunnel.getInFlow() != null ? userTunnel.getInFlow() : 0L)
+                  + (userTunnel.getOutFlow() != null ? userTunnel.getOutFlow() : 0L);
+        Long flowLimit = userTunnel.getFlow();
+        if (flowLimit != null && flowLimit > 0 && flow >= flowLimit * BYTES_TO_GB) {
+            // 流量耗尽：若该用户开启了自动切换则迁移到下一隧道，否则直接暂停
+            User user = userService.getById(userId);
+            boolean autoSwitchEnabled = user != null && Integer.valueOf(1).equals(user.getAutoSwitch());
+            if (autoSwitchEnabled && tunnelAutoSwitchService.tryAutoSwitch(userId, userTunnelId)) {
+                return;
+            }
             pauseSpecificForward(userTunnel.getTunnelId(), name, userId);
             return;
         }
