@@ -66,7 +66,7 @@ public class OpenApiController extends BaseController {
             headerValue = buildSubscriptionHeader(
                     tunnelInfo.getOutFlow(),
                     tunnelInfo.getInFlow(),
-                    tunnelInfo.getFlow() * GIGA,
+                    (long)(tunnelInfo.getFlow() * GIGA),
                     tunnelInfo.getExpTime() / 1000
             );
         }

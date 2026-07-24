@@ -589,7 +589,7 @@ public class ViteConfigServiceImpl extends ServiceImpl<ViteConfigMapper, ViteCon
                 UserTunnel ut = new UserTunnel();
                 ut.setUserId(newUserId != null ? newUserId.intValue() : null);
                 ut.setTunnelId(newTunnelId != null ? newTunnelId.intValue() : null);
-                ut.setFlow(getLong(item, "flow"));
+                ut.setFlow(getLong(item, "flow") != null ? getLong(item, "flow").doubleValue() : null);
                 ut.setInFlow(getLong(item, "inFlow"));
                 ut.setOutFlow(getLong(item, "outFlow"));
                 ut.setFlowResetTime(getLong(item, "flowResetTime"));
