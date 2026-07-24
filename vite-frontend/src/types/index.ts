@@ -18,6 +18,7 @@ export interface User {
   createdTime?: number; // 创建时间戳
   inFlow?: number; // 下载流量(字节)
   outFlow?: number; // 上传流量(字节)
+  autoSwitch?: number; // 隧道自动切换(0=关闭, 1=开启)
 }
 
 export interface UserForm {
@@ -30,6 +31,7 @@ export interface UserForm {
   num: number;
   expTime: Date | null;
   flowResetTime: number;
+  autoSwitch: number; // 隧道自动切换(0=关闭, 1=开启)
 }
 
 export interface UserTunnel {

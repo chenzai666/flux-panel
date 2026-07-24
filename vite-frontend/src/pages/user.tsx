@@ -21,6 +21,7 @@ import {
 import { Chip } from "@heroui/chip";
 import { Select, SelectItem } from "@heroui/select";
 import { RadioGroup, Radio } from "@heroui/radio";
+import { Switch } from "@heroui/switch";
 import { DatePicker } from "@heroui/date-picker";
 import { Spinner } from "@heroui/spinner";
 import { Progress } from "@heroui/progress";
@@ -254,7 +255,8 @@ export default function UserPage() {
       flow: 100,
       num: 10,
       expTime: null,
-      flowResetTime: 0
+      flowResetTime: 0,
+      autoSwitch: 0
     });
     onUserModalOpen();
   };
@@ -270,7 +272,8 @@ export default function UserPage() {
       flow: user.flow,
       num: user.num,
       expTime: user.expTime ? new Date(user.expTime) : null,
-      flowResetTime: user.flowResetTime ?? 0
+      flowResetTime: user.flowResetTime ?? 0,
+      autoSwitch: user.autoSwitch ?? 0
     });
     onUserModalOpen();
   };
@@ -824,6 +827,18 @@ export default function UserPage() {
               <Radio value="1">正常</Radio>
               <Radio value="0">禁用</Radio>
             </RadioGroup>
+
+            <div className="flex items-center justify-between py-2">
+              <div>
+                <p className="text-sm font-medium text-[#1a1a1a] dark:text-[#e8e2da]">隧道自动切换</p>
+                <p className="text-xs text-[#9b9590] dark:text-[#5d5854] mt-0.5">流量耗尽后自动迁移到下一个可用隧道</p>
+              </div>
+              <Switch
+                isSelected={userForm.autoSwitch === 1}
+                onValueChange={(checked) => setUserForm(prev => ({ ...prev, autoSwitch: checked ? 1 : 0 }))}
+                size="sm"
+              />
+            </div>
           </ModalBody>
           <ModalFooter className="border-t border-[#e5e0d8] dark:border-[#2d2824] pt-4">
             <Button variant="light" className="text-[#6b6560] dark:text-[#8a8480]" onPress={onUserModalClose}>
