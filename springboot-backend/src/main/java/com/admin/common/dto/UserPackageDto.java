@@ -60,7 +60,7 @@ public class UserPackageDto {
         private Integer tunnelId;
         private String tunnelName;
         private Integer tunnelFlow;  // 隧道流量计算类型（1-单向，2-双向）
-        private Long flow;           // 隧道流量配额(GB)
+        private Double flow;         // 隧道流量配额(GB)
         private Long inFlow;         // 隧道已用入站流量(字节)
         private Long outFlow;        // 隧道已用出站流量(字节)
         private Integer num;         // 隧道转发数量配额
