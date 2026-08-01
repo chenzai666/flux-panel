@@ -1078,7 +1078,7 @@ public class ForwardServiceImpl extends ServiceImpl<ForwardMapper, Forward> impl
         // 3. 创建新的Gost服务配置
         R createResult = createGostServices(updatedForward, newTunnel, limiter, nodeInfo, userTunnel);
         if (createResult.getCode() != 0) {
-            updateForwardStatusToError(updatedForward);
+            // 不在这里更新 DB，让调用方决定如何处理（避免写入错误的新隧道ID）
             return R.err("创建新隧道配置失败: " + createResult.getMsg());
         }
 
@@ -1447,9 +1447,21 @@ public class ForwardServiceImpl extends ServiceImpl<ForwardMapper, Forward> impl
         NodeInfo nodeInfo = getRequiredNodes(newTunnel);
         if (nodeInfo.isHasError()) return R.err(nodeInfo.getErrorMessage());
 
+        Tunnel oldTunnel = tunnelService.getById(existForward.getTunnelId());
+
         Forward updatedForward = new Forward();
         org.springframework.beans.BeanUtils.copyProperties(existForward, updatedForward);
         updatedForward.setTunnelId(newTunnelId);
+
+        // type 2 隧道切换到不同 outNode 时，旧 outPort 属于旧节点，需为新节点重新分配
+        if (newTunnel.getType() == TUNNEL_TYPE_TUNNEL_FORWARD && oldTunnel != null
+                && !Objects.equals(oldTunnel.getOutNodeId(), newTunnel.getOutNodeId())) {
+            Integer newOutPort = allocateOutPort(newTunnel, null);
+            if (newOutPort == null) {
+                return R.err("新隧道出口端口已满，无法完成自动切换");
+            }
+            updatedForward.setOutPort(newOutPort);
+        }
 
         R result = updateGostServicesWithTunnelChange(
                 existForward, updatedForward, newTunnel,

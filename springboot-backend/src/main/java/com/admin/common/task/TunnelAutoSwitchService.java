@@ -69,8 +69,9 @@ public class TunnelAutoSwitchService {
         );
         if (forwards.isEmpty()) return false;
 
-        // 构建可用隧道列表（有余量、未过期、有空位），并记录当前已占用数
-        List<CandidateTunnel> candidates = buildCandidates(userId, exhaustedUTId, exhaustedTunnel.getInNodeId());
+        // 构建可用隧道列表（有余量、未过期、有空位、同类型），并记录当前已占用数
+        List<CandidateTunnel> candidates = buildCandidates(userId, exhaustedUTId,
+                exhaustedTunnel.getInNodeId(), exhaustedTunnel.getType());
 
         log.info("[自动切换] 用户[{}] 隧道「{}」流量耗尽，待迁移{}条转发，候选隧道{}个",
                 userId, exhaustedTunnel.getName(), forwards.size(), candidates.size());
@@ -106,10 +107,11 @@ public class TunnelAutoSwitchService {
     }
 
     /**
-     * 构建候选隧道列表：有余量、未过期、有转发空位，优先同入口节点排前面。
-     * 每个 CandidateTunnel 记录当前已占用数，迁移过程中实时扣减。
+     * 构建候选隧道列表：有余量、未过期、有转发空位，且隧道类型必须与耗尽隧道相同，
+     * 优先同入口节点排前面（切换后用户无需更新连接地址）。
      */
-    private List<CandidateTunnel> buildCandidates(Integer userId, Integer excludeUTId, Long preferredInNodeId) {
+    private List<CandidateTunnel> buildCandidates(Integer userId, Integer excludeUTId,
+                                                    Long preferredInNodeId, Integer requiredTunnelType) {
         long now = System.currentTimeMillis();
 
         List<UserTunnel> eligible = userTunnelService.list(
@@ -126,6 +128,9 @@ public class TunnelAutoSwitchService {
         for (UserTunnel ut : eligible) {
             Tunnel tunnel = tunnelService.getById(ut.getTunnelId());
             if (tunnel == null) continue;
+
+            // 只切换到同类型隧道，避免 type 1 ↔ type 2 混用导致 outPort 为 null
+            if (requiredTunnelType != null && !requiredTunnelType.equals(tunnel.getType())) continue;
 
             // 当前该用户在这条隧道上已有多少条活跃转发
             long existingCount = forwardService.count(
