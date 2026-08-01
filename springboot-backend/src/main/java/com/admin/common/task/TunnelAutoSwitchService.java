@@ -90,6 +90,8 @@ public class TunnelAutoSwitchService {
                     target.useSlot();
                     switched++;
                     log.info("[自动切换] 转发[{}]「{}」→ 隧道「{}」", forward.getId(), forward.getName(), target.tunnelName);
+                    // 保底：若 switchTunnel 内删除旧服务失败，再 pause 一次确保旧服务停止上报流量
+                    stopOldService(forward, exhaustedUT, exhaustedTunnel);
                 } else {
                     pauseForward(forward, exhaustedUT);
                     paused++;
@@ -169,6 +171,23 @@ public class TunnelAutoSwitchService {
             forwardService.updateById(forward);
         } catch (Exception e) {
             log.error("[自动切换] 暂停转发[{}]失败: {}", forward.getId(), e.getMessage());
+        }
+    }
+
+    /**
+     * 切换成功后主动删除旧节点上的 GOST 服务，防止旧服务继续上报流量。
+     * switchTunnel 内部已尝试删除，此处作为保底重试。
+     */
+    private void stopOldService(Forward forward, UserTunnel oldUT, Tunnel oldTunnel) {
+        try {
+            String name = forward.getId() + "_" + forward.getUserId() + "_" + oldUT.getId();
+            GostUtil.DeleteService(oldTunnel.getInNodeId(), name);
+            if (oldTunnel.getType() == 2) {
+                GostUtil.DeleteRemoteService(oldTunnel.getOutNodeId(), name);
+                GostUtil.DeleteChains(oldTunnel.getInNodeId(), name);
+            }
+        } catch (Exception e) {
+            log.warn("[自动切换] 清理旧服务[转发{}]失败(可忽略，下次上报时会清理): {}", forward.getId(), e.getMessage());
         }
     }
 

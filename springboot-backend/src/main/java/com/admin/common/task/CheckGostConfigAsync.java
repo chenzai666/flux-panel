@@ -36,6 +36,10 @@ public class CheckGostConfigAsync {
     @Lazy
     private TunnelService tunnelService;
 
+    @Resource
+    @Lazy
+    private UserTunnelService userTunnelService;
+
 
 
     /**
@@ -73,17 +77,16 @@ public class CheckGostConfigAsync {
 
                         if (Objects.equals(type, "tcp")) { // 只处理TCP，避免重复处理
                             Forward forward = forwardService.getById(forwardId);
-                            if (forward == null) {
+                            if (forward == null || isStaleService(forward, userTunnelId)) {
                                 log.info("删除孤立的服务: {} (节点: {})", service.getName(), node.getId());
                                 GostDto gostDto = GostUtil.DeleteService(node.getId(), forwardId + "_" + userId + "_" + userTunnelId);
                                 System.out.println(gostDto);
                             }
                         }
 
-
                         if (Objects.equals(type, "tls")) {
                             Forward forward = forwardService.getById(forwardId);
-                            if (forward == null) {
+                            if (forward == null || isStaleService(forward, userTunnelId)) {
                                 log.info("删除孤立的服务: {} (节点: {})", service.getName(), node.getId());
                                 GostUtil.DeleteRemoteService(node.getId(), forwardId+"_"+userId+"_"+userTunnelId);
                             }
@@ -118,7 +121,7 @@ public class CheckGostConfigAsync {
                     
                     if (Objects.equals(type, "chains")) {
                         Forward forward = forwardService.getById(forwardId);
-                        if (forward == null) {
+                        if (forward == null || isStaleService(forward, userTunnelId)) {
                             log.info("删除孤立的链: {} (节点: {})", chain.getName(), node.getId());
                             GostUtil.DeleteChains(node.getId(), forwardId+"_"+userId+"_"+userTunnelId);
                         }
@@ -212,5 +215,22 @@ public class CheckGostConfigAsync {
      */
     private String[] parseServiceName(String serviceName) {
         return serviceName.split("_");
+    }
+
+    /**
+     * 判断 GOST 上的服务是否已过期（转发已切换到其他隧道）。
+     * 自动切换后旧服务名里的 userTunnelId 与当前隧道不再匹配，属于应清理的孤立服务。
+     */
+    private boolean isStaleService(Forward forward, String userTunnelId) {
+        try {
+            UserTunnel currentUT = userTunnelService.getOne(
+                    new QueryWrapper<UserTunnel>()
+                            .eq("user_id", forward.getUserId())
+                            .eq("tunnel_id", forward.getTunnelId()));
+            if (currentUT == null) return true;
+            return !Objects.equals(String.valueOf(currentUT.getId()), userTunnelId);
+        } catch (Exception e) {
+            return false; // 查询异常时保守处理，不删除
+        }
     }
 }
