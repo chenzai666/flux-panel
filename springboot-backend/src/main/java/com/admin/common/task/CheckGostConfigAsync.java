@@ -222,6 +222,8 @@ public class CheckGostConfigAsync {
      * 自动切换后旧服务名里的 userTunnelId 与当前隧道不再匹配，属于应清理的孤立服务。
      */
     private boolean isStaleService(Forward forward, String userTunnelId) {
+        // userTunnelId=0 表示管理员直接创建的转发，不走 UserTunnel 体系，永远不是孤立服务
+        if ("0".equals(userTunnelId)) return false;
         try {
             UserTunnel currentUT = userTunnelService.getOne(
                     new QueryWrapper<UserTunnel>()
